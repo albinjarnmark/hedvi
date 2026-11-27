@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="370" viewBox="0 0 1080 370" role="img" aria-labelledby="title desc">
+<title id="title">Rotate an API key safely</title>
+<desc id="desc">Never put a live secret in browser code, public repositories, screenshots or support messages.</desc>
+<rect width="1080" height="370" rx="20" fill="#102C28"/>
+<text x="36" y="53" fill="#F7F4EA" font-family="Arial,sans-serif" font-size="27" font-weight="700">Rotate an API key safely</text>
+<rect x="36" y="90" width="236" height="162" rx="12" fill="#193B35" stroke="#426159"/>
+<circle cx="66" cy="123" r="17" fill="#D5F86B"/>
+<text x="66" y="129" text-anchor="middle" fill="#102C28" font-family="Arial,sans-serif" font-size="18" font-weight="700">1</text>
+<text x="54" y="173" fill="#F7F4EA" font-family="Arial,sans-serif" font-size="20" font-weight="700">Create new key</text>
+<text x="54" y="207" fill="#C9D5CF" font-family="Arial,sans-serif" font-size="15">Sending only + one domain</text>
+<path d="M278 166h12m-5-5 5 5-5 5" stroke="#D5F86B" stroke-width="2" fill="none"/>
+<rect x="296" y="90" width="236" height="162" rx="12" fill="#193B35" stroke="#426159"/>
+<circle cx="326" cy="123" r="17" fill="#D5F86B"/>
+<text x="326" y="129" text-anchor="middle" fill="#102C28" font-family="Arial,sans-serif" font-size="18" font-weight="700">2</text>
+<text x="314" y="173" fill="#F7F4EA" font-family="Arial,sans-serif" font-size="20" font-weight="700">Update your app</text>
+<text x="314" y="207" fill="#C9D5CF" font-family="Arial,sans-serif" font-size="15">Use the secret store</text>
+<path d="M538 166h12m-5-5 5 5-5 5" stroke="#D5F86B" stroke-width="2" fill="none"/>
+<rect x="556" y="90" width="236" height="162" rx="12" fill="#193B35" stroke="#426159"/>
+<circle cx="586" cy="123" r="17" fill="#D5F86B"/>
+<text x="586" y="129" text-anchor="middle" fill="#102C28" font-family="Arial,sans-serif" font-size="18" font-weight="700">3</text>
+<text x="574" y="173" fill="#F7F4EA" font-family="Arial,sans-serif" font-size="20" font-weight="700">Verify one send</text>
+<text x="574" y="207" fill="#C9D5CF" font-family="Arial,sans-serif" font-size="15">Check status and logs</text>
+<path d="M798 166h12m-5-5 5 5-5 5" stroke="#D5F86B" stroke-width="2" fill="none"/>
+<rect x="816" y="90" width="236" height="162" rx="12" fill="#193B35" stroke="#426159"/>
+<circle cx="846" cy="123" r="17" fill="#D5F86B"/>
+<text x="846" y="129" text-anchor="middle" fill="#102C28" font-family="Arial,sans-serif" font-size="18" font-weight="700">4</text>
+<text x="834" y="173" fill="#F7F4EA" font-family="Arial,sans-serif" font-size="20" font-weight="700">Revoke old key</text>
+<text x="834" y="207" fill="#C9D5CF" font-family="Arial,sans-serif" font-size="15">Old requests now fail</text>
+<text x="36" y="298" fill="#C9D5CF" font-family="Arial,sans-serif" font-size="17">Never put a live secret in browser code, public repositories, screenshots or support messages.</text>
+</svg>

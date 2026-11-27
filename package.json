@@ -1,0 +1,13 @@
+{
+  "name": "hedvi",
+  "private": true,
+  "packageManager": "pnpm@10.15.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "web": "pnpm --filter @hedvi/web dev",
+    "contracts:node": "pnpm --filter @hedvi/contracts-node test"
+  },
+  "license": "AGPL-3.0-only"
+}

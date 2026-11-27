@@ -1,0 +1,24 @@
+title = "Hedvi secrets policy"
+[extend]
+useDefault = true
+
+# Exact published test vectors only, never blanket-exclude tests or config.
+[[allowlists]]
+description = "Standard Webhooks public signature test vector"
+condition = "AND"
+paths = ['''(?:^|/)apps/api/internal/webhooks/sign_test\.go$''']
+regexTarget = "line"
+regexes = ['''whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaSw''', '''msg_p5jXN8AQM9LWM0D4loKWxJek''']
+
+[[allowlists]]
+description = "Public local-development pepper, rejected outside local/test"
+condition = "AND"
+paths = ['''(?:^|/)apps/api/internal/config/config\.go$''']
+regexTarget = "line"
+regexes = ['''devDataKey\s*=\s*"aGVkdmktbG9jYWwtZGV2LWRhdGEta2V5LTMyLWJ5dGU="''', '''devPepper\s*=\s*"aGVkdmktbG9jYWwtZGV2LXBlcHBlcg=="''']
+
+[[rules]]
+id = "hedvi-api-key"
+description = "Hedvi API credential"
+regex = '''hv_(?:test|live)_[a-z2-7]{16}_[a-z2-7]{40}'''
+keywords = ["hv_test_", "hv_live_"]

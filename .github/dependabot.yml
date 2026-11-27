@@ -1,0 +1,39 @@
+# Dependency updates are reviewed manually. Cooldown keeps brand-new
+# releases out until they have been public for a week.
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: /apps/api
+    schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
+    groups:
+      aws-sdk: { patterns: ["github.com/aws/*"] }
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
+    ignore:
+      # Contract tests pin the SDK versions we document; bump deliberately.
+      - dependency-name: resend
+  - package-ecosystem: pip
+    directory: /contracts/python
+    schedule: { interval: monthly }
+    cooldown: { default-days: 7 }
+    ignore:
+      - dependency-name: resend
+  - package-ecosystem: terraform
+    directory: /infra/terraform/envs/staging
+    schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
+  - package-ecosystem: docker
+    directories: [/apps/api, /apps/web]
+    schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
+  - package-ecosystem: terraform
+    directories: [/infra/terraform/envs/prod, /infra/terraform/bootstrap]
+    schedule: { interval: weekly }
+    cooldown: { default-days: 7 }

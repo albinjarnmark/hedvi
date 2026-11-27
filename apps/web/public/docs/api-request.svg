@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="370" viewBox="0 0 1080 370" role="img" aria-labelledby="title desc">
+<title id="title">Send through the API</title>
+<desc id="desc">Use the email ID to inspect the recorded outcome after acceptance.</desc>
+<rect width="1080" height="370" rx="20" fill="#102C28"/>
+<g font-family="Arial,sans-serif">
+<text x="36" y="56" fill="#F7F4EA" font-size="30" font-weight="700">Send through the API</text>
+<rect x="36" y="88" width="322" height="158" rx="12" fill="#193B35" stroke="#426159"/>
+<circle cx="65" cy="119" r="14" fill="#D5F86B"/>
+<text x="65" y="125" text-anchor="middle" fill="#102C28" font-size="17" font-weight="700">1</text>
+<text x="52" y="171" fill="#F7F4EA" font-size="24" font-weight="700">Build the request</text>
+<text x="52" y="202" fill="#C9D5CF" font-size="16">Choose your project key and mode.</text>
+<path d="M362 165h10m-4-4 4 4-4 4" stroke="#D5F86B" stroke-width="2" fill="none"/>
+<rect x="378" y="88" width="322" height="158" rx="12" fill="#193B35" stroke="#426159"/>
+<circle cx="407" cy="119" r="14" fill="#D5F86B"/>
+<text x="407" y="125" text-anchor="middle" fill="#102C28" font-size="17" font-weight="700">2</text>
+<text x="394" y="171" fill="#F7F4EA" font-size="24" font-weight="700">Validate and accept</text>
+<text x="394" y="202" fill="#C9D5CF" font-size="16">Save the email and eligible quota.</text>
+<path d="M704 165h10m-4-4 4 4-4 4" stroke="#D5F86B" stroke-width="2" fill="none"/>
+<rect x="720" y="88" width="322" height="158" rx="12" fill="#193B35" stroke="#426159"/>
+<circle cx="749" cy="119" r="14" fill="#D5F86B"/>
+<text x="749" y="125" text-anchor="middle" fill="#102C28" font-size="17" font-weight="700">3</text>
+<text x="736" y="171" fill="#F7F4EA" font-size="24" font-weight="700">Track the result</text>
+<text x="736" y="202" fill="#C9D5CF" font-size="16">Read the log or verify a webhook.</text>
+<text x="36" y="298" fill="#C9D5CF" font-size="18">Use the email ID to inspect the recorded outcome after acceptance.</text>
+</g>
+</svg>

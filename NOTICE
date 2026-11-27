@@ -1,0 +1,13 @@
+Hedvi — transactional email platform
+Copyright (C) 2026 StackX AB and contributors
+
+Original platform code, build scripts, infrastructure templates and documentation
+are licensed under GNU AGPL version 3 only (SPDX: AGPL-3.0-only), unless a file
+states otherwise. See LICENSE for the complete, unmodified license.
+
+The small integration snippets shown in customer documentation are additionally
+available under the MIT license in docs/INTEGRATION-EXAMPLES-LICENSE. This extra
+permission applies to those snippets only, not the platform implementation.
+
+Dependencies retain their own copyright and licenses. See THIRD_PARTY_NOTICES.md.
+No trademark license is granted by the software license; see TRADEMARKS.md.

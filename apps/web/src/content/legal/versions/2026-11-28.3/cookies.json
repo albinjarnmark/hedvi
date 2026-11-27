@@ -1,0 +1,56 @@
+{
+  "version": "1.0",
+  "publishedAt": "28 November 2026",
+  "id": "cookies",
+  "title": "Cookies and browser storage",
+  "introduction": "This notice describes browser storage used by the hosted Hedvi site and application operated by StackX AB. Our privacy notice explains personal-data processing more generally. Contact hej@stackx.se about storage or privacy questions.",
+  "sections": [
+    {
+      "heading": "Essential sign-in cookie",
+      "paragraphs": [
+        "The first-party __Host-hedvi_session cookie keeps you signed in and links your browser to a server-side session. It contains a random credential, not your password. It is HttpOnly, Secure and SameSite=Lax in the hosted service, and is restricted to the issuing host and root path.",
+        "Its maximum browser lifetime is 14 days. Server-side access also expires after three days of inactivity and can end sooner on logout, password reset or another security action. Revocation ends access even if another browser still holds an old cookie. In local development the equivalent cookie is named hedvi_session."
+      ]
+    },
+    {
+      "heading": "Temporary onboarding-key storage",
+      "paragraphs": [
+        "After you complete account verification, the application may keep your newly generated test API key in sessionStorage under hedvi:onboarding-key:<project-id>, so the same browser tab can show it while you save it. The key is removed when you dismiss the display or clear that site storage. It normally ends with the tab session, although browser session restoration may preserve it. Treat a test key as a credential even though it cannot send live email."
+      ]
+    },
+    {
+      "heading": "Email verification and recovery links",
+      "paragraphs": [
+        "A verification or recovery token is carried in the fragment of the email link, not in a cookie or localStorage. The page removes that fragment from the current browser history entry and holds the token temporarily in memory. Submitting the form sends it to Hedvi for single use. It expires after 30 minutes. Closing or refreshing the page may require reopening the email link."
+      ]
+    },
+    {
+      "heading": "Ordinary page loading and external services",
+      "paragraphs": [
+        "The browser may cache ordinary page assets under standard HTTP rules. Hedvi does not install advertising cookies, cross-site analytics trackers or non-essential localStorage tracking on its application. Cloudflare is used for DNS only and does not inject proxy challenge or analytics cookies into this deployment.",
+        "When you choose a paid purchase or billing action, you may leave Hedvi for Stripe-hosted pages. Stripe applies its own cookie/privacy notices and controls there. Links to other external services likewise take you to their own sites; their storage is not covered by a promise that Hedvi uses only essential first-party storage."
+      ]
+    },
+    {
+      "heading": "Your choices",
+      "paragraphs": [
+        "You can clear cookies and site storage in your browser or block them. Blocking the sign-in cookie prevents authenticated features; clearing onboarding storage removes the displayed copy of a test key. It does not revoke the key on the server, so revoke it in the dashboard if needed.",
+        "The current Hedvi first-party storage supports features you explicitly request, rather than optional tracking. If we introduce non-essential storage that requires consent, we will seek it before activating that storage and provide a way to change the choice. Acceptance of the service terms or privacy notice is not consent to future advertising trackers."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "Hedvi Privacy Notice",
+      "url": "/legal/privacy"
+    },
+    {
+      "title": "Stripe Cookies Policy",
+      "url": "https://stripe.com/legal/cookies-policy"
+    },
+    {
+      "title": "Swedish Post and Telecom Authority: cookies",
+      "url": "https://pts.se/internet-och-telefoni/kakor-cookies"
+    }
+  ]
+}

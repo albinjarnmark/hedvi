@@ -1,0 +1,124 @@
+{
+  "version": "1.0",
+  "publishedAt": "28 November 2026",
+  "id": "subprocessors",
+  "title": "Service providers and subprocessors",
+  "introduction": "This list identifies providers used by the hosted Hedvi service operated by StackX AB. It distinguishes customer-message subprocessors from providers used for our own account, DNS, support and billing activities. Provider service terms can assign different roles for their own administration, security and legal duties.",
+  "sections": [
+    {
+      "heading": "Customer-message processing: Amazon Web Services",
+      "paragraphs": [
+        "Amazon Web Services (AWS, including the AWS contracting party and relevant affiliates under its agreement) provides SES email transmission and feedback, encrypted object storage, encryption-key services, queues and operational monitoring. Data can include message content, attachments, addresses, delivery information and technical diagnostics. The configured Hedvi data-plane region is Stockholm, Sweden (eu-north-1). AWS acts as processor or subprocessor for this customer data under its DPA; provider administration, support and onward email delivery are not promised to remain in that region."
+      ],
+      "links": [
+        {
+          "title": "AWS Data Processing Addendum",
+          "url": "https://d1.awsstatic.com/legal/aws-gdpr/AWS_GDPR_DPA.pdf"
+        }
+      ]
+    },
+    {
+      "heading": "Customer-message processing: Railway",
+      "paragraphs": [
+        "Railway Corporation provides application hosting, PostgreSQL, Valkey, deployment infrastructure and database backups. It processes account data, customer-message data and metadata, secrets protected by application encryption, security information and operational logs as needed for hosting. Hedvi application and database resources are configured in Amsterdam, Netherlands. Railway may use affiliates and onward providers and process account or usage information under its own policies. The deployment region is not a statement that every support, control-plane or provider operation stays in the EU."
+      ],
+      "links": [
+        {
+          "title": "Railway Data Processing Addendum",
+          "url": "https://railway.com/legal/dpa"
+        },
+        {
+          "title": "Railway subprocessor information",
+          "url": "https://trust.railway.com/item/subprocessors"
+        }
+      ]
+    },
+    {
+      "heading": "DNS: Cloudflare",
+      "paragraphs": [
+        "Cloudflare supplies authoritative DNS for Hedvi domains. Its role in this deployment is DNS only: Hedvi application HTTP traffic and email payloads are not routed through Cloudflare proxy, CDN, Workers or email-routing services. DNS records, domain-administration information and DNS query metadata may be processed through its global infrastructure. Public DNS records are intended to be public. Cloudflare is a provider for this limited infrastructure/account activity, not a storage provider for customer message bodies in this configuration."
+      ],
+      "links": [
+        {
+          "title": "Cloudflare Customer Data Processing Addendum",
+          "url": "https://www.cloudflare.com/cloudflare-customer-dpa/"
+        }
+      ]
+    },
+    {
+      "heading": "Support correspondence: Google Workspace",
+      "paragraphs": [
+        "Google Workspace provides StackX support email. It processes sender/contact details, correspondence, attachments and diagnostic information submitted to support. Do not email passwords, secret API keys or customer message bodies in an initial support request. We seek a suitable channel and minimise content when an investigation needs it. Google processes Workspace customer data under its Cloud Data Processing Addendum; processing can occur where Google or its subprocessors operate, subject to the applicable commitments. We make no EU-only claim for support mail."
+      ],
+      "links": [
+        {
+          "title": "Google Workspace Cloud Data Processing Addendum",
+          "url": "https://workspace.google.com/terms/dpa_terms.html"
+        }
+      ]
+    },
+    {
+      "heading": "Billing and payments: Stripe",
+      "paragraphs": [
+        "Stripe provides hosted Checkout, billing administration, payment processing and fraud controls. Data includes business and billing contacts, address, tax identifiers, purchase/payment references and status; payment details are entered on Stripe-hosted pages. Stripe is not a subprocessor for Hedvi customer email bodies. It can act as processor for some payment services and as an independent controller for activities such as fraud prevention and legal obligations, as described in its DPA and privacy notice. Its relevant contracting entities and affiliates may process data internationally."
+      ],
+      "links": [
+        {
+          "title": "Stripe Data Processing Agreement",
+          "url": "https://stripe.com/legal/dpa"
+        },
+        {
+          "title": "Stripe Privacy Policy",
+          "url": "https://stripe.com/privacy"
+        }
+      ]
+    },
+    {
+      "heading": "Recipient systems and customer-selected destinations",
+      "paragraphs": [
+        "Recipient email providers and customer-configured webhook operators receive data because the customer instructs delivery to those destinations. Their locations and processing are not controlled by a Hedvi EU hosting-region setting. They are not added to this list as providers selected by StackX merely because a customer addresses a message or webhook to them."
+      ]
+    },
+    {
+      "heading": "Transfers, onward providers and changes",
+      "paragraphs": [
+        "For transfers within our responsibility, the applicable provider agreements and data-protection terms must provide the required transfer mechanism and safeguards. A public policy or certification alone does not establish that every processing operation stays in a particular country. We can provide further information about the arrangements applicable to the service on request.",
+        "The linked provider documents describe their own processing and onward providers; they do not replace StackX obligations under the Hedvi DPA. Planned material additions or replacements of subprocessors handling customer personal data follow the DPA notice and objection process, normally with at least 30 days notice. Send questions or substantiated objections to hej@stackx.se with your organisation details."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "AWS Data Processing Addendum",
+      "url": "https://d1.awsstatic.com/legal/aws-gdpr/AWS_GDPR_DPA.pdf"
+    },
+    {
+      "title": "Railway Data Processing Addendum",
+      "url": "https://railway.com/legal/dpa"
+    },
+    {
+      "title": "Railway subprocessor information",
+      "url": "https://trust.railway.com/item/subprocessors"
+    },
+    {
+      "title": "Cloudflare Customer Data Processing Addendum",
+      "url": "https://www.cloudflare.com/cloudflare-customer-dpa/"
+    },
+    {
+      "title": "Google Workspace Cloud Data Processing Addendum",
+      "url": "https://workspace.google.com/terms/dpa_terms.html"
+    },
+    {
+      "title": "Stripe Data Processing Agreement",
+      "url": "https://stripe.com/legal/dpa"
+    },
+    {
+      "title": "Stripe Privacy Policy",
+      "url": "https://stripe.com/privacy"
+    },
+    {
+      "title": "Hedvi Data Processing Agreement",
+      "url": "/legal/dpa"
+    }
+  ]
+}

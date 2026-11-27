@@ -1,0 +1,6154 @@
+{
+  "scope": "Source dependencies installed on macOS arm64; not a distributed binary or container SBOM. Platform-optional dependencies and bundled notices require a target-build inventory before binary distribution.",
+  "components": [
+    {
+      "ecosystem": "go",
+      "name": "github.com/alecthomas/kingpin/v2",
+      "versions": [
+        "v2.4.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/alecthomas/kingpin/v2@v2.4.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/alecthomas/units",
+      "versions": [
+        "v0.0.0-20240927000941-0f3dac36c52b"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/alecthomas/units@v0.0.0-20240927000941-0f3dac36c52b",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2",
+      "versions": [
+        "v1.48.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2@v1.48.0",
+      "license_files": [
+        {
+          "name": "NOTICE.txt",
+          "file": "third_party/licenses/a6e830174d62dafad3a718384772ea1f4c0e27989f050932dc442a5e3ddad080.txt"
+        },
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream",
+      "versions": [
+        "v1.7.27"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream@v1.7.27",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/config",
+      "versions": [
+        "v1.33.21"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/config@v1.33.21",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/credentials",
+      "versions": [
+        "v1.21.3"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/credentials@v1.21.3",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/feature/ec2/imds",
+      "versions": [
+        "v1.20.9"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/feature/ec2/imds@v1.20.9",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/internal/configsources",
+      "versions": [
+        "v1.5.12"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/configsources@v1.5.12",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/internal/endpoints/v2",
+      "versions": [
+        "v2.8.12"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/endpoints/v2@v2.8.12",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/internal/v4a",
+      "versions": [
+        "v1.5.12"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/internal/v4a@v1.5.12",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding",
+      "versions": [
+        "v1.13.25"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding@v1.13.25",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/service/internal/checksum",
+      "versions": [
+        "v1.11.13"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/checksum@v1.11.13",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/service/internal/presigned-url",
+      "versions": [
+        "v1.14.12"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/presigned-url@v1.14.12",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/service/internal/s3shared",
+      "versions": [
+        "v1.20.12"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/internal/s3shared@v1.20.12",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/service/s3",
+      "versions": [
+        "v1.116.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/s3@v1.116.0",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/service/sesv2",
+      "versions": [
+        "v1.80.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/sesv2@v1.80.0",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/service/signin",
+      "versions": [
+        "v1.14.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/signin@v1.14.0",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/service/sns",
+      "versions": [
+        "v1.48.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/sns@v1.48.0",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/service/sqs",
+      "versions": [
+        "v1.53.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/sqs@v1.53.0",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/service/sso",
+      "versions": [
+        "v1.39.5"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/sso@v1.39.5",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/service/ssooidc",
+      "versions": [
+        "v1.44.5"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/ssooidc@v1.44.5",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/aws-sdk-go-v2/service/sts",
+      "versions": [
+        "v1.53.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/sts@v1.53.0",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/aws/smithy-go",
+      "versions": [
+        "v1.28.9"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/aws/smithy-go@v1.28.9",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b.txt"
+        },
+        {
+          "name": "NOTICE",
+          "file": "third_party/licenses/d4290ed64c2edd0fce1d84e3f9dfb2881240fe534def76b8cd29ed6af683e287.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/beorn7/perks",
+      "versions": [
+        "v1.0.1"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/beorn7/perks@v1.0.1",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/0db7c9ebb3717e526f34f87dd1ee8bc77d36846e29cb0cec9246f7138fbe962b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/cespare/xxhash/v2",
+      "versions": [
+        "v2.3.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/cespare/xxhash/v2@v2.3.0",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/f566a9f97bacdaf00d9f21dd991e81dc11201c4e016c86b470799429a1c9a79c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/davecgh/go-spew",
+      "versions": [
+        "v1.1.1"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/davecgh/go-spew@v1.1.1",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/golang-jwt/jwt/v5",
+      "versions": [
+        "v5.3.1"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/golang-jwt/jwt/v5@v5.3.1",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/golang/protobuf",
+      "versions": [
+        "v1.5.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/golang/protobuf@v1.5.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/google/go-cmp",
+      "versions": [
+        "v0.7.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/google/go-cmp@v0.7.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/google/uuid",
+      "versions": [
+        "v1.6.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/google/uuid@v1.6.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/0a8d61ed3cbfd5312326e8126c31ce9c627a283adc99131b56896d29ada04b2d.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/jackc/pgpassfile",
+      "versions": [
+        "v1.0.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/jackc/pgpassfile@v1.0.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/adb1663fda031df8f4344aa68f299fd87d80353e31339406742ded21dae65702.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/jackc/pgservicefile",
+      "versions": [
+        "v0.0.0-20240606120523-5a60cdf6a761"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/jackc/pgservicefile@v0.0.0-20240606120523-5a60cdf6a761",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/fc505773403fe869ed64cc2235cdd13988a427bb7e3a7e7004a3f4b27420f8fc.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/jackc/pgx/v5",
+      "versions": [
+        "v5.13.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/jackc/pgx/v5@v5.13.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/467f95e074fe23079a5623ed652619682692041b8551da27e3c2ddb9659a1507.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/jackc/puddle/v2",
+      "versions": [
+        "v2.2.3"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/jackc/puddle/v2@v2.2.3",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2d50e98a4900b4d6457a38d39c1432fdc156fc2f7b365f2e33ec9344acbb0057.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/jpillora/backoff",
+      "versions": [
+        "v1.0.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/jpillora/backoff@v1.0.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/json-iterator/go",
+      "versions": [
+        "v1.1.12"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/json-iterator/go@v1.1.12",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/julienschmidt/httprouter",
+      "versions": [
+        "v1.3.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/julienschmidt/httprouter@v1.3.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/klauspost/compress",
+      "versions": [
+        "v1.20.1"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/klauspost/compress@v1.20.1",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/kr/pretty",
+      "versions": [
+        "v0.3.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/kr/pretty@v0.3.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/kylelemons/godebug",
+      "versions": [
+        "v1.1.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/kylelemons/godebug@v1.1.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/modern-go/concurrent",
+      "versions": [
+        "v0.0.0-20180306012644-bacd9c7ef1dd"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/modern-go/concurrent@v0.0.0-20180306012644-bacd9c7ef1dd",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/modern-go/reflect2",
+      "versions": [
+        "v1.0.2"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/modern-go/reflect2@v1.0.2",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/munnerz/goautoneg",
+      "versions": [
+        "v0.0.0-20191010083416-a7dc8b61c822"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/munnerz/goautoneg@v0.0.0-20191010083416-a7dc8b61c822",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/aa1376b9bc5dea6f30cdefde40c176a254f247d2814d0a9929395138631b2ae0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/mwitkow/go-conntrack",
+      "versions": [
+        "v0.0.0-20190716064945-2f068394615f"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/mwitkow/go-conntrack@v0.0.0-20190716064945-2f068394615f",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/onsi/gomega",
+      "versions": [
+        "v1.44.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/onsi/gomega@v1.44.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/pmezard/go-difflib",
+      "versions": [
+        "v1.0.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/pmezard/go-difflib@v1.0.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/prometheus/client_golang",
+      "versions": [
+        "v1.25.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/prometheus/client_golang@v1.25.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        },
+        {
+          "name": "NOTICE",
+          "file": "third_party/licenses/8548bfb2bc1913396df38c548a6ec60b8dbcac3b0800485a40569c8bdd184471.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/prometheus/client_model",
+      "versions": [
+        "v0.6.3"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/prometheus/client_model@v0.6.3",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        },
+        {
+          "name": "NOTICE",
+          "file": "third_party/licenses/6c79faa15168885fb88a316ae0df18f486deafddefdc16826cdc56dfbd421e24.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/prometheus/common",
+      "versions": [
+        "v0.72.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/prometheus/common@v0.72.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        },
+        {
+          "name": "NOTICE",
+          "file": "third_party/licenses/600244c8052c8c1d307043fafacbc83b429c171dd8e08f5a537c0a54014585ee.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/prometheus/procfs",
+      "versions": [
+        "v0.22.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/prometheus/procfs@v0.22.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        },
+        {
+          "name": "NOTICE",
+          "file": "third_party/licenses/497fcdb9fae55924c12f55f05cbe83a096662e5c591d79b74e4a8f23bab5ffee.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/shopspring/decimal",
+      "versions": [
+        "v1.5.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/shopspring/decimal@v1.5.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b92ba0f6ee02f2309628bfdadb123668a17c016e475ba477b857d33470d9d625.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/stretchr/objx",
+      "versions": [
+        "v0.1.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/stretchr/objx@v0.1.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/stretchr/testify",
+      "versions": [
+        "v1.12.1"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/stretchr/testify@v1.12.1",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/stripe/stripe-go/v87",
+      "versions": [
+        "v87.2.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/stripe/stripe-go/v87@v87.2.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/09db8d93f1ec60eb9f2be32ce2e10e440b35e209ea9fa505e84e788af938670a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/valkey-io/valkey-go",
+      "versions": [
+        "v1.0.80"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/valkey-io/valkey-go@v1.0.80",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/283ea6cc2997a1a70da0049e09adf9317bb60ca1b51279b65196b83a69e1996b.txt"
+        },
+        {
+          "name": "NOTICE",
+          "file": "third_party/licenses/41824cdce292fe84e7130615e322aae144fdb9e1d147c00ce901b92694fae02c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "github.com/xhit/go-str2duration/v2",
+      "versions": [
+        "v2.1.0"
+      ],
+      "upstream": "https://pkg.go.dev/github.com/xhit/go-str2duration/v2@v2.1.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "go.uber.org/goleak",
+      "versions": [
+        "v1.3.0"
+      ],
+      "upstream": "https://pkg.go.dev/go.uber.org/goleak@v1.3.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "go.yaml.in/yaml/v2",
+      "versions": [
+        "v2.4.4"
+      ],
+      "upstream": "https://pkg.go.dev/go.yaml.in/yaml/v2@v2.4.4",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "go.yaml.in/yaml/v3",
+      "versions": [
+        "v3.0.6"
+      ],
+      "upstream": "https://pkg.go.dev/go.yaml.in/yaml/v3@v3.0.6",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "golang.org/x/crypto",
+      "versions": [
+        "v0.59.0"
+      ],
+      "upstream": "https://pkg.go.dev/golang.org/x/crypto@v0.59.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "golang.org/x/mod",
+      "versions": [
+        "v0.42.0"
+      ],
+      "upstream": "https://pkg.go.dev/golang.org/x/mod@v0.42.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "golang.org/x/net",
+      "versions": [
+        "v0.63.0"
+      ],
+      "upstream": "https://pkg.go.dev/golang.org/x/net@v0.63.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "golang.org/x/oauth2",
+      "versions": [
+        "v0.37.0"
+      ],
+      "upstream": "https://pkg.go.dev/golang.org/x/oauth2@v0.37.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "golang.org/x/sync",
+      "versions": [
+        "v0.25.0"
+      ],
+      "upstream": "https://pkg.go.dev/golang.org/x/sync@v0.25.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "golang.org/x/sys",
+      "versions": [
+        "v0.50.0"
+      ],
+      "upstream": "https://pkg.go.dev/golang.org/x/sys@v0.50.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "golang.org/x/term",
+      "versions": [
+        "v0.48.0"
+      ],
+      "upstream": "https://pkg.go.dev/golang.org/x/term@v0.48.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "golang.org/x/text",
+      "versions": [
+        "v0.44.0"
+      ],
+      "upstream": "https://pkg.go.dev/golang.org/x/text@v0.44.0",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "golang.org/x/tools",
+      "versions": [
+        "v0.52.0"
+      ],
+      "upstream": "https://pkg.go.dev/golang.org/x/tools@v0.52.0",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "google.golang.org/protobuf",
+      "versions": [
+        "v1.36.12"
+      ],
+      "upstream": "https://pkg.go.dev/google.golang.org/protobuf@v1.36.12",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/4835612df0098ca95f8e7d9e3bffcb02358d435dbb38057c844c99d7f725eb20.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "go",
+      "name": "gopkg.in/check.v1",
+      "versions": [
+        "v1.0.0-20201130134442-10cb98267c6c"
+      ],
+      "upstream": "https://pkg.go.dev/gopkg.in/check.v1@v1.0.0-20201130134442-10cb98267c6c",
+      "license_files": []
+    },
+    {
+      "ecosystem": "go",
+      "name": "gopkg.in/yaml.v3",
+      "versions": [
+        "v3.0.1"
+      ],
+      "upstream": "https://pkg.go.dev/gopkg.in/yaml.v3@v3.0.1",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/code-frame",
+      "versions": [
+        "7.29.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://babel.dev/docs/en/next/babel-code-frame",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/compat-data",
+      "versions": [
+        "7.29.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/babel/babel#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/core",
+      "versions": [
+        "7.29.13"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://babel.dev/docs/en/next/babel-core",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/generator",
+      "versions": [
+        "7.29.15"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://babel.dev/docs/en/next/babel-generator",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/helper-compilation-targets",
+      "versions": [
+        "7.29.13"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/babel/babel#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/helper-globals",
+      "versions": [
+        "7.29.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/babel/babel#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/helper-module-imports",
+      "versions": [
+        "7.29.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://babel.dev/docs/en/next/babel-helper-module-imports",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/helper-module-transforms",
+      "versions": [
+        "7.29.14"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://babel.dev/docs/en/next/babel-helper-module-transforms",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/helper-string-parser",
+      "versions": [
+        "7.29.15"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://babel.dev/docs/en/next/babel-helper-string-parser",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/helper-validator-identifier",
+      "versions": [
+        "7.29.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/babel/babel#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/helper-validator-option",
+      "versions": [
+        "7.29.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/babel/babel#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/helpers",
+      "versions": [
+        "7.29.15"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://babel.dev/docs/en/next/babel-helpers",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/4be9d87b56a306293223b490c0d0b245e9e94f39884147bf051a6c7b825aeb30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/parser",
+      "versions": [
+        "7.29.15"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://babel.dev/docs/en/next/babel-parser",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2e97627cb278aa7556fb9e8817368302301a595b6c7582512b8d74c57b773652.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/template",
+      "versions": [
+        "7.29.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://babel.dev/docs/en/next/babel-template",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/traverse",
+      "versions": [
+        "7.29.15"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://babel.dev/docs/en/next/babel-traverse",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@babel/types",
+      "versions": [
+        "7.29.15"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://babel.dev/docs/en/next/babel-types",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@cacheable/memory",
+      "versions": [
+        "2.2.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jaredwray/cacheable#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/465e8da349d50d8512e4a0e9b26d2bee50392c394f17edaa3be6e0df7c2b27ad.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@cacheable/utils",
+      "versions": [
+        "2.5.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jaredwray/cacheable#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/465e8da349d50d8512e4a0e9b26d2bee50392c394f17edaa3be6e0df7c2b27ad.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@eslint-community/eslint-utils",
+      "versions": [
+        "4.9.1",
+        "4.10.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/eslint-community/eslint-utils#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/fcf6eabf68ca96988a6b506b4fdc6cc32535d80eb2e11c79724af5ac6f50262b.txt"
+        },
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/fcf6eabf68ca96988a6b506b4fdc6cc32535d80eb2e11c79724af5ac6f50262b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@eslint-community/regexpp",
+      "versions": [
+        "4.12.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/eslint-community/regexpp#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/fcf6eabf68ca96988a6b506b4fdc6cc32535d80eb2e11c79724af5ac6f50262b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@eslint/config-array",
+      "versions": [
+        "0.23.6"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/eslint/rewrite/tree/main/packages/config-array#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@eslint/config-helpers",
+      "versions": [
+        "0.7.0"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/eslint/rewrite/tree/main/packages/config-helpers#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@eslint/core",
+      "versions": [
+        "1.2.1"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/eslint/rewrite/tree/main/packages/core#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@eslint/object-schema",
+      "versions": [
+        "3.0.5"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/eslint/rewrite/tree/main/packages/object-schema#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@eslint/plugin-kit",
+      "versions": [
+        "0.7.3"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/eslint/rewrite/tree/main/packages/plugin-kit#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@humanfs/core",
+      "versions": [
+        "0.19.2"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/humanwhocodes/humanfs#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@humanfs/node",
+      "versions": [
+        "0.16.8"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/humanwhocodes/humanfs#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@humanfs/types",
+      "versions": [
+        "0.15.0"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/humanwhocodes/humanfs#readme",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@humanwhocodes/module-importer",
+      "versions": [
+        "1.0.1"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/humanwhocodes/module-importer#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@humanwhocodes/retry",
+      "versions": [
+        "0.4.3"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/humanwhocodes/retry#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@img/colour",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/lovell/colour#readme",
+      "license_files": [
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/e2eaa4603c14cb26f301e88648c12a853fa3f0f5da6d4b0972958c666e7f2ab8.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@img/sharp-darwin-arm64",
+      "versions": [
+        "0.35.5"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://sharp.pixelplumbing.com",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/73ba74dfaa520b49a401b5d21459a8523a146f3b7518a833eea5efa85130bf68.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@img/sharp-libvips-darwin-arm64",
+      "versions": [
+        "1.3.4"
+      ],
+      "declared_license": "LGPL-3.0-or-later",
+      "upstream": "https://sharp.pixelplumbing.com",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@isaacs/nonrecursive-glob-match",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "BlueOak-1.0.0",
+      "upstream": "",
+      "license_files": [
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/8a1af140fdfbf5afd3df27f7e662f989c5b963a300020dfafce42033cae9e004.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@jridgewell/gen-mapping",
+      "versions": [
+        "0.3.13"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jridgewell/sourcemaps/tree/main/packages/gen-mapping",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/769d154fbde32a915af110b1123650bc79f4cbe675acc66e005265bf069c6c6c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@jridgewell/remapping",
+      "versions": [
+        "2.3.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jridgewell/sourcemaps/tree/main/packages/remapping",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/769d154fbde32a915af110b1123650bc79f4cbe675acc66e005265bf069c6c6c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@jridgewell/resolve-uri",
+      "versions": [
+        "3.1.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jridgewell/resolve-uri#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b8778b155bfde5a28b023a558753c0fa058a52bb9de35c343c250be1bbcdedab.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@jridgewell/sourcemap-codec",
+      "versions": [
+        "1.6.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jridgewell/sourcemaps/tree/main/packages/sourcemap-codec",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/769d154fbde32a915af110b1123650bc79f4cbe675acc66e005265bf069c6c6c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@jridgewell/trace-mapping",
+      "versions": [
+        "0.3.31"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jridgewell/sourcemaps/tree/main/packages/trace-mapping",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/769d154fbde32a915af110b1123650bc79f4cbe675acc66e005265bf069c6c6c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@keyv/bigmap",
+      "versions": [
+        "1.3.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jaredwray/keyv",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/f18cad8d98d4454ad42c33f1950d642cd3b939f2ccd3c36710fa8f50842cacc0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@keyv/serialize",
+      "versions": [
+        "1.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jaredwray/keyv",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/1f7dca26d2d328c3dbb9b6fe3b15ec3cda08ffe2288e47b73d617454b256f959.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@next/env",
+      "versions": [
+        "16.4.6"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/vercel/next.js#readme",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@next/eslint-plugin-next",
+      "versions": [
+        "16.4.6"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/vercel/next.js#readme",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@next/swc-darwin-arm64",
+      "versions": [
+        "16.4.6"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/vercel/next.js#readme",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@nodelib/fs.scandir",
+      "versions": [
+        "2.1.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/nodelib/nodelib/tree/master#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/9363d160bf41d46d83901a5d24fc3fe2094c2afc17b4a2378914b273977ee2de.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@nodelib/fs.stat",
+      "versions": [
+        "2.0.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/nodelib/nodelib/tree/master#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/9363d160bf41d46d83901a5d24fc3fe2094c2afc17b4a2378914b273977ee2de.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@nodelib/fs.walk",
+      "versions": [
+        "1.2.8"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/nodelib/nodelib/tree/master#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/9363d160bf41d46d83901a5d24fc3fe2094c2afc17b4a2378914b273977ee2de.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@nolyfill/is-core-module",
+      "versions": [
+        "1.0.39"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/SukkaW/nolyfill#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/eb2e51006ede7c76cfd37a6703c12a7d89899b74b4964aadcec716389af46e81.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@oxc-project/types",
+      "versions": [
+        "0.160.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://oxc.rs",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/95ced5ecf1133fbf41d409b5555c86c344f83f3b019926057ddbc07cfdcc27b3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/binding-darwin-arm64",
+      "versions": [
+        "1.3.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://rolldown.rs/",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rolldown/pluginutils",
+      "versions": [
+        "1.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/rolldown/plugins/tree/main/packages/pluginutils#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/e1919b3b98b8bf6c1b99fcc60a0ed46027c97ac947432e1278446c9606f50161.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@rtsao/scc",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/rtsao/scc#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/bfdefb3f2e265c9380c8b0e99ac6675b903e7e36f39b238be56283c00c1453fa.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@stablelib/base64",
+      "versions": [
+        "1.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/StableLib/stablelib/tree/master/packages/base64",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/1605b77bebe018db1fc27bd22fbcdeed1335c617937a124299a8b042b42b0fb6.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@swc/helpers",
+      "versions": [
+        "0.5.23"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://swc.rs",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d96eba1f1881334d50ffc144276dfa98e147a415e7c591ecdfcb81680361dc91.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/chai",
+      "versions": [
+        "5.2.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/chai",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/deep-eql",
+      "versions": [
+        "4.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/deep-eql",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/esrecurse",
+      "versions": [
+        "4.3.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/esrecurse",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/estree",
+      "versions": [
+        "1.0.11"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/estree",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/json-schema",
+      "versions": [
+        "7.0.15"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/json-schema",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/json5",
+      "versions": [
+        "0.0.29"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/DefinitelyTyped/DefinitelyTyped#readme",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/node",
+      "versions": [
+        "24.19.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/react",
+      "versions": [
+        "19.3.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@types/react-dom",
+      "versions": [
+        "19.3.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/react-dom",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript-eslint/eslint-plugin",
+      "versions": [
+        "8.74.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://typescript-eslint.io/packages/eslint-plugin",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2eb5c7a0bba9deb77a98c81bf6b9d3fb1c67118eebf968b6b1a787b3f8928ee0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript-eslint/parser",
+      "versions": [
+        "8.74.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://typescript-eslint.io/packages/parser",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2eb5c7a0bba9deb77a98c81bf6b9d3fb1c67118eebf968b6b1a787b3f8928ee0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript-eslint/project-service",
+      "versions": [
+        "8.74.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://typescript-eslint.io",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/053a75a14b7508a897466b65e12797201a06b0e9b5066d1223da72cac99601b5.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript-eslint/scope-manager",
+      "versions": [
+        "8.74.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://typescript-eslint.io/packages/scope-manager",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2eb5c7a0bba9deb77a98c81bf6b9d3fb1c67118eebf968b6b1a787b3f8928ee0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript-eslint/tsconfig-utils",
+      "versions": [
+        "8.74.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://typescript-eslint.io",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/053a75a14b7508a897466b65e12797201a06b0e9b5066d1223da72cac99601b5.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript-eslint/type-utils",
+      "versions": [
+        "8.74.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://typescript-eslint.io",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/f3c51ace7f159b21566d72535e84ff354505ae7ffdca835dac81fcdafbf9e879.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript-eslint/types",
+      "versions": [
+        "8.74.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://typescript-eslint.io",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2eb5c7a0bba9deb77a98c81bf6b9d3fb1c67118eebf968b6b1a787b3f8928ee0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript-eslint/typescript-estree",
+      "versions": [
+        "8.74.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://typescript-eslint.io/packages/typescript-estree",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2eb5c7a0bba9deb77a98c81bf6b9d3fb1c67118eebf968b6b1a787b3f8928ee0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript-eslint/utils",
+      "versions": [
+        "8.74.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://typescript-eslint.io/packages/utils",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2eb5c7a0bba9deb77a98c81bf6b9d3fb1c67118eebf968b6b1a787b3f8928ee0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@typescript-eslint/visitor-keys",
+      "versions": [
+        "8.74.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://typescript-eslint.io",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2eb5c7a0bba9deb77a98c81bf6b9d3fb1c67118eebf968b6b1a787b3f8928ee0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@unrs/resolver-binding-darwin-arm64",
+      "versions": [
+        "1.13.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/unrs/unrs-resolver",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@vitest/mocker",
+      "versions": [
+        "5.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/vitest-dev/vitest/tree/main/packages/mocker",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/04575fc5bfae19a9b63100f8691f901a2e15a399011ac02db435a9ef27295551.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "@vitest/spy",
+      "versions": [
+        "5.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://vitest.dev/api/mock",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/04575fc5bfae19a9b63100f8691f901a2e15a399011ac02db435a9ef27295551.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "acorn",
+      "versions": [
+        "8.19.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/acornjs/acorn",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/76a876cf886ff9be2a8b5e2e86514fed06223c8c9f0c1e9ee9606e93841e00b7.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "acorn-jsx",
+      "versions": [
+        "5.3.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/acornjs/acorn-jsx",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/cfa72b62b9ae173078823a3796b25c027a9071046a263beddf966df67018ce06.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "ajv",
+      "versions": [
+        "6.15.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ajv-validator/ajv",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/e85e131fa4ed25538ff1f4962ced1fb6f68b079bd9164a790597a0f30b8fd030.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "aria-query",
+      "versions": [
+        "5.3.2"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/A11yance/aria-query#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c8df456c7ccba74b959087dff494d4ac2a12dfb0400c08b46b2494a08a000567.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "array-buffer-byte-length",
+      "versions": [
+        "1.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/array-buffer-byte-length#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/499507afc8a14166950bd5e445a8206d0b38fab61ea54e436b8bf2fa073cd59a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "array-includes",
+      "versions": [
+        "3.2.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/array-includes#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/00d402c2bbe7c67369bd01ce2c16b8ed46ccc949a1ee2d6bb8f9606afa8c7434.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "array.prototype.findlast",
+      "versions": [
+        "1.2.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/Array.prototype.findLast#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d6151cc698dc6a772e5b448069270a095488f3962aef0b11e78974e1e1587082.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "array.prototype.findlastindex",
+      "versions": [
+        "1.2.6"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/Array.prototype.findLastIndex#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d6151cc698dc6a772e5b448069270a095488f3962aef0b11e78974e1e1587082.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "array.prototype.flat",
+      "versions": [
+        "1.3.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/Array.prototype.flat#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/567b1f5e84afcfc97685f3c7fce4c7502e1ac7a91e79cf10980ecd6a9ad38583.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "array.prototype.flatmap",
+      "versions": [
+        "1.3.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/Array.prototype.flatMap#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/567b1f5e84afcfc97685f3c7fce4c7502e1ac7a91e79cf10980ecd6a9ad38583.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "array.prototype.tosorted",
+      "versions": [
+        "1.1.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/Array.prototype.toSorted#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d6151cc698dc6a772e5b448069270a095488f3962aef0b11e78974e1e1587082.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "arraybuffer.prototype.slice",
+      "versions": [
+        "1.0.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/ArrayBuffer.prototype.slice#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/a6c1514885935d6b699b7e6c1ab22e9312189a75a4e937d83f20749a67d0dbe7.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "assertion-error",
+      "versions": [
+        "2.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/chaijs/assertion-error#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2130216d5ab4c02134f8247f32999feda0abe1eaf028218baeac445c19ce4cea.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "ast-types-flow",
+      "versions": [
+        "0.0.8"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/kyldvs/ast-types-flow#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/02293bba2170b45a1d8b49b52b695f7bd6f9005ed93f8f047dcededacaf2f9f4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "async-function",
+      "versions": [
+        "1.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/async-function#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/eab1e270ad6ecc6fdd64f9c149e019633fb6e59b2445002cb33d14f93092c42f.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "available-typed-arrays",
+      "versions": [
+        "1.0.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/available-typed-arrays#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/6d0917530cf3b3dca12c1ab7798e4d38ad0a6798ecc1bd27849a3048ba91d265.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "axe-core",
+      "versions": [
+        "4.14.1"
+      ],
+      "declared_license": "MPL-2.0",
+      "upstream": "https://www.deque.com/axe/",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/af175b9d96ee93c21a036152e1b905b0b95304d4ae8c2c921c7609100ba8df7e.txt"
+        },
+        {
+          "name": "LICENSE-3RD-PARTY.txt",
+          "file": "third_party/licenses/4f8563870d0fca38bbc3e00b6f670cb7fa9f380ba9f26a7f7d1184a6b18b1653.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "axobject-query",
+      "versions": [
+        "4.1.0"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/A11yance/axobject-query#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c8df456c7ccba74b959087dff494d4ac2a12dfb0400c08b46b2494a08a000567.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "balanced-match",
+      "versions": [
+        "1.0.2",
+        "4.0.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/juliangruber/balanced-match#readme",
+      "license_files": [
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/a1bd5deadb6a06dd74efa852c1b8b23f63b67f2214fbe9c8bd591da51da69268.txt"
+        },
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/d408f38ffa3355c5faec517153295338892eb0f1ea43f57874bb23c6075979b5.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "baseline-browser-mapping",
+      "versions": [
+        "2.11.40"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/web-platform-dx/baseline-browser-mapping#readme",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "brace-expansion",
+      "versions": [
+        "1.1.22",
+        "5.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/juliangruber/brace-expansion#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/68f12f6e2c33688699249c01d8f9623c534da20aa71989c57b061b7bc1676d14.txt"
+        },
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/9c63a23124d68cd30cd316a94a1a0bca34f032786df6df69fc4b5f136bac8d2e.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "braces",
+      "versions": [
+        "3.0.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/micromatch/braces",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/35bdd8a44339719441900fb50fbefc5e2dca1ca662cbaed7a687de842c8b70f2.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "browserslist",
+      "versions": [
+        "4.29.6"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/browserslist/browserslist#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/21c2679a63d7699c0e644409e2f17d0adbc7a965003feb06b3ff4b833d21f722.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "cacheable",
+      "versions": [
+        "2.5.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jaredwray/cacheable#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/465e8da349d50d8512e4a0e9b26d2bee50392c394f17edaa3be6e0df7c2b27ad.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "call-bind",
+      "versions": [
+        "1.0.9"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/call-bind#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/39c5ec504cf6bd5cd782a7c695828e09189df79f5d94840e4f08feb97b9fd416.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "call-bind-apply-helpers",
+      "versions": [
+        "1.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/call-bind-apply-helpers#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "call-bound",
+      "versions": [
+        "1.0.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/call-bound#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "caniuse-lite",
+      "versions": [
+        "1.0.30001828"
+      ],
+      "declared_license": "CC-BY-4.0",
+      "upstream": "https://github.com/browserslist/caniuse-lite#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/fd3a263fe19ed8faa9068b43abaebafc02c77897b0c6fc09abc04bb592e5f16e.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "chai",
+      "versions": [
+        "6.3.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "http://chaijs.com",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b181da80336ff9dd1043fc8be1a764d7382363433319aa872e4d2cb5ce2a3066.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "client-only",
+      "versions": [
+        "0.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://reactjs.org/",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "concat-map",
+      "versions": [
+        "0.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/substack/node-concat-map#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "convert-source-map",
+      "versions": [
+        "2.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/thlorenz/convert-source-map",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/1fa6ee8bb95a81ae3d73a5bd074a3ac380ffec13697051063ca1a601921b91db.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "cross-spawn",
+      "versions": [
+        "7.0.6"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/moxystudio/node-cross-spawn",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/aaa78451b6fecd1b9c4594c796c133c0e90cad100372ff8bc6de615e9ef9adf1.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "csstype",
+      "versions": [
+        "3.2.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/frenic/csstype#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/11d55bd4541c75ee7879547ac49089c489163dae49551389713c3d026cab383e.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "damerau-levenshtein",
+      "versions": [
+        "1.0.8"
+      ],
+      "declared_license": "BSD-2-Clause",
+      "upstream": "https://github.com/tad-lispy/node-damerau-levenshtein#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/8bcfa73a7b42b5c786a8a05291f9a5573a8d5f2446a956203c2e4c0e755d73b7.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "data-view-buffer",
+      "versions": [
+        "1.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/data-view-buffer#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b41d08bc3624d8c436fc80237d73ebb361985a67f4504bbcd703e5ca2b27254c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "data-view-byte-length",
+      "versions": [
+        "1.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/data-view-byte-length#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "data-view-byte-offset",
+      "versions": [
+        "1.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/data-view-byte-offset#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "debug",
+      "versions": [
+        "3.2.7",
+        "4.4.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/debug-js/debug#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/98c970de440dcfc77471610aec2377c9d9b0db2b3be6d1add524a586e1d7f422.txt"
+        },
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/3a61c6c96caf5c1d9b623fb9b04c822b783dfcb78aa7e49c76a3f643e6ed7f95.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "deep-is",
+      "versions": [
+        "0.1.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/thlorenz/deep-is#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/f2042f3634c4136d06b5139c9c6aefb81a3a462b514548bc1845953233dfba98.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "define-data-property",
+      "versions": [
+        "1.1.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/define-data-property#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b41d08bc3624d8c436fc80237d73ebb361985a67f4504bbcd703e5ca2b27254c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "define-properties",
+      "versions": [
+        "1.2.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/define-properties#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/00d402c2bbe7c67369bd01ce2c16b8ed46ccc949a1ee2d6bb8f9606afa8c7434.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "detect-libc",
+      "versions": [
+        "2.1.2"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/lovell/detect-libc#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "doctrine",
+      "versions": [
+        "2.1.0"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/eslint/doctrine",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5c272e206669b79ee20fa89fa8fa888d5b56186f16c55a5614753ad3412e2ae9.txt"
+        },
+        {
+          "name": "LICENSE.closure-compiler",
+          "file": "third_party/licenses/cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30.txt"
+        },
+        {
+          "name": "LICENSE.esprima",
+          "file": "third_party/licenses/0e74697a68cebdcd61502c30fe80ab7f9e341d995dcd452023654d57133534b1.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "dunder-proto",
+      "versions": [
+        "1.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/dunder-proto#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2b770a704c15de238c3f622b01b0044ddd60b49ee30608ea6991ebf19db7a7a1.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "electron-to-chromium",
+      "versions": [
+        "1.5.495"
+      ],
+      "declared_license": "ISC",
+      "upstream": "https://github.com/Kilian/electron-to-chromium#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/25ba5c59dad3e0dd8f9540beaa0f0a86a10e3aec35af5fdc8e88c5f6a5c0d8c6.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "emoji-regex",
+      "versions": [
+        "9.2.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://mths.be/emoji-regex",
+      "license_files": [
+        {
+          "name": "LICENSE-MIT.txt",
+          "file": "third_party/licenses/483acb265f182907d1caf6cff9c16c96f31325ed23792832cc5d8b12d5f88c8a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "entities",
+      "versions": [
+        "6.0.1"
+      ],
+      "declared_license": "BSD-2-Clause",
+      "upstream": "https://github.com/fb55/entities#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/cb992345949ccd6e8394b2cd6c465f7b897c864f845937dbf64e8997f389e164.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "es-abstract",
+      "versions": [
+        "1.24.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/es-abstract#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/210549bd75abec340599f291e5ecd95b9acd0d8a713543838ab42f6f462b16bc.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "es-abstract-get",
+      "versions": [
+        "1.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/es-abstract-get#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5b06b483b5c8874fd4e977fedb335067a9e8f722fd45c46ed42797af9d37fbf3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "es-define-property",
+      "versions": [
+        "1.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/es-define-property#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "es-errors",
+      "versions": [
+        "1.3.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/es-errors#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "es-iterator-helpers",
+      "versions": [
+        "1.4.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/iterator-helpers#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/1a3aeb1f1398bd697d57c3c585faadf59d825aca6e3162cd7eeb72ff76eb2466.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "es-module-lexer",
+      "versions": [
+        "2.3.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/guybedford/es-module-lexer#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/8a4b6c44eebfb026d23719a348145a661a555568dbfdc11618ff2d0dd9306b00.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "es-object-atoms",
+      "versions": [
+        "1.1.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/es-object-atoms#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "es-set-tostringtag",
+      "versions": [
+        "2.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/es-set-tostringtag#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/1a3aeb1f1398bd697d57c3c585faadf59d825aca6e3162cd7eeb72ff76eb2466.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "es-shim-unscopables",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/es-shim-unscopables#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d90bf0a089da4cf43d644ed240a0b3825dcdb705e64e38371d56995a4cc9e4c5.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "es-to-primitive",
+      "versions": [
+        "1.3.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/es-to-primitive#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "escalade",
+      "versions": [
+        "3.2.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/lukeed/escalade#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/9a9edad7baae52622bddf3c15b2ef8a33d2c89f2d25408ad13e8a7481c6b0c97.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "escape-string-regexp",
+      "versions": [
+        "4.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sindresorhus/escape-string-regexp#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "eslint",
+      "versions": [
+        "10.14.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://eslint.org",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/3b6be04f862a077a4b97929dbf247299360824d9365f8603c263769303ace18c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "eslint-config-next",
+      "versions": [
+        "16.4.6"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://nextjs.org/docs/app/api-reference/config/eslint",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "eslint-import-resolver-node",
+      "versions": [
+        "0.3.10"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/import-js/eslint-plugin-import",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/7829efc4266fad5f57f7fc489429a3b35d0c62183c0bd617ef6591f64c980c92.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "eslint-import-resolver-typescript",
+      "versions": [
+        "3.10.1"
+      ],
+      "declared_license": "ISC",
+      "upstream": "https://github.com/import-js/eslint-import-resolver-typescript#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/cb38960320e8cc7c23e613bacbd5d84c9af46e6366e59f925071bf3787d5bc3d.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "eslint-module-utils",
+      "versions": [
+        "2.14.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/import-js/eslint-plugin-import#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/7829efc4266fad5f57f7fc489429a3b35d0c62183c0bd617ef6591f64c980c92.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "eslint-plugin-import",
+      "versions": [
+        "2.32.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/import-js/eslint-plugin-import",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/7829efc4266fad5f57f7fc489429a3b35d0c62183c0bd617ef6591f64c980c92.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "eslint-plugin-jsx-a11y",
+      "versions": [
+        "6.10.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jsx-eslint/eslint-plugin-jsx-a11y#readme",
+      "license_files": [
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/82b19019e25e266a310ef46800b3af726136a3cee79af8812dc83ca0b045afae.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "eslint-plugin-react",
+      "versions": [
+        "7.37.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jsx-eslint/eslint-plugin-react",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d500a9547fec26f52544f5f2fe52dec4b0c9bdf78177c79f202c98bd13d7c37c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "eslint-plugin-react-hooks",
+      "versions": [
+        "7.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://react.dev/",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "eslint-scope",
+      "versions": [
+        "9.1.2"
+      ],
+      "declared_license": "BSD-2-Clause",
+      "upstream": "https://github.com/eslint/js/blob/main/packages/eslint-scope/README.md",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d3a724e2ed749f172ff70b62a1d0631b7d4b0ea273782365a3464d4e2d6b6dbd.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "eslint-visitor-keys",
+      "versions": [
+        "3.4.3",
+        "5.0.1"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/eslint/js/blob/main/packages/eslint-visitor-keys/README.md",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d8bf34ff6d190640a01e7704ad78253fc181bc128949d71273fbbaa12f33c0b4.txt"
+        },
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d8bf34ff6d190640a01e7704ad78253fc181bc128949d71273fbbaa12f33c0b4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "espree",
+      "versions": [
+        "11.2.0"
+      ],
+      "declared_license": "BSD-2-Clause",
+      "upstream": "https://github.com/eslint/js/blob/main/packages/espree/README.md",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/26c95937762a3dc17a3934a0a2773c70259ba4bf28dab713c225e4af8eb9d349.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "esquery",
+      "versions": [
+        "1.7.0"
+      ],
+      "declared_license": "BSD-3-Clause",
+      "upstream": "https://github.com/estools/esquery/",
+      "license_files": [
+        {
+          "name": "license.txt",
+          "file": "third_party/licenses/ac68116ae73740de4190892f334992e449a124600924ec761e64319d3aac9e6e.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "esrecurse",
+      "versions": [
+        "4.3.0"
+      ],
+      "declared_license": "BSD-2-Clause",
+      "upstream": "https://github.com/estools/esrecurse",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "estraverse",
+      "versions": [
+        "5.3.0"
+      ],
+      "declared_license": "BSD-2-Clause",
+      "upstream": "https://github.com/estools/estraverse",
+      "license_files": [
+        {
+          "name": "LICENSE.BSD",
+          "file": "third_party/licenses/0e74697a68cebdcd61502c30fe80ab7f9e341d995dcd452023654d57133534b1.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "estree-walker",
+      "versions": [
+        "3.0.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/Rich-Harris/estree-walker#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/8a6dcbabe7179f9c8489c08a7d874d0f1e093ae7449e03756ccf87cb9d0e296e.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "esutils",
+      "versions": [
+        "2.0.3"
+      ],
+      "declared_license": "BSD-2-Clause",
+      "upstream": "https://github.com/estools/esutils",
+      "license_files": [
+        {
+          "name": "LICENSE.BSD",
+          "file": "third_party/licenses/0e74697a68cebdcd61502c30fe80ab7f9e341d995dcd452023654d57133534b1.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "expect-type",
+      "versions": [
+        "1.4.0"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://github.com/mmkal/expect-type#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/7c6cc83c84eaa249a85bf12fe3eedd831bb50c696e8890b5248223ae68c7b408.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fast-deep-equal",
+      "versions": [
+        "3.1.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/epoberezkin/fast-deep-equal#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/7bf9b2de73a6b356761c948d0e9eeb4be6c1270bd04c79cd489c1e400ffdfc1a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fast-glob",
+      "versions": [
+        "3.3.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/mrmlnc/fast-glob#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/9363d160bf41d46d83901a5d24fc3fe2094c2afc17b4a2378914b273977ee2de.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fast-json-stable-stringify",
+      "versions": [
+        "2.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/epoberezkin/fast-json-stable-stringify",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/a833d366242c298cf1b10263516572fb8dcbe68eb5072cdcac2b4546e2b4eb36.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fast-levenshtein",
+      "versions": [
+        "2.0.6"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/hiddentao/fast-levenshtein#readme",
+      "license_files": [
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/942a98cb8846a6354266193f173c1354615827fbb7d67f68399599dff12c4d6a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fast-sha256",
+      "versions": [
+        "1.3.0"
+      ],
+      "declared_license": "Unlicense",
+      "upstream": "https://github.com/dchest/fast-sha256-js#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/88d9b4eb60579c191ec391ca04c16130572d7eedc4a86daa58bf28c6e14c9bcd.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fastq",
+      "versions": [
+        "1.20.3"
+      ],
+      "declared_license": "ISC",
+      "upstream": "https://github.com/mcollina/fastq#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c3367f6d01a79d368fc4fbb41b3615fcd92f243d6597ab96742f6f976f9325af.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fdir",
+      "versions": [
+        "6.5.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/thecodrr/fdir#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/9a39f2aadab11a3697edd668ff2d8ad885b649737b7ab4d3bf12b34e5ada0c86.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "file-entry-cache",
+      "versions": [
+        "11.1.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jaredwray/cacheable#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/465e8da349d50d8512e4a0e9b26d2bee50392c394f17edaa3be6e0df7c2b27ad.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fill-range",
+      "versions": [
+        "7.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jonschlinkert/fill-range",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/35bdd8a44339719441900fb50fbefc5e2dca1ca662cbaed7a687de842c8b70f2.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "find-up",
+      "versions": [
+        "5.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sindresorhus/find-up#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "flat-cache",
+      "versions": [
+        "6.1.23"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jaredwray/cacheable#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/465e8da349d50d8512e4a0e9b26d2bee50392c394f17edaa3be6e0df7c2b27ad.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "flatted",
+      "versions": [
+        "3.4.4"
+      ],
+      "declared_license": "ISC",
+      "upstream": "https://github.com/WebReflection/flatted#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/148718606d34f467fd08a2176bb4c1ab275f999576f779368503d8d3e3642861.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "for-each",
+      "versions": [
+        "0.3.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/Raynos/for-each",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d07913d776eef217a95d7ee3ee83577fc3c365b9c870f5a3411f785b81090614.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "fsevents",
+      "versions": [
+        "2.3.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/fsevents/fsevents",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2a8a5d6197bb97a018b8a190dd3ed853d750ca87c8e80c17aad41d6c6ff448e1.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "function-bind",
+      "versions": [
+        "1.1.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/Raynos/function-bind",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/773e131a7684726005a7e4688a80b4620033bc08499bc1404dd1a1eb3bca725e.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "function.prototype.name",
+      "versions": [
+        "1.2.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/Function.prototype.name#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/acfaf437865d82f0fa9b9cdcae8b550bed8d011adaa5b42d973191caf99f62a8.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "functions-have-names",
+      "versions": [
+        "1.2.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/functions-have-names#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/cfc3f455254c0af0655cc3ff46a41ed644b67599f6043346169d285bf2b3cf3b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "generator-function",
+      "versions": [
+        "2.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/TimothyGu/generator-function#readme",
+      "license_files": [
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/1ac0263302bfb8eedc54a10a44175b0df51419306d5bc1539bfd7a7da121bd08.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "gensync",
+      "versions": [
+        "1.0.0-beta.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/loganfsmyth/gensync",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/e3a956681ee067f971ac413994171b3d90ca801ec6324e76c9c55366cfe31cb0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "get-intrinsic",
+      "versions": [
+        "1.3.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/get-intrinsic#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/39c5ec504cf6bd5cd782a7c695828e09189df79f5d94840e4f08feb97b9fd416.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "get-proto",
+      "versions": [
+        "1.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/get-proto#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/be46ce1e3b0479af9ce82d22b465a6d7d2ff084fca0aaf3d54172da2b5eb5781.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "get-symbol-description",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/get-symbol-description#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/e2560e002e13281578c75c850061d9255c33d16d732939e8c2db64c2506642fa.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "get-tsconfig",
+      "versions": [
+        "4.14.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/privatenumber/get-tsconfig#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/10c904a49af44409b073532e45a53fd4df19bdf26eaf9afc7917258c2b354382.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "glob-parent",
+      "versions": [
+        "5.1.2",
+        "6.0.2"
+      ],
+      "declared_license": "ISC",
+      "upstream": "https://github.com/gulpjs/glob-parent#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2c46f1325bd3822a33c1e2c1e49c18d13127ac00f9c8b3b79196c7a126f73cd9.txt"
+        },
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/fc68eb8f1c8e1d6b8be50f3c177927e24791cae7dc251e6253a012f37926a30c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "globals",
+      "versions": [
+        "16.4.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sindresorhus/globals#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "globalthis",
+      "versions": [
+        "1.0.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/System.global#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/acfaf437865d82f0fa9b9cdcae8b550bed8d011adaa5b42d973191caf99f62a8.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "gopd",
+      "versions": [
+        "1.2.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/gopd#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d90bf0a089da4cf43d644ed240a0b3825dcdb705e64e38371d56995a4cc9e4c5.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "has-bigints",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/has-bigints#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/cfc3f455254c0af0655cc3ff46a41ed644b67599f6043346169d285bf2b3cf3b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "has-property-descriptors",
+      "versions": [
+        "1.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/has-property-descriptors#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/0f0ca96f50793990031ebc488a38f7292ff70bce8ab6a8e5eeda674abc32ccdf.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "has-proto",
+      "versions": [
+        "1.2.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/has-proto#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/0f0ca96f50793990031ebc488a38f7292ff70bce8ab6a8e5eeda674abc32ccdf.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "has-symbols",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/has-symbols#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/206c1adcf206dc0031b11232f5b054ec5f1662407ab1ca415247921cab2068ab.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "has-tostringtag",
+      "versions": [
+        "1.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/has-tostringtag#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/e2560e002e13281578c75c850061d9255c33d16d732939e8c2db64c2506642fa.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "hashery",
+      "versions": [
+        "1.5.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jaredwray/hashery#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2eef776efe4bae7fcd2d8162ecadf2b0873aae20afac343a936ddb0de3d79253.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "hasown",
+      "versions": [
+        "2.0.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/hasOwn#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/bf9b0d665be2a689851eea667ca9f42066ea1d903b38349c51e6a44b2577680a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "hermes-estree",
+      "versions": [
+        "0.25.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/facebook/hermes#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "hermes-parser",
+      "versions": [
+        "0.25.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/facebook/hermes#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "hookified",
+      "versions": [
+        "1.15.1",
+        "2.2.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jaredwray/hookified#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/3902e57e73412bd91ba81a47fa2cef45e1729c152c835114c1692cc5e685ddbe.txt"
+        },
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/3902e57e73412bd91ba81a47fa2cef45e1729c152c835114c1692cc5e685ddbe.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "ignore",
+      "versions": [
+        "5.3.2",
+        "7.0.17"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/kaelzhang/node-ignore#readme",
+      "license_files": [
+        {
+          "name": "LICENSE-MIT",
+          "file": "third_party/licenses/9c94db23dc4b1e9aaee5d195668b916afc71efed54af226b66cf0ccc4389c1c0.txt"
+        },
+        {
+          "name": "LICENSE-MIT",
+          "file": "third_party/licenses/9c94db23dc4b1e9aaee5d195668b916afc71efed54af226b66cf0ccc4389c1c0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "imurmurhash",
+      "versions": [
+        "0.1.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jensyt/imurmurhash-js",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "internal-slot",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/internal-slot#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/cfc3f455254c0af0655cc3ff46a41ed644b67599f6043346169d285bf2b3cf3b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-array-buffer",
+      "versions": [
+        "3.0.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-array-buffer#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b505862c2bf0b38f98a4629efe0d17fb87690cbd35a9f3ae95d2fd769d7cea23.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-async-function",
+      "versions": [
+        "2.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-async-function#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/36571397680e083211d7968a24f46e31cb75df18d4c03fe48896ee1367119fe8.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-bigint",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-bigint#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/971e376febf7afbcceab6857e243f2ccb3ea88f520b68c324af15a28171f5de3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-boolean-object",
+      "versions": [
+        "1.2.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-boolean-object#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-bun-module",
+      "versions": [
+        "2.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/SunsetTechuila/is-bun-module",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/6b18b7c59aac92fa46d552edd12a7e30502aef0d906a0bce37b5087b35b7ce51.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-callable",
+      "versions": [
+        "1.2.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-callable#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-core-module",
+      "versions": [
+        "2.18.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-core-module",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5c496ce5ae47eb8e5ddcaa5e29c27c446a3855b19e3a66991b52f361bed22b28.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-data-view",
+      "versions": [
+        "1.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-data-view#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/166ffde0aa2773f509ba6edb3d0716602e076eb1cb1b21ae50b8262641af13b3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-date-object",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-date-object#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-document.all",
+      "versions": [
+        "1.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-document.all#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/492328129d2df31681bd85ebc673ebadb6017bcbc7a494e2eaf475eefc0e6d24.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-extglob",
+      "versions": [
+        "2.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jonschlinkert/is-extglob",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/73b5283588baa142c5baaef5f56d3e8fdea7a30b214e8c5737e87640f882453a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-finalizationregistry",
+      "versions": [
+        "1.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-finalizationregistry#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/6d0917530cf3b3dca12c1ab7798e4d38ad0a6798ecc1bd27849a3048ba91d265.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-generator-function",
+      "versions": [
+        "1.1.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-generator-function#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/dc0fe5a22d9336f345ee984f9bf56f11f22877a3aa5fd16a1db9a8ca0e23a5d1.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-glob",
+      "versions": [
+        "4.0.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/micromatch/is-glob",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/4cd903859549d4b20b571041f96dfae1136ed079c476126268f9d7cc1b611150.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-map",
+      "versions": [
+        "2.0.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-map#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5a26e47b9d7020848f061bcad66f8e73cab95f529dab5c02588b21e57c4f876c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-negative-zero",
+      "versions": [
+        "2.0.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-negative-zero",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/dc0fe5a22d9336f345ee984f9bf56f11f22877a3aa5fd16a1db9a8ca0e23a5d1.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-number",
+      "versions": [
+        "7.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jonschlinkert/is-number",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/35bdd8a44339719441900fb50fbefc5e2dca1ca662cbaed7a687de842c8b70f2.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-number-object",
+      "versions": [
+        "1.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-number-object#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-regex",
+      "versions": [
+        "1.2.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-regex",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/dc0fe5a22d9336f345ee984f9bf56f11f22877a3aa5fd16a1db9a8ca0e23a5d1.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-set",
+      "versions": [
+        "2.0.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-set#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5a26e47b9d7020848f061bcad66f8e73cab95f529dab5c02588b21e57c4f876c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-shared-array-buffer",
+      "versions": [
+        "1.0.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-shared-array-buffer#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/e2560e002e13281578c75c850061d9255c33d16d732939e8c2db64c2506642fa.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-string",
+      "versions": [
+        "1.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-string#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-symbol",
+      "versions": [
+        "1.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-symbol#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-typed-array",
+      "versions": [
+        "1.1.15"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-typed-array#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-weakmap",
+      "versions": [
+        "2.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-weakmap#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5a26e47b9d7020848f061bcad66f8e73cab95f529dab5c02588b21e57c4f876c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-weakref",
+      "versions": [
+        "1.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-weakref#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/6d0917530cf3b3dca12c1ab7798e4d38ad0a6798ecc1bd27849a3048ba91d265.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "is-weakset",
+      "versions": [
+        "2.0.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/is-weakset#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5a26e47b9d7020848f061bcad66f8e73cab95f529dab5c02588b21e57c4f876c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "isarray",
+      "versions": [
+        "2.0.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/juliangruber/isarray",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/68f12f6e2c33688699249c01d8f9623c534da20aa71989c57b061b7bc1676d14.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "isexe",
+      "versions": [
+        "2.0.0"
+      ],
+      "declared_license": "ISC",
+      "upstream": "https://github.com/isaacs/isexe#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "iterator.prototype",
+      "versions": [
+        "1.1.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/Iterator.prototype#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d90bf0a089da4cf43d644ed240a0b3825dcdb705e64e38371d56995a4cc9e4c5.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "js-tokens",
+      "versions": [
+        "4.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/lydell/js-tokens#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2213d91c606205c71eb051a199478cdc2adde945893404d7f1421436dd6d5cc1.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "jsesc",
+      "versions": [
+        "3.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://mths.be/jsesc",
+      "license_files": [
+        {
+          "name": "LICENSE-MIT.txt",
+          "file": "third_party/licenses/483acb265f182907d1caf6cff9c16c96f31325ed23792832cc5d8b12d5f88c8a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "json-schema-traverse",
+      "versions": [
+        "0.4.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/epoberezkin/json-schema-traverse#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/7bf9b2de73a6b356761c948d0e9eeb4be6c1270bd04c79cd489c1e400ffdfc1a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "json-stable-stringify-without-jsonify",
+      "versions": [
+        "1.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/samn/json-stable-stringify",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "json5",
+      "versions": [
+        "1.0.2",
+        "2.2.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "http://json5.org/",
+      "license_files": [
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/53e59feb13058722d977c699eb0407c7bce2f93c949b681bbd2ff31698535927.txt"
+        },
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/53e59feb13058722d977c699eb0407c7bce2f93c949b681bbd2ff31698535927.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "jsx-ast-utils",
+      "versions": [
+        "3.3.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jsx-eslint/jsx-ast-utils#readme",
+      "license_files": [
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/82b19019e25e266a310ef46800b3af726136a3cee79af8812dc83ca0b045afae.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "keyv",
+      "versions": [
+        "5.6.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jaredwray/keyv",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/1f7dca26d2d328c3dbb9b6fe3b15ec3cda08ffe2288e47b73d617454b256f959.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "language-subtag-registry",
+      "versions": [
+        "0.3.23"
+      ],
+      "declared_license": "CC0-1.0",
+      "upstream": "https://github.com/mattcg/language-subtag-registry",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "language-tags",
+      "versions": [
+        "1.0.9"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/mattcg/language-tags",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "levn",
+      "versions": [
+        "0.4.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/gkz/levn",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b9eb082c39fe245e38793699074c394c43a722c51fce031c3c165cb92a31035c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss",
+      "versions": [
+        "1.33.0"
+      ],
+      "declared_license": "MPL-2.0",
+      "upstream": "https://github.com/parcel-bundler/lightningcss#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5eba353fe5076ac3432177f8ab1cf75e3afcd0584251e37c3bfead5f447d040e.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lightningcss-darwin-arm64",
+      "versions": [
+        "1.33.0"
+      ],
+      "declared_license": "MPL-2.0",
+      "upstream": "https://github.com/parcel-bundler/lightningcss#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5eba353fe5076ac3432177f8ab1cf75e3afcd0584251e37c3bfead5f447d040e.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "locate-path",
+      "versions": [
+        "6.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sindresorhus/locate-path#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "loose-envify",
+      "versions": [
+        "1.4.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/zertosh/loose-envify",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/4eb7543b08d955a6d23fcc224601d43ff566e775be918805e26210d7f6eb4893.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "lru-cache",
+      "versions": [
+        "5.1.1"
+      ],
+      "declared_license": "ISC",
+      "upstream": "https://github.com/isaacs/node-lru-cache#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "magic-string",
+      "versions": [
+        "1.4.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/Rich-Harris/magic-string#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/1cbe51b907662f6cb1492b16c359384a595180bf0e4d101603ed525e75c4e484.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "math-intrinsics",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/math-intrinsics#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2b770a704c15de238c3f622b01b0044ddd60b49ee30608ea6991ebf19db7a7a1.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "merge2",
+      "versions": [
+        "1.4.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/teambition/merge2",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b2590e53ea6e050512c3993bfc746c394bbba9242fd6909245201bdc1dc6862a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "micromatch",
+      "versions": [
+        "4.0.8"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/micromatch/micromatch",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/35bdd8a44339719441900fb50fbefc5e2dca1ca662cbaed7a687de842c8b70f2.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "minimatch",
+      "versions": [
+        "11.0.1",
+        "11.0.9"
+      ],
+      "declared_license": "BlueOak-1.0.0",
+      "upstream": "https://github.com/isaacs/minimatch#readme",
+      "license_files": [
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/2c7c5d22ed5a8ee968c64757710979afcd77438c48b4a265b94e615babd8a901.txt"
+        },
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/2c7c5d22ed5a8ee968c64757710979afcd77438c48b4a265b94e615babd8a901.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "minimatch",
+      "versions": [
+        "3.1.5"
+      ],
+      "declared_license": "ISC",
+      "upstream": "https://github.com/isaacs/minimatch#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "minimist",
+      "versions": [
+        "1.2.8"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/minimistjs/minimist",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "ms",
+      "versions": [
+        "2.1.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/vercel/ms#readme",
+      "license_files": [
+        {
+          "name": "license.md",
+          "file": "third_party/licenses/1662fae9b5314d11cf51284e2dcd1f006a354f7343f08712a730fcff9a359801.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "nanoid",
+      "versions": [
+        "3.3.20"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ai/nanoid#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/da4db1480d9beea3483a2eda5c53b22238d0827d57da162b48f122e04d2d9987.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "napi-postinstall",
+      "versions": [
+        "0.3.8"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/un-ts/napi-postinstall#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/6b2ba6ac4aa455c1f4254e882e3ab425260726d60239d1f03ee9429935643aa9.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "natural-compare",
+      "versions": [
+        "1.4.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/litejs/natural-compare-lite#readme",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "next",
+      "versions": [
+        "16.4.6"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://nextjs.org",
+      "license_files": [
+        {
+          "name": "license.md",
+          "file": "third_party/licenses/ee765244e2d59f5234d474f62e0766fa0c8b99af967fdd4c0cb8dcb0c76ea224.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "node-exports-info",
+      "versions": [
+        "1.6.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/node-exports-info#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/0f0ca96f50793990031ebc488a38f7292ff70bce8ab6a8e5eeda674abc32ccdf.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "node-releases",
+      "versions": [
+        "2.0.66"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/chicoxyzzy/node-releases#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/3706296ed611888111ceccc1dff4712844dea4bde0b185c82d718c3b69895abe.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "object-assign",
+      "versions": [
+        "4.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sindresorhus/object-assign#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/6fb9754611c20f6649f68805e8c990e83261f29316e29de9e6cedae607b8634c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "object-inspect",
+      "versions": [
+        "1.14.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/object-inspect",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/bd40cc437e28a3ad7bef2ad34e6b72e757b182e67bda1acadbab4ef0476f8232.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "object-keys",
+      "versions": [
+        "1.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/object-keys#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5640e5cbe2e9f57f6ccfdd8dbfbeadb875495bdbcb69d2666ce3177ccd0942e4.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "object.assign",
+      "versions": [
+        "4.1.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/object.assign#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/a596744eec6b05682ed972bf93937668bbc8da2caed93fbf6510389de019b5c0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "object.entries",
+      "versions": [
+        "1.1.9"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/Object.entries#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "object.fromentries",
+      "versions": [
+        "2.0.8"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/Object.fromEntries#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/971e376febf7afbcceab6857e243f2ccb3ea88f520b68c324af15a28171f5de3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "object.groupby",
+      "versions": [
+        "1.0.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/Object.groupBy#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/a6c1514885935d6b699b7e6c1ab22e9312189a75a4e937d83f20749a67d0dbe7.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "object.values",
+      "versions": [
+        "1.2.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/Object.values#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "obug",
+      "versions": [
+        "3.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sxzz/obug#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/ee48679d379ca6b4493d5e231094d85f818dd9be40b1a4f234fb7ff657ee35d9.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "optionator",
+      "versions": [
+        "0.9.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/gkz/optionator",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b9eb082c39fe245e38793699074c394c43a722c51fce031c3c165cb92a31035c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "own-keys",
+      "versions": [
+        "1.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/own-keys#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "p-limit",
+      "versions": [
+        "3.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sindresorhus/p-limit#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "p-locate",
+      "versions": [
+        "5.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sindresorhus/p-locate#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "parse5",
+      "versions": [
+        "7.3.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://parse5.js.org",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/8c535800331e1e4439835555b3f9edc7fe9dee2fab0d8bbbd5a982e8b8343d4d.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "path-exists",
+      "versions": [
+        "4.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sindresorhus/path-exists#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "path-key",
+      "versions": [
+        "3.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sindresorhus/path-key#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "path-parse",
+      "versions": [
+        "1.0.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jbgutierrez/path-parse#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/3f4609137f65070541b9214300ea0d640af8192857de0eeb2b03403003d9228a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "picocolors",
+      "versions": [
+        "1.1.1"
+      ],
+      "declared_license": "ISC",
+      "upstream": "https://github.com/alexeyraspopov/picocolors#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/6582629e2979466878f6014313dcc2f3756c9616148682227ce3063dde310750.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "picomatch",
+      "versions": [
+        "2.3.2",
+        "4.0.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/micromatch/picomatch",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9.txt"
+        },
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d0cd141b0c322fded5dfad1d4645bb2fedfc05b7321fe1009469638190d59ef9.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "possible-typed-array-names",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/possible-typed-array-names#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "postal-mime",
+      "versions": [
+        "2.7.6"
+      ],
+      "declared_license": "MIT-0",
+      "upstream": "https://postal-mime.postalsys.com",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/831ad54932cb62a1fe0827ae7218a213875f1ddbd629c6432860928ba1c5234d.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "postcss",
+      "versions": [
+        "8.5.23",
+        "8.5.33"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://postcss.org/",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5be1f3465bba68a626777f984878814aaf35e7ef8e9fd314d469bcf887050fb8.txt"
+        },
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5be1f3465bba68a626777f984878814aaf35e7ef8e9fd314d469bcf887050fb8.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "prelude-ls",
+      "versions": [
+        "1.2.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "http://preludels.com",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b9eb082c39fe245e38793699074c394c43a722c51fce031c3c165cb92a31035c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "prop-types",
+      "versions": [
+        "15.8.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://facebook.github.io/react/",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/f657f99d3fb9647db92628e96007aabb46e5f04f33e49999075aab8e250ca7ce.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "punycode",
+      "versions": [
+        "2.3.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://mths.be/punycode",
+      "license_files": [
+        {
+          "name": "LICENSE-MIT.txt",
+          "file": "third_party/licenses/483acb265f182907d1caf6cff9c16c96f31325ed23792832cc5d8b12d5f88c8a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "qified",
+      "versions": [
+        "0.10.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jaredwray/qified#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/3902e57e73412bd91ba81a47fa2cef45e1729c152c835114c1692cc5e685ddbe.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "queue-microtask",
+      "versions": [
+        "1.2.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/feross/queue-microtask",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d4c2065e2b936e62a4eb400efb4576edec9ca1388a9f78aa288e147275e7bc8b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "react",
+      "versions": [
+        "19.3.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://react.dev/",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "react-dom",
+      "versions": [
+        "19.3.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://react.dev/",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "react-is",
+      "versions": [
+        "16.13.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://reactjs.org/",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "reflect.getprototypeof",
+      "versions": [
+        "1.0.10"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/Reflect.getPrototypeOf",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d6151cc698dc6a772e5b448069270a095488f3962aef0b11e78974e1e1587082.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "regexp.prototype.flags",
+      "versions": [
+        "1.5.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/RegExp.prototype.flags#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/9616325393b574ca774a0409b95b05cb0f640393513f72da00c5e3191de4a1ea.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "resend",
+      "versions": [
+        "6.39.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/resend/resend-node#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/299819a2f2d6ddefaf47dfd684242dd683f9d17c2d29edce08ba777b4c264a65.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "resolve",
+      "versions": [
+        "2.0.0-next.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/browserify/resolve#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/60acd7711e6c138e6041836e32d922705254cc1568a30fdf16aa8f59bb87aeaa.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "resolve-pkg-maps",
+      "versions": [
+        "1.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/privatenumber/resolve-pkg-maps#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/10c904a49af44409b073532e45a53fd4df19bdf26eaf9afc7917258c2b354382.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "reusify",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/mcollina/reusify#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/93a1506953b08ad4874e1cc0971a1d2ac387ca510da91e4d05e460a6c4966fa3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "rolldown",
+      "versions": [
+        "1.3.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://rolldown.rs/",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/23ecfff35a5a2e80d92142f75228912c3b1abc4b5a8337a821ff4397e2f9f734.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "run-parallel",
+      "versions": [
+        "1.2.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/feross/run-parallel",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d4c2065e2b936e62a4eb400efb4576edec9ca1388a9f78aa288e147275e7bc8b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "safe-array-concat",
+      "versions": [
+        "1.1.4"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/safe-array-concat#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b41d08bc3624d8c436fc80237d73ebb361985a67f4504bbcd703e5ca2b27254c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "safe-push-apply",
+      "versions": [
+        "1.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/safe-push-apply#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "safe-regex-test",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/safe-regex-test#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/d90bf0a089da4cf43d644ed240a0b3825dcdb705e64e38371d56995a4cc9e4c5.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "scheduler",
+      "versions": [
+        "0.28.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://react.dev/",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "semver",
+      "versions": [
+        "6.3.2",
+        "7.8.6"
+      ],
+      "declared_license": "ISC",
+      "upstream": "https://github.com/npm/node-semver#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b.txt"
+        },
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "set-function-length",
+      "versions": [
+        "1.2.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/set-function-length#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/bf9b0d665be2a689851eea667ca9f42066ea1d903b38349c51e6a44b2577680a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "set-function-name",
+      "versions": [
+        "2.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/set-function-name#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/bf9b0d665be2a689851eea667ca9f42066ea1d903b38349c51e6a44b2577680a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "set-proto",
+      "versions": [
+        "1.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/set-proto#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "sharp",
+      "versions": [
+        "0.35.5"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://sharp.pixelplumbing.com",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/73ba74dfaa520b49a401b5d21459a8523a146f3b7518a833eea5efa85130bf68.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "shebang-command",
+      "versions": [
+        "2.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/kevva/shebang-command#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/69dee148a2cc470554dfa7142e830662062394d0fe67cddd379aba90dc60d6b3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "shebang-regex",
+      "versions": [
+        "3.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sindresorhus/shebang-regex#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/48da2f39e100d4085767e94966b43f4fa95ff6a0698fba57ed460914e35f94a0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "side-channel",
+      "versions": [
+        "1.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/side-channel#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/cfc3f455254c0af0655cc3ff46a41ed644b67599f6043346169d285bf2b3cf3b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "side-channel-list",
+      "versions": [
+        "1.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/side-channel-list#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "side-channel-map",
+      "versions": [
+        "1.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/side-channel-map#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5e325595b4ea8cfec3802f545b1def5d7b73e4a5b8e9ba63e32a320f67732292.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "side-channel-weakmap",
+      "versions": [
+        "1.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/side-channel-weakmap#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/cfc3f455254c0af0655cc3ff46a41ed644b67599f6043346169d285bf2b3cf3b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "source-map-js",
+      "versions": [
+        "1.2.4"
+      ],
+      "declared_license": "BSD-3-Clause",
+      "upstream": "https://github.com/7rulnik/source-map-js",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/6cb0631f71c7749763fd3dd1d5bee52dd1070ec17f2edc1710079ad070bd2fbd.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "stable-hash",
+      "versions": [
+        "0.0.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/shuding/stable-hash#readme",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "standardwebhooks",
+      "versions": [
+        "1.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/standard-webhooks/standard-webhooks/tree/main/libraries/javascript",
+      "license_files": []
+    },
+    {
+      "ecosystem": "npm",
+      "name": "std-env",
+      "versions": [
+        "4.3.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/unjs/std-env#readme",
+      "license_files": [
+        {
+          "name": "LICENCE",
+          "file": "third_party/licenses/a6f36438e46fb911859f3b9c4cad045ba64e1af3d8f4512c60258fa2d7552d28.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "stop-iteration-iterator",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/stop-iteration-iterator#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b41d08bc3624d8c436fc80237d73ebb361985a67f4504bbcd703e5ca2b27254c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "string.prototype.includes",
+      "versions": [
+        "2.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://mths.be/includes",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/483acb265f182907d1caf6cff9c16c96f31325ed23792832cc5d8b12d5f88c8a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "string.prototype.matchall",
+      "versions": [
+        "4.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/String.prototype.matchAll#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "string.prototype.repeat",
+      "versions": [
+        "1.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://mths.be/repeat",
+      "license_files": [
+        {
+          "name": "LICENSE-MIT.txt",
+          "file": "third_party/licenses/483acb265f182907d1caf6cff9c16c96f31325ed23792832cc5d8b12d5f88c8a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "string.prototype.trim",
+      "versions": [
+        "1.2.11"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/String.prototype.trim#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c16d06f1808d8d8c6ec0f6b6fb7e951126c46730fbb67320863a81f8aa8ca033.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "string.prototype.trimend",
+      "versions": [
+        "1.0.10"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/String.prototype.trimEnd#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/a5e49293b629194f16e08c965807b34a4a8f45aa2735658a3b0e3c1478a34b30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "string.prototype.trimstart",
+      "versions": [
+        "1.0.8"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/es-shims/String.prototype.trimStart#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/a5e49293b629194f16e08c965807b34a4a8f45aa2735658a3b0e3c1478a34b30.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "strip-bom",
+      "versions": [
+        "3.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sindresorhus/strip-bom#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/6fb9754611c20f6649f68805e8c990e83261f29316e29de9e6cedae607b8634c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "styled-jsx",
+      "versions": [
+        "5.1.6"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/vercel/styled-jsx#readme",
+      "license_files": [
+        {
+          "name": "license.md",
+          "file": "third_party/licenses/24d4a4580df855c345705b3016404f0c9da7e7674dc3b21a3ce7d0e5d0c37e2d.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "supports-preserve-symlinks-flag",
+      "versions": [
+        "1.0.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/node-supports-preserve-symlinks-flag#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/0f0ca96f50793990031ebc488a38f7292ff70bce8ab6a8e5eeda674abc32ccdf.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "tinybench",
+      "versions": [
+        "6.2.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/tinylibs/tinybench#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/cebc084d54e6dd99e53292ddb4bc1cdb63d9bfcd9ce438fe3aa6eb106d79e2ea.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "tinyexec",
+      "versions": [
+        "1.4.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/tinylibs/tinyexec#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/f95f668fe64081ddb4153b322e34fdd719b991285ed08177d5ad7133b7988d92.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "tinyglobby",
+      "versions": [
+        "0.2.17"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://superchupu.dev/tinyglobby",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/22c68811e174cbbfb3813d4135918df4f540959c14d872e601d9abe83d3cde8f.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "to-regex-range",
+      "versions": [
+        "5.0.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/micromatch/to-regex-range",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/e7d1fee7347ffddccc5fd03327ffdb50f8c112be0d5016d62388a92c4ae6e7a9.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "ts-api-utils",
+      "versions": [
+        "2.5.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/JoshuaKGoldberg/ts-api-utils#readme",
+      "license_files": [
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/76c9d5f5ea942054715c026f33f8717c9e24603196a3737b8899afa216bcbdab.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "tsconfig-paths",
+      "versions": [
+        "3.15.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/dividab/tsconfig-paths#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/8850a2d4828514113042db6ec97237b7ca6cb1599734874e5817d521f8f84e1c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "tslib",
+      "versions": [
+        "2.9.1"
+      ],
+      "declared_license": "0BSD",
+      "upstream": "https://www.typescriptlang.org/",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/210b19e543130388c68654b7497e967119ce17145f66ab7d85688fbd70f08751.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "type-check",
+      "versions": [
+        "0.4.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/gkz/type-check",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b9eb082c39fe245e38793699074c394c43a722c51fce031c3c165cb92a31035c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "typed-array-buffer",
+      "versions": [
+        "1.0.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/typed-array-buffer#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/b41d08bc3624d8c436fc80237d73ebb361985a67f4504bbcd703e5ca2b27254c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "typed-array-byte-length",
+      "versions": [
+        "1.0.3"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/typed-array-byte-length#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/6d0917530cf3b3dca12c1ab7798e4d38ad0a6798ecc1bd27849a3048ba91d265.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "typed-array-byte-offset",
+      "versions": [
+        "1.0.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/typed-array-byte-offset#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/6d0917530cf3b3dca12c1ab7798e4d38ad0a6798ecc1bd27849a3048ba91d265.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "typed-array-length",
+      "versions": [
+        "1.0.8"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/typed-array-length#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/6d0917530cf3b3dca12c1ab7798e4d38ad0a6798ecc1bd27849a3048ba91d265.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "typescript",
+      "versions": [
+        "6.0.3"
+      ],
+      "declared_license": "Apache-2.0",
+      "upstream": "https://www.typescriptlang.org/",
+      "license_files": [
+        {
+          "name": "LICENSE.txt",
+          "file": "third_party/licenses/a7d00bfd54525bc694b6e32f64c7ebcf5e6b7ae3657be5cc12767bce74654a47.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "typescript-eslint",
+      "versions": [
+        "8.74.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://typescript-eslint.io/packages/typescript-eslint",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/2eb5c7a0bba9deb77a98c81bf6b9d3fb1c67118eebf968b6b1a787b3f8928ee0.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "unbox-primitive",
+      "versions": [
+        "1.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/ljharb/unbox-primitive#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/cfc3f455254c0af0655cc3ff46a41ed644b67599f6043346169d285bf2b3cf3b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "undici-types",
+      "versions": [
+        "7.24.6"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://undici.nodejs.org",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/a6db8096b2707bc0102d256917d4d33f298ba36d8c3f25de067a2b5bb379db27.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "unrs-resolver",
+      "versions": [
+        "1.13.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/unrs/unrs-resolver",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "update-browserslist-db",
+      "versions": [
+        "1.4.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/browserslist/update-db#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/9877e90da14aa8c931a1f9d07cc2a20ce119106e5dab1ebb41af865266d0cd2a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "uri-js",
+      "versions": [
+        "4.4.1"
+      ],
+      "declared_license": "BSD-2-Clause",
+      "upstream": "https://github.com/garycourt/uri-js",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/0af366eff4c01ec147c9c61ea9e8ffad64a4294754c9d79355f3fd1b97cb2fb9.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "vite",
+      "versions": [
+        "8.4.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://vite.dev",
+      "license_files": [
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/2766dec1874ab68acb200d6dd68c846482250d7fa245710eced29f6348c51d44.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "vitest",
+      "versions": [
+        "5.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://vitest.dev",
+      "license_files": [
+        {
+          "name": "LICENSE.md",
+          "file": "third_party/licenses/7f3ddf93a2280ef07bddd352939f5a09d345e1ffe619c518c010021344f22312.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "which",
+      "versions": [
+        "2.0.2"
+      ],
+      "declared_license": "ISC",
+      "upstream": "https://github.com/isaacs/node-which#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "which-boxed-primitive",
+      "versions": [
+        "1.1.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/which-boxed-primitive#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/cfc3f455254c0af0655cc3ff46a41ed644b67599f6043346169d285bf2b3cf3b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "which-builtin-type",
+      "versions": [
+        "1.2.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/which-builtin-type#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/bfc4406bbf7f0bc110196312ce26471bcc7c47666949ef6a42fa500cfcb4173a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "which-collection",
+      "versions": [
+        "1.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/which-collection#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/5a26e47b9d7020848f061bcad66f8e73cab95f529dab5c02588b21e57c4f876c.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "which-typed-array",
+      "versions": [
+        "1.1.24"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/inspect-js/which-typed-array#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "why-is-node-running",
+      "versions": [
+        "3.2.1"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/mafintosh/why-is-node-running",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/6a134e51aa31496c15a741592fc5d782b2dbf8d8b6b8524e15c8520ae0cd6374.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "word-wrap",
+      "versions": [
+        "1.2.5"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/jonschlinkert/word-wrap",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/73b5283588baa142c5baaef5f56d3e8fdea7a30b214e8c5737e87640f882453a.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "yallist",
+      "versions": [
+        "3.1.1"
+      ],
+      "declared_license": "ISC",
+      "upstream": "https://github.com/isaacs/yallist#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/4ec3d4c66cd87f5c8d8ad911b10f99bf27cb00cdfcff82621956e379186b016b.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "yocto-queue",
+      "versions": [
+        "0.1.0"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/sindresorhus/yocto-queue#readme",
+      "license_files": [
+        {
+          "name": "license",
+          "file": "third_party/licenses/5c932d88256b4ab958f64a856fa48e8bd1f55bc1d96b8149c65689e0c61789d3.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "zod",
+      "versions": [
+        "4.6.7"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://zod.dev",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/3f1189b28e3866e0d979968d466b78f813f76827cfdca1fbb124cc0a5c8841f8.txt"
+        }
+      ]
+    },
+    {
+      "ecosystem": "npm",
+      "name": "zod-validation-error",
+      "versions": [
+        "4.0.2"
+      ],
+      "declared_license": "MIT",
+      "upstream": "https://github.com/causaly/zod-validation-error#readme",
+      "license_files": [
+        {
+          "name": "LICENSE",
+          "file": "third_party/licenses/03cc9a630489a2544b799548a0e8b134f382fe09fa06dc22b339091b28b8f4a8.txt"
+        }
+      ]
+    }
+  ]
+}

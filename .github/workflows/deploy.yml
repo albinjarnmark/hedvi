@@ -1,0 +1,53 @@
+name: Build AWS images
+
+# Build-only workflow for the optional ECS installation. The selected GitHub
+# environment supplies AWS_DEPLOY_ROLE_ARN, AWS_ACCOUNT_ID and HEDVI_PUBLIC_API_URL.
+# Schema migration and service rollout are deliberately a separate maintenance
+# operation: docs/runbooks/deploy.md. This workflow never updates running services.
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: choice
+        options: [staging, production]
+        default: staging
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-images:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    environment: ${{ inputs.environment }}
+    env:
+      ENV_SHORT: ${{ inputs.environment == 'production' && 'prod' || 'staging' }}
+      PREFIX: hedvi-${{ inputs.environment }}
+      REGISTRY: ${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.eu-north-1.amazonaws.com
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: aws-actions/configure-aws-credentials@cabfdba3510de1431bac9dba27511d97497fc100 # v5
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: eu-north-1
+      - uses: aws-actions/amazon-ecr-login@7290e214a610b32bc0eef81748948b6d466a8783 # v2
+      - name: Build and push images
+        env:
+          APP_HOST: ${{ vars.HEDVI_APP_HOST }}
+          PUBLIC_API_URL: ${{ vars.HEDVI_PUBLIC_API_URL }}
+          SUPPORT_EMAIL: ${{ vars.HEDVI_SUPPORT_EMAIL }}
+          SOURCE_URL: ${{ format('{0}/{1}/tree/{2}', github.server_url, github.repository, github.sha) }}
+        run: |
+          docker build -t $REGISTRY/$PREFIX-api:$GITHUB_SHA apps/api
+          test -n "$PUBLIC_API_URL"
+          test -n "$SUPPORT_EMAIL"
+          docker build -f apps/web/Dockerfile --build-arg HEDVI_APP_HOST="$APP_HOST" --build-arg HEDVI_PUBLIC_API_URL="$PUBLIC_API_URL" --build-arg NEXT_PUBLIC_HEDVI_SOURCE_URL="$SOURCE_URL" --build-arg NEXT_PUBLIC_HEDVI_SUPPORT_EMAIL="$SUPPORT_EMAIL" -t $REGISTRY/$PREFIX-web:$GITHUB_SHA .
+          docker push $REGISTRY/$PREFIX-api:$GITHUB_SHA
+          docker push $REGISTRY/$PREFIX-web:$GITHUB_SHA
+      - name: Record image version
+        run: |
+          echo "Built API and web images tagged $GITHUB_SHA. No running service was updated." >> "$GITHUB_STEP_SUMMARY"
+          echo "Follow docs/runbooks/deploy.md to migrate and release this version." >> "$GITHUB_STEP_SUMMARY"

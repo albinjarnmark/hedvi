@@ -1,0 +1,89 @@
+{
+  "version": "1.1",
+  "publishedAt": "28 November 2026",
+  "id": "privacy",
+  "title": "Privacy Notice",
+  "introduction": "StackX AB, registration number 559598-7313, Tybblegatan 94 C, 702 19 Örebro, Sweden, is responsible for the account, business-contact, billing and security processing described here. Contact hej@stackx.se and use the subject Hedvi privacy. This notice does not ask you to consent to processing that has a different legal basis.",
+  "sections": [
+    {
+      "heading": "Our roles",
+      "paragraphs": [
+        "For account administration, billing, service security and our own support, StackX acts as controller. For customers' transactional messages and recipient records, StackX generally acts as processor on the customer's instructions under the DPA. Customers must provide their recipients with the appropriate information. If you received a message from a Hedvi customer, contact that sender first about its use of your data; we assist the customer where required."
+      ]
+    },
+    {
+      "heading": "Information we process",
+      "paragraphs": [
+        "Account information includes your name, work email, organisation, role, language, password hash, authentication factors, sessions and records of accepted agreements. Connection and security information includes IP address, browser information, request identifiers, timestamps, authentication events, resource use and relevant abuse evidence.",
+        "Billing information includes the organisation's identity, address, tax ID, billing contacts, selected product, currency, invoices, payment references and status. Stripe collects payment-card information in its hosted pages; Hedvi does not receive or store your complete card number or security code. Support information is what you send us plus the account and diagnostic information needed to investigate.",
+        "Customer message data includes sender and recipient addresses, subject, body, attachments, headers, delivery outcomes and webhook payloads. We do not use customer email content to train AI models, sell it to advertisers or use it for our own advertising profiles."
+      ]
+    },
+    {
+      "heading": "Purposes and legal bases",
+      "paragraphs": [
+        "We process information necessary to provide a service to an individual business customer on the basis of that contract. Where the customer is an organisation, administration of its representatives' access, support and service notices is based on our legitimate interest in operating that business relationship. Security, abuse prevention, reliability, dispute management and proportionate service improvement also rely on legitimate interests, balanced against affected people's rights.",
+        "Accounting, tax, lawful authority requests and legally required recordkeeping rely on legal obligations. Optional marketing would require a separate applicable basis and an easy opt-out; signing up does not automatically subscribe you to marketing. We do not rely on acceptance of this notice as blanket consent."
+      ]
+    },
+    {
+      "heading": "Who receives information",
+      "paragraphs": [
+        "Access is limited to authorised StackX personnel and service providers who need it for their work. AWS supplies the email, storage, key and queue services; Railway supplies application, database and cache hosting; Cloudflare supplies DNS; Google Workspace carries our support email; Stripe supplies billing and payment services. The provider list explains their roles and locations. Provider support, fraud prevention and statutory functions may involve their own controller processing.",
+        "A customer chooses the recipients and webhook destinations for its messages. Those recipients' mail providers and webhook operators receive the information necessary for the customer's instructions. We may disclose information when legally required, to protect legal rights, or in a business transfer subject to appropriate safeguards."
+      ]
+    },
+    {
+      "heading": "Locations and international transfers",
+      "paragraphs": [
+        "The hosted service's current primary application/database location is Amsterdam, Netherlands, and its AWS email/data-plane region is Stockholm, Sweden. This does not mean every provider operation, support access or onward delivery stays in the EU. Recipient mail systems and customer-selected webhooks may be anywhere.",
+        "For transfers we control outside the EEA, we use a valid applicable mechanism such as an adequacy decision or the European Commission's Standard Contractual Clauses, together with required assessments and safeguards. Ask us for information about the safeguards applicable to your data. Do not infer that a provider's general certification covers every service or transfer."
+      ]
+    },
+    {
+      "heading": "Retention",
+      "paragraphs": [
+        "Account information is held while the account is active, then deleted or anonymised during closure, normally within 30 days after the verified request unless an identified legal or security reason requires longer retention. Session tokens expire after at most 14 days, with a three-day idle limit; security audit entries are normally retained for 400 days. Separate support correspondence is normally retained for up to 24 months after resolution. A documented incident or claim may require the relevant evidence for longer.",
+        "Accounting records are retained for the statutory period, generally through the seventh year after the end of the calendar year in which the financial year ended. Keeping those records does not justify retaining email bodies. Account agreement receipts record the user, exact document versions and hashes, acceptance time, IP address and a bounded browser description while the account exists; account deletion removes these operational receipts. Separately retained invoices or evidence needed for an identified legal claim follow their own lawful retention.",
+        "Customer content, delivery metadata and backups follow the DPA and the data-retention documentation: content zero to seven days after processing, metadata 14/30/90 days by plan, and scheduled database backups up to 27 days. Pending or uncertain sends and legal holds may require specific retention. Operational logs are retained under the hosting service's configured retention and may be extracted only for a documented investigation; they are not used as a message archive.",
+        "Account-verification and password-reset proofs are valid for 30 minutes. Encrypted delivery links are erased after a terminal delivery outcome, or by the worker when a queued proof expires or becomes unusable. A worker outage can delay physical cleanup; the pending authentication-mail queue is capped. Address ciphertext and account bindings are cleared on use/invalidation or expiry cleanup.",
+        "Minimal authentication-mail correlation, including address HMACs, token hashes and job/provider identifiers, is kept for up to 90 days to match delayed delivery or abuse feedback. These hashes are pseudonymous personal data, not anonymous data. Inactive hashed IP/address rate-limit records are cleared after two days. Our application-level permanent-bounce block lasts 90 days. Application-level complaints stay blocked until a separately reviewed removal. Provider-level bounce or complaint suppression can remain until a separately reviewed removal. These controls are distinct from customer-message retention."
+      ]
+    },
+    {
+      "heading": "Your rights",
+      "paragraphs": [
+        "Depending on the circumstances, you may request access, correction, erasure, restriction, portability or object to processing based on legitimate interests. You can always object to direct marketing. If processing relies on consent, you may withdraw it without affecting earlier lawful processing. Contact hej@stackx.se; we may request proportionate evidence to verify your identity.",
+        "We normally respond within one month. If a lawful extension is needed because of complexity or volume, we explain it within that first month. Some information must be retained to meet legal obligations or protect others' rights. You may complain to the Swedish Authority for Privacy Protection (IMY), or the supervisory authority competent for your residence or workplace."
+      ]
+    },
+    {
+      "heading": "Security and automated controls",
+      "paragraphs": [
+        "Safeguards include password hashing, access controls, encrypted secrets and message payloads, transport protection, tenant isolation, restricted credentials, audit records and backups. MFA is available for customer accounts and required for staff access to sensitive operations. No internet service can promise absolute security.",
+        "Automated rules can reject excessive requests, suppress bounced or complained-about recipients, or pause sending that appears unsafe. Contact support for review of a restriction. We do not use the service to make solely automated decisions about individuals that produce legal or similarly significant effects."
+      ]
+    },
+    {
+      "heading": "Cookies, required data and changes",
+      "paragraphs": [
+        "The cookie notice lists the storage used by the site. Essential authentication storage is necessary to provide signed-in features; declining it prevents login. We do not install advertising or cross-site analytics trackers on the Hedvi application.",
+        "We cannot provide an account, process payments or investigate a request without the necessary information. Optional information is identified where collected. We publish material changes to this notice with a new version and notify affected users where appropriate."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "title": "Swedish Authority for Privacy Protection (IMY)",
+      "url": "https://www.imy.se/en/"
+    },
+    {
+      "title": "Hedvi service providers",
+      "url": "/legal/subprocessors"
+    },
+    {
+      "title": "Data and retention",
+      "url": "/docs/data-and-retention"
+    }
+  ]
+}

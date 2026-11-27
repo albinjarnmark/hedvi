@@ -1,0 +1,2 @@
+# Pinned supported SDK. Regenerate the hash lock with a seven-day release cutoff.
+resend==2.54.0

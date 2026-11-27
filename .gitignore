@@ -1,0 +1,54 @@
+# Dependencies and build output
+node_modules/
+.pnpm-store/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+apps/api/bin/
+.venv/
+__pycache__/
+*.pyc
+
+# Local state
+.env
+.env.*
+!.env.example
+.data/
+*.log
+.DS_Store
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Duplicate of brand/ (distribution archive)
+/Hedvi-brand-kit.zip
+tsconfig.tsbuildinfo
+
+# Contract test venv
+contracts/python/.venv/
+
+# Credentials, deployment inputs and private publication artifacts
+.aws/
+.ssh/
+*.pem
+*.key
+*.p12
+*.pfx
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+backend.hcl
+
+# Private pilot deployment configuration; public releases use generic templates.
+/infra/terraform/envs/railway-staging/

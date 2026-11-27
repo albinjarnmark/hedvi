@@ -1,0 +1,7 @@
+packages:
+  - apps/web
+  - contracts/node
+
+# CVE-2026-118764: pinned compatible ESLint glob matcher security fix.
+overrides:
+  'eslint>minimatch': 11.0.1

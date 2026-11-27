@@ -1,0 +1,99 @@
+{
+  "version": "1.0",
+  "publishedAt": "28 November 2026",
+  "id": "terms",
+  "title": "Terms of Service",
+  "introduction": "These terms govern the hosted Hedvi service supplied by StackX AB, Swedish registration number 559598-7313, VAT number SE559598731301, Tybblegatan 94 C, 702 19 Örebro, Sweden. Contact: hej@stackx.se. The agreement starts when an authorised representative accepts these terms for the organisation identified in the account.",
+  "sections": [
+    {
+      "heading": "1. Business customers and contract documents",
+      "paragraphs": [
+        "Hedvi is offered to businesses and other organisations for their professional activities, not for personal consumer use. You must be at least 18 and authorised to bind your organisation. Keep your business, billing and contact information accurate. Self-service purchasing is available only in the billing countries supported by the checkout; contact us about other markets.",
+        "These terms, the order confirmed at checkout, the Acceptable Use Policy and the Data Processing Agreement form the agreement. The DPA takes priority for processing personal data; an individually signed agreement takes priority over these terms. The privacy notice explains our separate processing as controller. Published feature documentation describes the supported service; roadmaps are not commitments."
+      ]
+    },
+    {
+      "heading": "2. Accounts, access and permitted use",
+      "paragraphs": [
+        "Use a unique password, protect authentication devices and API keys, and grant only necessary access. You are responsible for activity authorised through your account and must tell us promptly about suspected compromise. Do not share personal sign-ins. We may require additional verification before restoring access, approving sending or changing sensitive details.",
+        "Follow the Acceptable Use Policy. Send only lawful, expected transactional email from domains you control. Domain verification, a paid plan or an API acceptance response does not constitute sending approval. We may review the business, recipient source, message types and anticipated volume. Rate limits and operational safeguards apply in addition to your commercial allowance."
+      ]
+    },
+    {
+      "heading": "3. Email processing and service limits",
+      "paragraphs": [
+        "An accepted API request is queued for processing; it does not promise delivery, inbox placement, a particular sending time or recipient action. Receiving systems may reject, delay or filter mail. Test-mode messages are captured without being sent to external recipients.",
+        "One billable unit is one unique recipient after To, Cc and Bcc are deduplicated for a message. Units are reserved when a live message is accepted and consumed when the sending provider accepts the recipient. Suppressed or unsent rejected recipients do not consume sending units. An uncertain sending result remains reserved until reconciled to avoid an unsafe duplicate. Attachment data is measured per recipient. Duplicate requests with a valid unchanged idempotency key reuse the existing result within its documented lifetime.",
+        "Do not use Hedvi as the only channel for emergency, safety-critical or legally time-sensitive communications. Maintain suitable alternative contact and recovery processes."
+      ]
+    },
+    {
+      "heading": "4. Free, Flex and Pro",
+      "paragraphs": [
+        "Free provides up to 5,000 recipients and 100 MiB of attachment data per UTC calendar month, subject to sending approval and operational limits. Free allowances do not roll over. We may change the Free offering with reasonable notice.",
+        "Flex is a one-time pack of 10,000 recipients and 250 MiB of attachment data for 39 SEK or 4 USD before tax. A pack expires 365 days after confirmed payment. It is not a recurring subscription, money, a deposit or transferable credit. Expired unused units do not roll over. A message validly reserved before expiry may settle against that reservation afterwards.",
+        "Pro 50k provides 50,000 recipients and 1 GiB per paid monthly billing period for 129 SEK or 13 USD before tax. Pro 100k provides 100,000 recipients and 2 GiB for 249 SEK or 25 USD. The confirmed order identifies your currency, tier and renewal date. Pro periods follow the paid subscription invoice, not the first day of the calendar month. Unused units do not roll over.",
+        "The first Flex purchase changes a Free account to the Flex baseline; there is no simultaneous recurring Free allowance while that baseline applies. Buying a pack during Pro does not replace the subscription. Using Flex units after exhausting Pro requires the account's explicit prepaid-credit setting. There is no automatic paid overage or automatic top-up. When eligible units or data run out, new live requests stop. Contact support to return to Free; doing so does not reset a previously used monthly allowance."
+      ]
+    },
+    {
+      "heading": "5. Checkout, tax and renewals",
+      "paragraphs": [
+        "Stripe processes payments. The checkout shows the applicable amount and tax before you confirm. Quoted prices exclude VAT and other applicable sales taxes. Provide accurate billing information and a valid business tax ID where relevant. We may request evidence needed for the correct tax treatment. Your card issuer may apply its own currency-conversion charges.",
+        "Pro renews monthly until cancelled. You authorise the recurring charges confirmed at checkout. Payment must be confirmed before a purchased allowance becomes available. A failed or disputed payment does not create a new allowance. If renewal fails, already paid access continues to the paid period's end unless another valid suspension ground applies; afterwards the account uses its eligible baseline and prepaid sources. Update your payment method through the customer portal to resolve collection problems."
+      ]
+    },
+    {
+      "heading": "6. Cancellation, changes and refunds",
+      "paragraphs": [
+        "Cancel Pro through the customer portal at any time before the next renewal. Cancellation takes effect at the paid period's end; no further normal renewal is then charged. It does not automatically close your account, delete data or refund the current period. Any tier change offered by Hedvi states its effective date and price before confirmation; we do not apply undisclosed proration.",
+        "Contact hej@stackx.se about billing errors or a requested refund. Duplicate or incorrectly collected charges will be corrected. Other business purchases are not refundable merely because the allowance was unused, except where mandatory law or an individual agreement requires a refund. If we permanently discontinue a paid service or terminate without your breach, we will refund the unused prepaid portion attributable to the unavailable service.",
+        "A refund request, charge dispute or payment reversal may put the affected purchase on hold while investigated. Refunded or reversed allowances cannot fund new sends. Previously consumed units and accepted-message records remain in the audit trail; unresolved accepted sends retain their original reservations. Partial refunds are reconciled against the specific purchase, not converted blindly from tax-inclusive money to email units."
+      ]
+    },
+    {
+      "heading": "7. Content, retention and export",
+      "paragraphs": [
+        "You retain your rights to your content and give us the limited permission necessary to store, process and transmit it to provide the service. You determine recipients, lawful grounds and content. Do not send prohibited sensitive data or content that infringes others' rights.",
+        "Email content retention can be set from zero to seven days, subject to completion of pending processing and documented recovery safeguards. Metadata retention is normally 14 days on Free, 30 days on Flex and 90 days on Pro. Test inbox content is retained for seven days. Webhook event copies can contain subjects and addresses until metadata retention expires, even when the original content is deleted sooner. The DPA and data-retention documentation explain queues and backups.",
+        "Export information you need before it expires or you close the account. Hedvi is not a permanent archive. A downgrade changes the retention policy for newly accepted data and limits for new actions; it does not grant a new allowance or automatically delete existing domains."
+      ]
+    },
+    {
+      "heading": "8. Service operation and support",
+      "paragraphs": [
+        "We use reasonable care to operate, maintain and secure Hedvi. Maintenance, provider incidents and emergency controls may interrupt the service. Standard plans do not include a contractual uptime percentage, guaranteed recovery time or guaranteed support response time. Any service-level agreement must be agreed separately in writing.",
+        "Support is available in English and Swedish through hej@stackx.se. Include relevant project and message IDs, but never passwords or secret keys. We may change the implementation while preserving the purchased service's essential function. Material adverse changes to a paid service will be notified at least 30 days in advance where practicable, with a right to cancel before they take effect."
+      ]
+    },
+    {
+      "heading": "9. Suspension and termination",
+      "paragraphs": [
+        "We may restrict sending or access when reasonably necessary for security, suspected abuse, unpaid amounts, legal duties or provider requirements. Where lawful and practicable, we will explain the reason and how to request a review. Queued messages may expire during a pause. Do not evade a restriction through another account or key.",
+        "Either party may terminate for a material breach not remedied within 14 days after written notice; serious abuse, unlawful use or urgent security threats may require immediate termination. You may request account closure through support. We verify the requester's authority, stop new processing and follow the DPA's return/deletion process. Payment obligations already incurred and provisions intended to survive remain effective."
+      ]
+    },
+    {
+      "heading": "10. Software and intellectual property",
+      "paragraphs": [
+        "The hosted service, the Hedvi brand and the open-source code have different terms. Source code is made available under its stated open-source licences, including AGPL-3.0-only for Hedvi-owned application code. Those licences continue to govern copying, modification and self-hosting; these hosted-service terms do not withdraw those rights.",
+        "No trademark licence or endorsement is implied. Do not present your own deployment as the StackX-operated Hedvi service or imply that StackX supports it. Third-party components retain their own licences."
+      ]
+    },
+    {
+      "heading": "11. Responsibility and liability",
+      "paragraphs": [
+        "Each party is responsible for its own obligations and legally attributable acts. We do not warrant that email will reach an inbox, that the service is uninterrupted or error-free, or that using Hedvi alone satisfies your legal obligations. You must test your integration and retain appropriate records and backups.",
+        "To the extent permitted by law, neither party is liable under this agreement for indirect or consequential loss, lost profits, lost revenue or lost business opportunities. Each party's aggregate contractual liability arising in any 12-month period is limited to the greater of the fees paid or payable for Hedvi in that period and 1,000 SEK. This does not limit payment obligations, fraud, wilful misconduct, gross negligence, liability that cannot lawfully be limited, or data subjects' statutory rights. The DPA does not reduce obligations or remedies imposed by applicable data-protection law."
+      ]
+    },
+    {
+      "heading": "12. Changes, notices and disputes",
+      "paragraphs": [
+        "We may update these terms and prices with at least 30 days' notice for material changes. New prices apply to future purchases or renewals after notice, not retrospectively to a paid period. You may cancel before a material change takes effect. Urgent legal or security changes may take effect sooner, with notice as soon as reasonably practicable. A new version and publication date identify each text; acceptance records identify the version applicable to your account.",
+        "Notices may be sent to the current account contact and displayed in the service. Keep that address monitored. If part of the agreement is unenforceable, the remaining parts continue in effect. Neither party's delay in enforcement waives its rights. Assignment to an affiliate or successor requires that customer protections and service obligations continue; other assignment requires the other party's consent.",
+        "Swedish law governs this business agreement, excluding conflict-of-law rules. First contact us to try to resolve a dispute. If unresolved, disputes are submitted to the competent Swedish general courts, with Örebro District Court as first instance, subject to mandatory jurisdiction rules."
+      ]
+    }
+  ]
+}

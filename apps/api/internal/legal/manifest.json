@@ -1,0 +1,48 @@
+{
+  "version": "2026-11-28.3",
+  "adopted": true,
+  "documents": [
+    {
+      "id": "terms",
+      "version": "1.0",
+      "url": "/legal/versions/2026-11-28.3/terms",
+      "sha256": "9072edecaf4534db424f57ce7e422901c0ba2c1d352e11d33208b3e4cb31eb9a",
+      "acknowledgement": "agreement"
+    },
+    {
+      "id": "aup",
+      "version": "1.1",
+      "url": "/legal/versions/2026-11-28.3/acceptable-use",
+      "sha256": "bd61053d18418562a021348e9503e55f6e2fc71e7a1ddb382ca1de31c6e7a0a7",
+      "acknowledgement": "agreement"
+    },
+    {
+      "id": "dpa",
+      "version": "1.0",
+      "url": "/legal/versions/2026-11-28.3/dpa",
+      "sha256": "3daf83eb7a0d229b8095a0cb6e8621312b204769f9f066c40cb32652ad3f3bb7",
+      "acknowledgement": "agreement"
+    },
+    {
+      "id": "privacy",
+      "version": "1.1",
+      "url": "/legal/versions/2026-11-28.3/privacy",
+      "sha256": "c4c62e851c6b38e788a99456b85c66039e25b2820b7b4c960dec85c8e41b7548",
+      "acknowledgement": "notice_received"
+    },
+    {
+      "id": "subprocessors",
+      "version": "1.0",
+      "url": "/legal/versions/2026-11-28.3/subprocessors",
+      "sha256": "bdfdd5dbc990f60270177fe48f19b34bafae2cd52ec091adf45a249a9031473a",
+      "acknowledgement": "notice_received"
+    },
+    {
+      "id": "cookies",
+      "version": "1.0",
+      "url": "/legal/versions/2026-11-28.3/cookies",
+      "sha256": "cdea7744fff5ebf47541219b223073384262a59f7d23ad92ce4a224cde63e2f3",
+      "acknowledgement": "notice_received"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@hedvi/contracts-node",
+  "private": true,
+  "type": "module",
+  "description": "Contract tests: the pinned Resend Node SDK against a local Hedvi API.",
+  "scripts": {
+    "test": "node --test contract.test.mjs"
+  },
+  "dependencies": {
+    "resend": "6.39.0"
+  },
+  "license": "AGPL-3.0-only"
+}

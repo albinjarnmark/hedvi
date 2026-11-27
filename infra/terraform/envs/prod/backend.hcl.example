@@ -1,0 +1,5 @@
+# Copy to ignored backend.hcl and replace with YOUR verified AWS account/bucket.
+# Never copy credentials into this file. Check bucket ownership before init.
+bucket = "hedvi-prod-111122223333-terraform-state"
+allowed_account_ids = ["111122223333"]
+# Before init: aws s3api head-bucket --bucket <above-bucket> --expected-bucket-owner <your-account-id>

@@ -1,0 +1,89 @@
+{
+  "version": "1.0",
+  "publishedAt": "28 November 2026",
+  "id": "dpa",
+  "title": "Data Processing Agreement",
+  "introduction": "This DPA forms part of the hosted Hedvi agreement between the customer organisation identified in its account and StackX AB, registration number 559598-7313, Tybblegatan 94 C, 702 19 Örebro, Sweden. The customer is controller, or an authorised processor for its own controller, and StackX is processor or subprocessor as applicable. It applies from acceptance of the service agreement while StackX processes customer personal data.",
+  "sections": [
+    {
+      "heading": "1. Scope and documented instructions",
+      "paragraphs": [
+        "Customer personal data means personal data submitted in or generated from the customer's messages and processing instructions. Processing comprises receipt, validation, storage, encryption, queueing, transmission, delivery-event handling, suppression, troubleshooting, retention and deletion for transactional email, test inboxes and customer webhooks.",
+        "The data includes sender and recipient addresses, names where included, subject, message body, attachments, headers, delivery metadata, complaints, bounces and webhook diagnostics. Data subjects are the customer's recipients, personnel, business contacts and other people legitimately referenced in its messages. Special-category data, criminal-offence records and other highly sensitive content are excluded by the Acceptable Use Policy.",
+        "The agreement, configured retention, API requests, selected recipient/webhook destinations and authenticated support requests are the customer's documented instructions. StackX will process only on those instructions, including for transfers, unless EU or Member State law requires otherwise. In that case StackX will inform the customer before processing unless the law prohibits it. StackX will notify the customer if an instruction appears to infringe applicable data-protection law and may pause the affected processing while it is resolved."
+      ]
+    },
+    {
+      "heading": "2. Customer responsibilities",
+      "paragraphs": [
+        "The customer determines its purposes and lawful grounds, supplies accurate instructions and appropriate privacy information, and is responsible for its rights to send each message. It must select suitable data, retention and destinations, protect access and respond to data-subject requests. A customer acting as processor warrants that its controller authorises the engagement and these instructions.",
+        "The customer's authorised administrator represents it for routine instructions. StackX may verify authority before acting on deletion, export or access requests. Instructions outside the service's agreed scope require a written agreement on feasibility, security and any reasonable cost."
+      ]
+    },
+    {
+      "heading": "3. Confidentiality and access",
+      "paragraphs": [
+        "StackX will ensure that persons authorised to process customer data are bound by confidentiality duties and receive access only as necessary for their roles. Access is reviewed and removed when no longer needed. Customer content is accessed for support only when necessary for the requested investigation or another documented lawful instruction.",
+        "StackX will not sell customer message data, use it for advertising, or train its own or third-party general-purpose AI models on it. Independent controller processing of account, billing and proportionate security information is described separately in the privacy notice and is not a licence to repurpose message content."
+      ]
+    },
+    {
+      "heading": "4. Technical and organisational measures",
+      "paragraphs": [
+        "StackX maintains risk-appropriate measures under Article 32 GDPR and will not materially reduce their overall protection during the agreement. Measures include tenant-scoped database access and row-level security; least-privilege service credentials; protected authentication and staff MFA; encrypted message payloads and secrets; HTTPS for customer access and webhooks; database transport protection and private service networking; validation, resource limits and abuse controls; security logging; vulnerability management; backups and restoration procedures.",
+        "The current deployment uses Railway Amsterdam for compute, PostgreSQL and Valkey, and AWS Stockholm for SES, S3, queues, encryption keys and monitoring. Private-network cache traffic is authenticated within the hosting network. Destination mail transport depends on the sending provider and recipient server; recipient systems remain outside StackX's control. This agreement does not promise high availability, a security certification or universal end-to-end encryption."
+      ]
+    },
+    {
+      "heading": "5. Subprocessors",
+      "paragraphs": [
+        "The customer gives general written authorisation for subprocessors identified in the published service-provider list for the activities described there. StackX will bind subprocessors by written data-protection obligations appropriate to their processing and equivalent in substance to the relevant obligations here. StackX remains responsible to the customer for performance of those obligations.",
+        "StackX will notify the customer at least 30 days before a planned material addition or replacement of a subprocessor that processes customer data. The customer may object within that period on reasonable data-protection grounds. The parties will seek a reasonable alternative. If none is available, the customer may terminate the affected service before the change and receive a proportionate refund of unused prepaid service. An urgent legally or operationally necessary replacement will be notified as soon as possible, with the same right to raise a substantiated objection."
+      ]
+    },
+    {
+      "heading": "6. International processing",
+      "paragraphs": [
+        "Primary service locations are listed above and in the provider list. Remote support or provider operations can involve transfers outside the EEA. StackX will ensure that transfers it or its subprocessors initiate have a valid Chapter V GDPR basis, required safeguards and supplementary measures where appropriate. Applicable Standard Contractual Clauses take precedence where required.",
+        "The customer instructs delivery to its specified recipients and webhook destinations, which may be outside the EEA, and is responsible for the lawfulness of that destination choice. This does not excuse StackX from its own obligations. StackX will promptly inform the customer of a legally binding disclosure request unless prohibited and will challenge a request where there are reasonable legal grounds to do so."
+      ]
+    },
+    {
+      "heading": "7. Assistance and requests",
+      "paragraphs": [
+        "Taking account of the nature of processing and available information, StackX will assist the customer with data-subject rights, security obligations, breach notifications, impact assessments and prior consultation under Articles 32–36 GDPR. Requests received directly from data subjects about customer message data will be referred to the customer where appropriate; StackX will not independently decide the customer's response unless legally required.",
+        "Standard service functions and reasonable information are included. Unusually extensive assistance outside the standard service may incur a reasonable fee agreed beforehand, except to the extent the work is necessary because of StackX's breach. Fees must not prevent compliance with mandatory duties."
+      ]
+    },
+    {
+      "heading": "8. Personal-data breaches",
+      "paragraphs": [
+        "StackX will notify the customer without undue delay after becoming aware of a personal-data breach affecting customer data. We aim to provide the initial notice within 24 hours of awareness; incomplete information will not delay that notice. It will describe known facts, affected data and people where possible, likely consequences, containment and mitigation, and a contact point. Further information will follow as it becomes available.",
+        "StackX will investigate, contain and remediate the breach, preserve relevant evidence and cooperate with the customer. The customer determines its notifications to authorities and individuals, with StackX's assistance, unless law directly requires StackX to notify. A notification is not itself an admission of fault."
+      ]
+    },
+    {
+      "heading": "9. Return, deletion and retention",
+      "paragraphs": [
+        "On termination, the customer may instruct return through the available export mechanisms or request a secure assisted export, followed by deletion. Unless otherwise agreed or legally required, StackX will complete active-system deletion within 30 days after the verified instruction. The customer should export before its configured retention expires; already deleted data cannot be reconstructed for export.",
+        "During service, message content is retained according to the zero-to-seven-day setting after processing. Queued/retrying messages can remain for the queue deadline of up to 72 hours; uncertain outcomes remain until safely reconciled. Metadata normally expires after 14/30/90 days on Free/Flex/Pro. Test content lasts seven days. Webhook event payload copies, including subjects and recipients, follow metadata retention, not the shorter original-content setting.",
+        "Main queue messages can remain up to four days and dead-letter messages up to 14 days. Automatic database snapshots expire within 27 days; deleted data can remain in isolated backups until expiry. Restores must reconcile deletion and retention before resuming normal processing. StackX will restrict legally required retained data to that purpose and delete it when the requirement ends. Upon reasonable request, StackX will confirm completion of the applicable deletion process.",
+        "Account verification, password recovery, agreement receipts and security notices that StackX processes for its own account administration are described separately in the Privacy Notice. Their pseudonymous security-correlation retention is not an extension of the retention permitted for customer message bodies under this DPA."
+      ]
+    },
+    {
+      "heading": "10. Information and audits",
+      "paragraphs": [
+        "StackX will provide information reasonably necessary to demonstrate compliance with this DPA and allow and contribute to audits, including inspections, by the customer or an independent auditor it mandates. Start with relevant documentation where it adequately addresses the issue; this does not remove the right to an appropriate inspection.",
+        "Audits should use reasonable notice, business hours and confidentiality protections and minimise unnecessary access to other customers' data or disruption. These safeguards do not restrict competent authorities or urgent investigation of a credible material breach. The parties will agree reasonable costs in advance, except where an audit identifies a material breach by StackX."
+      ]
+    },
+    {
+      "heading": "11. Duration, precedence and contact",
+      "paragraphs": [
+        "This DPA continues for as long as StackX or its subprocessors retain customer data covered by it. Changes require a documented agreement or the service agreement's change process without reducing mandatory protections. Nothing here limits a data subject's statutory rights or a supervisory authority's powers.",
+        "For instructions, incidents, assistance or subprocessor objections, contact hej@stackx.se with the subject Hedvi data processing and identify your organisation. Avoid including message bodies or secret keys in an initial request; ask for a secure channel where needed."
+      ]
+    }
+  ]
+}

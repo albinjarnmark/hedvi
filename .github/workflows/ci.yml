@@ -1,0 +1,156 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  go:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18-alpine@sha256:ff64c9e3bdf8e2120107d3559de8db314e8305f7e38c5105903c6295876738ff
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_ci
+        ports: ["55432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 2s --health-timeout 3s --health-retries 30
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: apps/api/go.mod
+          cache-dependency-path: apps/api/go.sum
+      - name: Create database roles
+        env:
+          PGPASSWORD: postgres_ci
+        run: psql -h 127.0.0.1 -p 55432 -U postgres -f ../../scripts/db/init-local.sql
+      - name: Verify canonical legal document hashes
+        run: python3 ../../scripts/sync-legal.py --check
+      - name: Format
+        run: test -z "$(gofmt -l .)"
+      - name: Vet
+        run: go vet ./...
+      - name: Test (unit + integration, race detector)
+        env:
+          HEDVI_REQUIRE_DB: "1"
+        run: go test -race -count=1 ./...
+      - name: Vulnerability check
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
+      - name: Build
+        run: CGO_ENABLED=0 go build -trimpath -o bin/hedvi ./cmd/hedvi
+
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --audit-level=moderate
+      - run: pnpm --filter @hedvi/web typecheck
+      - run: pnpm --filter @hedvi/web lint
+      - run: pnpm --filter @hedvi/web test
+      - run: pnpm --filter @hedvi/web build
+
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [go]
+    services:
+      postgres:
+        image: postgres:18-alpine@sha256:ff64c9e3bdf8e2120107d3559de8db314e8305f7e38c5105903c6295876738ff
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_ci
+        ports: ["55432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 2s --health-timeout 3s --health-retries 30
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: apps/api/go.mod
+          cache-dependency-path: apps/api/go.sum
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.13"
+      - name: Database
+        env:
+          PGPASSWORD: postgres_ci
+        run: |
+          psql -h 127.0.0.1 -p 55432 -U postgres -f scripts/db/init-local.sql
+          cd apps/api && go build -o bin/hedvi ./cmd/hedvi && ./bin/hedvi migrate
+      - name: Start API with local simulator
+        working-directory: apps/api
+        run: |
+          ./bin/hedvi dev > /tmp/hedvi.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:8780/healthz && break; sleep 1; done
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @hedvi/contracts-node test
+      - run: contracts/python/run.sh
+      - if: failure()
+        run: cat /tmp/hedvi.log
+
+  terraform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3
+        with:
+          terraform_version: 1.14.0
+      - run: terraform fmt -recursive -check infra/terraform
+      - name: Validate
+        run: |
+          for d in infra/terraform/bootstrap infra/terraform/envs/staging infra/terraform/envs/prod; do
+            terraform -chdir=$d init -backend=false -input=false && terraform -chdir=$d validate
+          done
+
+  secrets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install pinned scanner and check history
+        shell: bash
+        run: |
+          curl --fail --location --retry 3 https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz --output /tmp/gitleaks.tar.gz
+          echo '551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  /tmp/gitleaks.tar.gz' | sha256sum --check
+          tar -xzf /tmp/gitleaks.tar.gz -C /tmp gitleaks
+          /tmp/gitleaks git --config .gitleaks.toml --redact=100 --no-banner
+      - name: Verify source export exclusions
+        run: python3 scripts/test_export_source.py
