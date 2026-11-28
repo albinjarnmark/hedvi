@@ -1557,7 +1557,7 @@
     },
     {
       "path": "docs/status.md",
-      "sha256": "6eec34122cc0c0ca0f0382d3f132d4e44f816603236f7b59675c3de009900c00"
+      "sha256": "8d4323e35444a37c87ac232c1446fe8bea40d55e1a9f416b9ac0e828c7800cdf"
     },
     {
       "path": "infra/terraform/AUTH-MAIL.md",

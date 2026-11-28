@@ -31,9 +31,13 @@ owner unlocked the private console and exercised a temporary gift and revocation
 A logical production backup was restored to an isolated database; migration and
 retention code completed there, and the clone was removed afterwards.
 
-Real Stripe sandbox Checkout, VAT, prepaid Flex, Pro 50k allowance, customer portal,
-cancellation at period end and a full Flex refund passed. Both currencies, Pro
-100k and accelerated renewal still need the complete hosted acceptance matrix.
+Real Stripe sandbox Checkout passed for all six Flex/Pro price variants in SEK
+and USD, with 25% Swedish VAT. Canadian, Danish and German test cards and foreign
+payment details preserved the Swedish invoice address. A 3D Secure challenge,
+customer-portal card replacement, cancellation at period end and a full Flex refund
+passed. A Stripe test-clock renewal produced a paid subscription-cycle invoice and
+exactly one new 100k/2 GiB allowance for the next period; all received billing events
+were processed. These checks used isolated staging organizations and no real money.
 Six live prices and three business-SaaS products passed restricted-key checks.
 Both live keys are privately stored in their respective production services; the
 worker passed all thirteen resource-read checks and denied customer/refund writes.
@@ -42,8 +46,10 @@ Live billing remains disabled while Stripe support corrects the merchant legal
 entity and live tax configuration and payment acceptance are completed.
 A sandbox success does not verify live payments.
 
-Source revision `a2f6b407c347a04cd4542f406bb477af452a9af4` is deployed to staging
-and production, with migrations through 0017. All five cloud CI jobs passed,
+API and worker revision `a2f6b407c347a04cd4542f406bb477af452a9af4` is deployed to
+staging and production, with migrations through 0017. Web revision
+`2ccbf1d22cde175484337988d75f86d96094b47c` adds the independent HTTPS status link
+and clearer feature-availability copy. All five cloud CI jobs passed,
 including PostgreSQL/race tests, mobile WebKit and desktop Chromium checks,
 rendered Terraform policy tests, secret scanning and SDK contracts.
 
