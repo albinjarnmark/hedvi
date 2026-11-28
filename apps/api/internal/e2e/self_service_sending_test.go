@@ -26,6 +26,7 @@ func TestDomainAndTermsAutomaticallyEnableSending(t *testing.T) {
 		t.Fatal("ownership did not provision", err)
 	}
 	dns.records = d.Records
+	e.Exec(`UPDATE domains SET last_checked_at=now()-interval '11 seconds' WHERE id=$1`, d.ID)
 	d, err = service.Verify(e.Ctx, org, project, d.ID)
 	if err != nil || d.Status != "verified" {
 		t.Fatal("DNS", err)

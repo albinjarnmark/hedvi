@@ -45,8 +45,9 @@ func (s *Server) ownerSummary(ctx context.Context, tx pgx.Tx, r *http.Request, a
 		{"grants", `SELECT g.id,g.org_id,o.name organization,g.plan,g.starts_at,g.ends_at,g.revoked_at,
   CASE WHEN g.revoked_at IS NOT NULL THEN 'revoked' WHEN g.ends_at<=now() THEN 'expired' ELSE 'active' END AS state,
   g.reason,g.revoke_reason FROM complimentary_memberships g JOIN organizations o ON o.id=g.org_id WHERE ($1::uuid IS NULL OR g.org_id=$1) ORDER BY g.starts_at DESC,g.id LIMIT 50`},
-		{"purchases", `SELECT b.id,b.org_id,o.name organization,b.sku,b.state,b.amount,b.currency,b.created_at
-  FROM billing_orders b JOIN organizations o ON o.id=b.org_id WHERE ($1::uuid IS NULL OR b.org_id=$1) ORDER BY b.created_at DESC,b.id LIMIT 50`},
+		{"purchases", `SELECT b.id,b.org_id,o.name organization,b.sku,s.state,b.amount,b.currency,b.created_at
+  FROM billing_orders b JOIN billing_order_status s ON s.id=b.id AND s.org_id=b.org_id
+  JOIN organizations o ON o.id=b.org_id WHERE ($1::uuid IS NULL OR b.org_id=$1) ORDER BY b.created_at DESC,b.id LIMIT 50`},
 		{"errors", `SELECT * FROM (
   (SELECT id,org_id,created_at,
     CASE kind WHEN 'review_requested' THEN 'Sender review requested' WHEN 'delivery_unknown' THEN 'Unknown send outcome'

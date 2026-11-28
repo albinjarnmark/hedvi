@@ -151,7 +151,7 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
           {sku === "flex"
             ? "A first Flex purchase moves a Free organization to prepaid usage. Each pack includes 250 MiB of attachment data."
             : "The subscription renews monthly until canceled. Pro 50k includes 1 GiB of attachment data per cycle and Pro 100k includes 2 GiB."}
-          {" "}Prices exclude VAT. Stripe shows your total before payment. Your sender approval and sending limits still apply.
+          {" "}Prices exclude VAT. Stripe shows your total before payment. Domain verification and sending limits still apply.
         </p>
         <button className="btn btn-primary" disabled={pending}>Continue to Stripe Checkout</button>
       </form>

@@ -33,7 +33,7 @@ export const dict = {
     pricing: {
       title: "Three simple choices",
       lead: "Prices before VAT. When hosted billing is enabled, Stripe Checkout shows your currency, applicable tax and total before payment.",
-      free: { name: "Free", price: "0", per: "", points: ["Up to 5,000 recipients/month after sender approval", "Starts at 100/day", "3 domains", "Test inbox", "14 days metadata, up to 7 days content"] },
+      free: { name: "Free", price: "0", per: "", points: ["Up to 5,000 recipients/month after domain verification", "Starts at 100/day", "3 domains", "Test inbox", "14 days metadata, up to 7 days content"] },
       flex: { name: "Flex", price: "$4", per: "per 10k recipients", points: ["Prepaid credits, no subscription", "Valid for 365 days, expiry always visible", "Up to 10 domains", "30 days metadata, 7 days content"] },
       pro: { name: "Pro", price: "$13", per: "/month for 50k · $25 for 100k", points: ["Organization roles, webhooks, test inbox", "25 or 100 domains", "90 days metadata, 7 days content", "Optional use of prepaid Flex credits"] },
       larger: "Larger volume: quote for now.",
@@ -68,7 +68,7 @@ export const dict = {
     pricing: {
       title: "Tre enkla val",
       lead: "Priser före moms. När betalning är aktiverad visar Stripe Checkout valuta, skatt och totalsumma innan du betalar.",
-      free: { name: "Free", price: "0 kr", per: "", points: ["Upp till 5 000 mottagare/mån efter godkänd avsändare", "Start 100/dag", "3 domäner", "Testinkorg", "14 dagars metadata, högst 7 dagars innehåll"] },
+      free: { name: "Free", price: "0 kr", per: "", points: ["Upp till 5 000 mottagare/mån efter verifierad domän", "Start 100/dag", "3 domäner", "Testinkorg", "14 dagars metadata, högst 7 dagars innehåll"] },
       flex: { name: "Flex", price: "39 kr", per: "per 10 000 mottagare", points: ["Förbetalda krediter utan abonnemang", "Giltiga i 365 dagar, utgångsdatum syns alltid", "Upp till 10 domäner", "30 dagars metadata, 7 dagars innehåll"] },
       pro: { name: "Pro", price: "129 kr", per: "/mån för 50 000 · 249 kr för 100 000", points: ["Organisationsroller, webhooks, testinkorg", "25 eller 100 domäner", "90 dagars metadata, 7 dagars innehåll", "Använd förbetalda Flex-krediter vid behov"] },
       larger: "Större volym: offert tills vidare.",

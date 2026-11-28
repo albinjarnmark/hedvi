@@ -11,6 +11,7 @@ RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=pg_catalog,
 $$;
 REVOKE ALL ON FUNCTION hedvi_org_has_live_consent(uuid,text,jsonb,boolean) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION hedvi_org_has_live_consent(uuid,text,jsonb,boolean) TO hedvi_api,hedvi_worker;
+GRANT SELECT ON billing_order_status TO hedvi_worker;
 
 -- A claim tag must remain attached to the same resource for its entire life.
 -- Customer deletion is a soft delete; recreating a claim always gets a new UUID.

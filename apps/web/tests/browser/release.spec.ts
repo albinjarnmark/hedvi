@@ -139,13 +139,13 @@ test("owner sections separate accounts, gifts, sending and errors", async ({ pag
   await page.screenshot({path:info.outputPath("owner-overview.png"),fullPage:true});
   await page.getByRole("button",{name:"Open Example AB",exact:true}).click();
   await page.getByRole("button",{name:"Give membership",exact:true}).click();
-  await expect(page.getByLabel("Internal note")).toHaveValue("Complimentary access from Hedvi owner");
+  await expect(page.getByLabel("Reason (shown in the account audit log)")).toHaveValue("Complimentary access from Hedvi owner");
   await fits(page);
   await page.screenshot({path:info.outputPath("owner-account.png"),fullPage:true});
   await page.getByRole("button",{name:"Cancel",exact:true}).click();
   await page.getByRole("navigation",{name:"Owner sections"}).getByRole("button",{name:"Sending",exact:true}).click();
   await expect(page.getByText("Awaiting domain",{exact:true})).toBeVisible();
-  await expect(page.getByLabel("Internal note")).toHaveCount(0);
+  await expect(page.getByLabel("Reason (shown in the account audit log)")).toHaveCount(0);
   await page.getByRole("button",{name:"Manage",exact:true}).click();
   await expect(page.getByRole("button",{name:"Approve live sending"})).toHaveCount(0);
   await page.getByRole("navigation",{name:"Owner sections"}).getByRole("button",{name:"Errors",exact:true}).click();

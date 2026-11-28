@@ -66,7 +66,7 @@ To withdraw a grant, identify the organization and active grant, enter a reason,
 
 - **Overview** shows recent registrations and links to accounts, sending and errors.
 - **Accounts** searches by email or organization. Open an account for its Membership, Sending projects and Purchases tabs.
-- **Membership** grants a fixed Flex or Pro gift without a charge. The internal audit note is prefilled; ending a gift removes its unused allowance. Paid purchases remain separate.
+- **Membership** grants a fixed Flex or Pro gift without a charge. The customer-visible audit reason is prefilled; ending a gift removes its unused allowance. Paid purchases remain separate.
 - **Sending** shows project status and limits. Normal domain onboarding is automatic. Open Manage only for a limit adjustment or a pause/resume decision.
 - **Billing** shows recent purchases and gift history. It does not expose payment credentials.
 - **Errors** filters sanitized operational events by severity. Keep event references for incident follow-up.
