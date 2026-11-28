@@ -63,7 +63,12 @@ func (s *Service) inspectInvoice(ctx context.Context, id string, o Order) (e evi
 		}
 		return
 	}
-	if !catalogTotal(&inv, o.Amount) || inv.AmountRemaining != 0 || inv.AmountPaid != inv.Total || inv.AmountPaidOffStripe != 0 || inv.Subtotal != o.Amount || inv.CollectionMethod != "charge_automatically" || inv.AutomaticTax == nil || !inv.AutomaticTax.Enabled || inv.AutomaticTax.Status != "complete" || inv.StatusTransitions == nil || inv.StatusTransitions.PaidAt <= 0 || inv.CustomerAddress == nil || !s.C.Countries[inv.CustomerAddress.Country] || inv.CustomerAddress.Country != o.Country {
+	// Checkout's one-time post-payment invoices use send_invoice even though
+	// their payment was captured in Checkout. Flex still has to prove that
+	// exact session, invoice, PaymentIntent and captured charge below. Pro
+	// remains limited to automatically collected subscription invoices.
+	collectionOK := inv.CollectionMethod == "charge_automatically" || o.SKU == "flex" && inv.CollectionMethod == "send_invoice"
+	if !catalogTotal(&inv, o.Amount) || inv.AmountRemaining != 0 || inv.AmountPaid != inv.Total || inv.AmountPaidOffStripe != 0 || inv.Subtotal != o.Amount || !collectionOK || inv.AutomaticTax == nil || !inv.AutomaticTax.Enabled || inv.AutomaticTax.Status != "complete" || inv.StatusTransitions == nil || inv.StatusTransitions.PaidAt <= 0 || inv.CustomerAddress == nil || !s.C.Countries[inv.CustomerAddress.Country] || inv.CustomerAddress.Country != o.Country {
 		return
 	}
 	var lines page[stripe.InvoiceLineItem]

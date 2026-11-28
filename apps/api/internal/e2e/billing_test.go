@@ -29,6 +29,7 @@ type stripeFixture struct {
 	customerAddress                             billingJSON
 	customerShipping                            billingJSON
 	customerDetailsCountry, invoiceCountry      string
+	invoiceCollection                           string
 	customerCreates, sessionCreates             int
 	lostCustomerResponses, lostSessionResponses int
 	rejectCustomer                              bool
@@ -172,6 +173,12 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 			invoiceCountry = "SE"
 		}
 		inv := billingJSON{"id": f.invoiceID, "customer": customer, "currency": f.currency, "status": "paid", "subtotal": f.amount, "subtotal_excluding_tax": f.amount, "total_excluding_tax": f.amount, "amount_due": total, "total_taxes": []any{billingJSON{"tax_behavior": "exclusive", "amount": tax}}, "total": total, "amount_paid": total, "amount_remaining": 0, "collection_method": "charge_automatically", "customer_address": billingJSON{"country": invoiceCountry}, "automatic_tax": billingJSON{"enabled": true, "status": "complete"}, "status_transitions": billingJSON{"paid_at": f.start}}
+		if !recurring {
+			inv["collection_method"] = "send_invoice"
+		}
+		if f.invoiceCollection != "" {
+			inv["collection_method"] = f.invoiceCollection
+		}
 		if f.offStripe {
 			inv["amount_paid_off_stripe"] = total
 		}
@@ -369,6 +376,15 @@ func TestStripeOrdersGrantOnlyCanonicalEconomicSources(t *testing.T) {
 			}
 			f.reduced = false
 			if sku != "flex" {
+				f.invoiceCollection = "send_invoice"
+				notify("evt_manual_subscription", "invoice.paid", f.invoiceID, true)
+				if err := work.RunOnce(e.Ctx); err != nil {
+					t.Fatal(err)
+				}
+				if e.Count(`SELECT count(*) FROM billing_invoices WHERE state='granted'`) != 0 {
+					t.Fatal("manually collected subscription granted allowance")
+				}
+				f.invoiceCollection = ""
 				f.wrongItem = true
 				notify("evt_wrong_item", "invoice.paid", f.invoiceID, true)
 				if err := work.RunOnce(e.Ctx); err != nil {
