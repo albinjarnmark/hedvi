@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useLoad } from "@/lib/hooks";
 import { Logo } from "./Logo";
 import { sourceUrl } from "@/lib/public-site";
+import { ResponsiveNav } from "./ResponsiveNav";
 
 export type Me = {
   user: { id: string; email: string; name: string; locale: string; mfa_enabled: boolean; is_staff: boolean; session_mfa: boolean; legal_accepted: boolean };
@@ -47,8 +48,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <MeContext.Provider value={me}>
       <div className="shell">
-        <aside className="sidebar" aria-label="Dashboard">
-          <Link href="/app" aria-label="Hedvi dashboard" style={{ padding: "4px 8px 12px" }}><Logo variant="cream" height={26} /></Link>
+        <a className="skip" href="#main">Skip to content</a>
+        <aside className="sidebar">
+          <ResponsiveNav id="dashboard-navigation" label="Dashboard" className="dashboard-navigation"
+            header={<Link href="/app" aria-label="Hedvi dashboard" className="dashboard-logo"><Logo variant="cream" height={26} /></Link>}>
           <label htmlFor="project" className="tiny" style={{ padding: "0 4px" }}>Project</label>
           <select id="project" value={projectId} onChange={(e) => router.push(`/app/${e.target.value}`)}>
             {projects.map((p) => <option key={p.id} value={p.id}>{p.org} / {p.name}</option>)}
@@ -65,6 +68,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <p className="tiny" style={{ padding: "0 8px", color: "var(--text-3)" }}>{me.user.email}</p>
           <button className="btn btn-small" style={{ margin: "4px 4px 0" }}
             onClick={async () => { await api("/auth/logout", { method: "POST" }); router.push("/login"); }}>Sign out</button>
+          </ResponsiveNav>
         </aside>
         <main className="main" id="main">{children}</main>
       </div>

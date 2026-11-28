@@ -235,7 +235,7 @@ func (s *Service) checkOrder(ctx context.Context, j job) error {
 		}
 	}
 	if o.Customer != "" {
-		if err := s.verifyCustomer(ctx, o.Customer, customerRef); err != nil {
+		if err := s.verifyCustomer(ctx, o.Customer, customerRef, nil); err != nil {
 			return err
 		}
 	}
@@ -275,7 +275,10 @@ func (s *Service) checkOrder(ctx context.Context, j job) error {
 				return err
 			}
 			termsAccepted = cs.ConsentCollection != nil && cs.ConsentCollection.TermsOfService == "required" && cs.Consent != nil && cs.Consent.TermsOfService == "accepted"
-			if !termsAccepted || cs.CustomerDetails == nil || cs.CustomerDetails.Address == nil || cs.CustomerDetails.Address.Country != o.Country || !s.C.Countries[o.Country] || cs.AutomaticTax == nil || !cs.AutomaticTax.Enabled || cs.AutomaticTax.Status != "complete" || string(cs.Currency) != o.Currency || cs.AmountSubtotal != o.Amount || len(items.Data) != 1 || items.More || items.Data[0].Price == nil || items.Data[0].Price.ID != o.PriceID || items.Data[0].Quantity != 1 {
+			// The payment method address may legitimately differ from the locked
+			// company address. inspectInvoice still requires the canonical invoice
+			// country, complete automatic tax and the paid economic source.
+			if !termsAccepted || !s.C.Countries[o.Country] || cs.AutomaticTax == nil || !cs.AutomaticTax.Enabled || cs.AutomaticTax.Status != "complete" || string(cs.Currency) != o.Currency || cs.AmountSubtotal != o.Amount || len(items.Data) != 1 || items.More || items.Data[0].Price == nil || items.Data[0].Price.ID != o.PriceID || items.Data[0].Quantity != 1 {
 				state = "review"
 				delay = 3600
 				break

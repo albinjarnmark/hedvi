@@ -73,14 +73,15 @@ func (s *Server) billingCheckout(w http.ResponseWriter, r *http.Request, a *acce
 		return
 	}
 	var req struct {
-		SKU, Currency, Country string
-		RequestID              uuid.UUID `json:"request_id"`
+		SKU, Currency string
+		Profile       *billing.Profile `json:"billing_profile"`
+		RequestID     uuid.UUID        `json:"request_id"`
 	}
 	if err := decode(r, &req); err != nil {
 		s.fail(w, r, err)
 		return
 	}
-	u, err := s.Billing.Checkout(r.Context(), a.OrgID, a.UserID, a.ProjectID, req.RequestID, req.SKU, req.Currency, req.Country)
+	u, err := s.Billing.Checkout(r.Context(), a.OrgID, a.UserID, a.ProjectID, req.RequestID, req.SKU, req.Currency, req.Profile)
 	s.billingRedirect(w, r, a, u, err)
 }
 func (s *Server) billingPortal(w http.ResponseWriter, r *http.Request, a *access) {

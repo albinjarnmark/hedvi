@@ -52,3 +52,6 @@ backend.hcl
 
 # Private pilot deployment configuration; public releases use generic templates.
 /infra/terraform/envs/railway-staging/
+
+# Isolated local release work and review artifacts
+/.release-work/

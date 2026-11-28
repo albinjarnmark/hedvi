@@ -37,3 +37,6 @@ plan
 **/*.bak
 **/*.backup
 **/*.swp
+
+# Isolated local release work and review artifacts
+.release-work

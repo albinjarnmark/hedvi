@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useProjectId } from "@/components/AppShell";
+import { useMe, useProjectId } from "@/components/AppShell";
 import { Status } from "@/components/Status";
 import { api, formatDate } from "@/lib/api";
 import { useAction, useLoad } from "@/lib/hooks";
@@ -10,12 +10,15 @@ type Domain = { id: string; name: string; status: string; created_at: string; he
 
 export default function DomainsPage() {
   const pid = useProjectId();
+  const me = useMe();
+  const organization = me.organizations.find((org) => org.projects.some((project) => project.id === pid));
   const router = useRouter();
   const { data } = useLoad<{ data: Domain[] }>(`/projects/${pid}/domains`, 10000);
   const { pending, error, run } = useAction();
   return (
     <>
       <div className="page-head"><div><h1>Domains</h1><p className="muted small">Send from your own domain. Hedvi never changes your existing SPF or DMARC.</p></div></div>
+      {organization?.plan === "free" && <p className="notice small">Free includes 3 sending domains across your organization. Add each domain here and verify its DNS records. No paid plan is required.</p>}
       <form className="card row" onSubmit={(e) => {
         e.preventDefault();
         const f = new FormData(e.currentTarget);
@@ -29,6 +32,7 @@ export default function DomainsPage() {
         <button className="btn btn-primary" disabled={pending} style={{ alignSelf: "flex-end" }}>Add domain</button>
       </form>
       {error && <p className="error" role="alert">{error}</p>}
+      <div className="table-scroll" tabIndex={0} role="region" aria-label="Sending domains">
       <table className="table" style={{ marginTop: 20 }}>
         <thead><tr><th>Domain</th><th>Status</th><th>Last checked</th></tr></thead>
         <tbody>
@@ -41,6 +45,7 @@ export default function DomainsPage() {
           ))}
         </tbody>
       </table>
+      </div>
       {data && data.data.length === 0 && <p className="muted">No domains yet. Test mode works without one.</p>}
     </>
   );

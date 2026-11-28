@@ -31,14 +31,16 @@ type OrderSummary struct {
 	Created     time.Time  `json:"created_at"`
 }
 type Status struct {
-	Baseline    string         `json:"baseline"`
-	HasCredits  bool           `json:"has_credits"`
-	HasPro      bool           `json:"has_pro"`
-	Enabled     bool           `json:"enabled"`
-	Currency    string         `json:"currency"`
-	Countries   []string       `json:"countries"`
-	HasCustomer bool           `json:"has_customer"`
-	Orders      []OrderSummary `json:"orders"`
+	ProfileEditable bool           `json:"billing_profile_editable"`
+	Profile         *Profile       `json:"billing_profile"`
+	Baseline        string         `json:"baseline"`
+	HasCredits      bool           `json:"has_credits"`
+	HasPro          bool           `json:"has_pro"`
+	Enabled         bool           `json:"enabled"`
+	Currency        string         `json:"currency"`
+	Countries       []string       `json:"countries"`
+	HasCustomer     bool           `json:"has_customer"`
+	Orders          []OrderSummary `json:"orders"`
 }
 
 func (s *Service) customerTx(ctx context.Context, org, user uuid.UUID, fn func(pgx.Tx) error) error {
@@ -61,7 +63,7 @@ func (s *Service) Status(ctx context.Context, org, user uuid.UUID) (Status, erro
 	}
 	sort.Strings(v.Countries)
 	err := s.customerTx(ctx, org, user, func(tx pgx.Tx) error {
-		if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM billing_orders b WHERE b.org_id=o.id AND b.sku<>'flex' AND b.state NOT IN ('expired','ended')),o.plan,EXISTS(SELECT 1 FROM credit_lots l WHERE l.org_id=o.id AND billing_usable AND expires_at>now() AND expired_at IS NULL AND granted>reserved+consumed+expired_amount),COALESCE(c.currency,''),c.customer_id IS NOT NULL FROM organizations o LEFT JOIN billing_customers c ON c.org_id=o.id WHERE o.id=$1`, org).Scan(&v.HasPro, &v.Baseline, &v.HasCredits, &v.Currency, &v.HasCustomer); err != nil {
+		if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM billing_orders b WHERE b.org_id=o.id AND b.sku<>'flex' AND b.state NOT IN ('expired','ended')),o.plan,EXISTS(SELECT 1 FROM credit_lots l WHERE l.org_id=o.id AND billing_usable AND expires_at>now() AND expired_at IS NULL AND granted>reserved+consumed+expired_amount),COALESCE(c.currency,''),c.customer_id IS NOT NULL,c.billing_profile,COALESCE(c.profile_rejected AND NOT c.creation_uncertain AND c.customer_id IS NULL,false) FROM organizations o LEFT JOIN billing_customers c ON c.org_id=o.id WHERE o.id=$1`, org).Scan(&v.HasPro, &v.Baseline, &v.HasCredits, &v.Currency, &v.HasCustomer, &v.Profile, &v.ProfileEditable); err != nil {
 			return err
 		}
 		rows, err := tx.Query(ctx, `SELECT id,sku,currency,state,created_at,cancel_at,paid_through FROM billing_order_status WHERE org_id=$1 ORDER BY created_at DESC LIMIT 25`, org)
@@ -108,7 +110,12 @@ func (s *Service) beginAction(ctx context.Context, org, user uuid.UUID) (func(),
 	}
 	return done, nil
 }
-func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.UUID, sku, currency, country string) (string, error) {
+func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.UUID, sku, currency string, proposed *Profile) (string, error) {
+	profile, err := s.normalizeProfile(proposed)
+	if err != nil {
+		return "", err
+	}
+	country := profile.Country
 	p, ok := s.C.Prices[sku+"_"+currency]
 	if !ok || !s.C.Countries[country] || token == uuid.Nil {
 		return "", apierr.New(422, "validation_error", "Choose an available plan, currency and billing country.")
@@ -123,19 +130,99 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 	var customerUUID uuid.UUID
 	var customerCreated time.Time
 	var o Order
-	err := s.customerTx(ctx, org, user, func(tx pgx.Tx) error {
+	err = s.customerTx(ctx, org, user, func(tx pgx.Tx) error {
 		if _, err := tx.Exec(ctx, `SELECT id FROM organizations WHERE id=$1 FOR UPDATE`, org); err != nil {
 			return err
 		}
-		if _, err := tx.Exec(ctx, `INSERT INTO billing_customers(org_id,currency) VALUES($1,$2) ON CONFLICT DO NOTHING`, org, currency); err != nil {
+		if _, err := tx.Exec(ctx, `INSERT INTO billing_customers(org_id,currency,billing_profile) VALUES($1,$2,$3) ON CONFLICT DO NOTHING`, org, currency, profile); err != nil {
+			return err
+		}
+		if _, err := tx.Exec(ctx, `SELECT hedvi_retry_billing_profile($1,$2,$3)`, org, profile, currency); err != nil {
 			return err
 		}
 		var boundCurrency string
-		if err := tx.QueryRow(ctx, `SELECT id,created_at,currency,coalesce(customer_id,'') FROM billing_customers WHERE org_id=$1`, org).Scan(&customerUUID, &customerCreated, &boundCurrency, &o.Customer); err != nil {
+		var boundProfile *Profile
+		if err := tx.QueryRow(ctx, `SELECT id,created_at,currency,coalesce(customer_id,''),billing_profile FROM billing_customers WHERE org_id=$1`, org).Scan(&customerUUID, &customerCreated, &boundCurrency, &o.Customer, &boundProfile); err != nil {
 			return err
+		}
+		if boundProfile == nil {
+			return apierr.New(409, "billing_profile_required", "This billing account needs an address review. Contact support before purchasing.")
+		}
+		if *boundProfile != profile {
+			return apierr.New(409, "billing_profile_locked", "This organization already has a billing address. Use the saved address or contact support to change it.")
 		}
 		if boundCurrency != currency {
 			return apierr.New(409, "billing_currency", "This organization's billing currency is already selected.")
+		}
+
+		return nil
+	})
+	if err != nil {
+		return "", err
+	}
+	if o.Customer == "" {
+		if time.Since(customerCreated) > 23*time.Hour {
+			return "", apierr.New(409, "billing_review", "Customer setup requires reconciliation. Contact support.")
+		}
+		claim := uuid.New()
+		if err := s.customerTx(ctx, org, user, func(tx pgx.Tx) error {
+			var acquired bool
+			if err := tx.QueryRow(ctx, `SELECT hedvi_claim_billing_customer($1,$2,$3)`, org, customerUUID, claim).Scan(&acquired); err != nil {
+				return err
+			}
+			if !acquired {
+				return apierr.New(409, "billing_setup_busy", "Billing setup is already in progress. Wait a moment and retry with the saved address.")
+			}
+			return nil
+		}); err != nil {
+			return "", err
+		}
+		var customer stripe.Customer
+		err = s.call(ctx, "POST", "/customers", profile.customerParams(customerUUID.String()), "hedvi-customer-"+customerUUID.String(), &customer)
+		if err == nil && (!stripeID.MatchString(customer.ID) || customer.Livemode != s.C.Live || !profile.matchesCustomer(&customer)) {
+			err = errors.New("unexpected Stripe customer")
+		}
+		if err != nil {
+			// Record an ambiguous result even after the request deadline. A
+			// crash before this write leaves a lease whose takeover is always
+			// uncertain, so it can never authorize changing the address.
+			finishCtx, finishCancel := context.WithTimeout(context.WithoutCancel(ctx), 3*time.Second)
+			defer finishCancel()
+			var editable bool
+			finishErr := s.customerTx(finishCtx, org, user, func(tx pgx.Tx) error {
+				return tx.QueryRow(finishCtx, `SELECT hedvi_fail_billing_customer($1,$2,$3,$4)`, org, customerUUID, claim, errors.Is(err, errCustomerLocation)).Scan(&editable)
+			})
+			if finishErr != nil {
+				return "", finishErr
+			}
+			if errors.Is(err, errCustomerLocation) {
+				message := "Stripe could not validate the billing address. Its earlier creation outcome is uncertain; retry with the saved address or contact support."
+				if editable {
+					message = "Stripe could not validate this billing address. Check the address and postal code, then try again. No checkout was created."
+				}
+				return "", apierr.New(422, "billing_address", "%s", message)
+			}
+			return "", err
+		}
+		o.Customer = customer.ID
+		if err = s.customerTx(ctx, org, user, func(tx pgx.Tx) error {
+			tag, e := tx.Exec(ctx, `UPDATE billing_customers SET customer_id=$2 WHERE org_id=$1 AND id=$3 AND NOT profile_rejected AND (customer_id IS NULL OR customer_id=$2)`, org, customer.ID, customerUUID)
+			if e == nil && tag.RowsAffected() != 1 {
+				return errors.New("billing customer conflict")
+			}
+			return e
+		}); err != nil {
+			return "", err
+		}
+	}
+	if err := s.verifyCustomer(ctx, o.Customer, customerUUID, &profile); err != nil {
+		return "", err
+	}
+	// No local payable order exists until Customer creation is confirmed. This
+	// makes a definitive first-attempt location rejection safely correctable.
+	err = s.customerTx(ctx, org, user, func(tx pgx.Tx) error {
+		if _, err := tx.Exec(ctx, `SELECT id FROM organizations WHERE id=$1 FOR UPDATE`, org); err != nil {
+			return err
 		}
 		// A timed-out create, double-click or second browser tab reuses an open checkout.
 		err := tx.QueryRow(ctx, `SELECT return_project_id,id,sku,currency,country,coalesce(session_id,''),state,created_at FROM billing_orders WHERE org_id=$1 AND (request_id=$2 OR (sku=$3 AND state IN ('creating','open','review')) OR ($3<>'flex' AND sku<>'flex' AND state NOT IN ('ended','expired'))) ORDER BY (request_id=$2) DESC,created_at LIMIT 1`, org, token, sku).Scan(&project, &o.ID, &o.SKU, &o.Currency, &o.Country, &o.Session, &o.State, &o.Created)
@@ -153,32 +240,6 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 	if err != nil {
 		return "", err
 	}
-	if o.Customer == "" {
-		if time.Since(customerCreated) > 23*time.Hour {
-			return "", apierr.New(409, "billing_review", "Customer setup requires reconciliation. Contact support.")
-		}
-		var customer stripe.Customer
-		err = s.call(ctx, "POST", "/customers", url.Values{"metadata[hedvi_customer]": {customerUUID.String()}}, "hedvi-customer-"+customerUUID.String(), &customer)
-		if err != nil {
-			return "", err
-		}
-		if !stripeID.MatchString(customer.ID) || customer.Livemode != s.C.Live {
-			return "", errors.New("unexpected Stripe customer")
-		}
-		o.Customer = customer.ID
-		if err = s.customerTx(ctx, org, user, func(tx pgx.Tx) error {
-			tag, e := tx.Exec(ctx, `UPDATE billing_customers SET customer_id=$2 WHERE org_id=$1 AND (customer_id IS NULL OR customer_id=$2)`, org, customer.ID)
-			if e == nil && tag.RowsAffected() != 1 {
-				return errors.New("billing customer conflict")
-			}
-			return e
-		}); err != nil {
-			return "", err
-		}
-	}
-	if err := s.verifyCustomer(ctx, o.Customer, customerUUID); err != nil {
-		return "", err
-	}
 	var session stripe.CheckoutSession
 	if o.Session != "" {
 		err = s.get(ctx, "/checkout/sessions/"+o.Session, nil, &session)
@@ -188,7 +249,7 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 		}
 		// Stable return destinations are required when a purchase is retried from a different project.
 		dest := s.C.AppURL + "/app/" + project.String() + "/settings/billing-return"
-		v := url.Values{"mode": {p.mode()}, "customer": {o.Customer}, "line_items[0][price]": {p.ID}, "line_items[0][quantity]": {"1"}, "payment_method_types[0]": {"card"}, "adaptive_pricing[enabled]": {"false"}, "allow_promotion_codes": {"false"}, "consent_collection[terms_of_service]": {"required"}, "billing_address_collection": {"required"}, "customer_update[address]": {"auto"}, "customer_update[name]": {"auto"}, "tax_id_collection[enabled]": {"true"}, "automatic_tax[enabled]": {"true"}, "client_reference_id": {o.ID.String()}, "metadata[hedvi_order]": {o.ID.String()}, "success_url": {dest + "?order=" + o.ID.String()}, "cancel_url": {dest + "?order=" + o.ID.String()}}
+		v := url.Values{"mode": {p.mode()}, "customer": {o.Customer}, "line_items[0][price]": {p.ID}, "line_items[0][quantity]": {"1"}, "payment_method_types[0]": {"card"}, "adaptive_pricing[enabled]": {"false"}, "allow_promotion_codes": {"false"}, "consent_collection[terms_of_service]": {"required"}, "billing_address_collection": {"auto"}, "customer_update[address]": {"never"}, "customer_update[name]": {"auto"}, "tax_id_collection[enabled]": {"true"}, "automatic_tax[enabled]": {"true"}, "client_reference_id": {o.ID.String()}, "metadata[hedvi_order]": {o.ID.String()}, "success_url": {dest + "?order=" + o.ID.String()}, "cancel_url": {dest + "?order=" + o.ID.String()}}
 		if sku == "flex" {
 			v.Set("invoice_creation[enabled]", "true")
 			v.Set("payment_intent_data[metadata][hedvi_order]", o.ID.String())
@@ -221,7 +282,7 @@ func stripeURL(raw, host string) bool {
 	u, err := url.Parse(raw)
 	return err == nil && u.Scheme == "https" && u.User == nil && u.Host == host
 }
-func (s *Service) verifyCustomer(ctx context.Context, id string, local uuid.UUID) error {
+func (s *Service) verifyCustomer(ctx context.Context, id string, local uuid.UUID, profile *Profile) error {
 	if !stripeID.MatchString(id) || !strings.HasPrefix(id, "cus_") {
 		return errors.New("customer binding missing")
 	}
@@ -231,6 +292,9 @@ func (s *Service) verifyCustomer(ctx context.Context, id string, local uuid.UUID
 	}
 	if c.ID != id || c.Deleted || c.Livemode != s.C.Live || c.Metadata["hedvi_customer"] != local.String() {
 		return errors.New("Stripe customer binding differs from the organization")
+	}
+	if profile != nil && !profile.matchesCustomer(&c) {
+		return apierr.New(409, "billing_address_changed", "The Stripe billing address needs review. Contact support before purchasing.")
 	}
 	return nil
 }
@@ -253,7 +317,7 @@ func (s *Service) Portal(ctx context.Context, org, user, project uuid.UUID) (str
 	if err != nil {
 		return "", err
 	}
-	if err := s.verifyCustomer(ctx, customer, local); err != nil {
+	if err := s.verifyCustomer(ctx, customer, local, nil); err != nil {
 		return "", err
 	}
 	var cfg stripe.BillingPortalConfiguration

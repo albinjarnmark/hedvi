@@ -23,6 +23,8 @@ import (
 
 const APIVersion = stripe.APIVersion
 
+var errCustomerLocation = errors.New("Stripe rejected the new customer tax location")
+
 var stripeID = regexp.MustCompile(`^[a-zA-Z0-9_]{5,255}$`)
 var countryCode = regexp.MustCompile(`^[A-Z]{2}$`)
 
@@ -207,6 +209,18 @@ func (s *Service) call(ctx context.Context, method, path string, v url.Values, k
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		if method == http.MethodPost && path == "/customers" && resp.StatusCode == 400 {
+			var failure struct {
+				Error struct {
+					Code string `json:"code"`
+					Type string `json:"type"`
+				} `json:"error"`
+			}
+			decodeErr := json.NewDecoder(io.LimitReader(resp.Body, 32<<10)).Decode(&failure)
+			if decodeErr == nil && failure.Error.Type == "invalid_request_error" && failure.Error.Code == "customer_tax_location_invalid" && resp.Header.Get("Stripe-Should-Retry") != "true" {
+				return errCustomerLocation
+			}
+		}
 		return fmt.Errorf("Stripe returned HTTP %d (request %s)", resp.StatusCode, resp.Header.Get("Request-Id"))
 	}
 	b, err := io.ReadAll(io.LimitReader(resp.Body, 4<<20+1))

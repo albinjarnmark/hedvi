@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { billingProfileFromForm, type BillingProfile } from "@/lib/billing-profile";
 import { api, formatDate } from "@/lib/api";
 import { useAction, useLoad } from "@/lib/hooks";
 
@@ -22,6 +23,8 @@ type Billing = {
   currency: string;
   countries: string[];
   has_customer: boolean;
+  billing_profile: BillingProfile | null;
+  billing_profile_editable: boolean;
   orders: BillingOrder[];
 };
 
@@ -67,8 +70,14 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
 
   function openStripe(action: "checkout" | "portal", body: Record<string, unknown>) {
     return run(async () => {
-      const result = await api<{ url: string }>(`${path}/${action}`, { method: "POST", body });
-      window.location.assign(result.url);
+      try {
+        const result = await api<{ url: string }>(`${path}/${action}`, { method: "POST", body });
+        window.location.assign(result.url);
+      } catch (error) {
+        // A timed-out provider response may still have bound the invoice address.
+        await load.reload();
+        throw error;
+      }
     });
   }
 
@@ -78,8 +87,8 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
       <p>Free includes 5,000 recipients per UTC calendar month. A Flex pack covers 10,000 recipients for 365 days. Pro renews its allowance each paid billing period.</p>
       <form className="stack" onSubmit={event => {
         event.preventDefault();
-        const country = new FormData(event.currentTarget).get("country");
-        void openStripe("checkout", { sku, currency, country, request_id: crypto.randomUUID() });
+        const profile = data.billing_profile && !data.billing_profile_editable ? data.billing_profile : billingProfileFromForm(new FormData(event.currentTarget));
+        void openStripe("checkout", { sku, currency, billing_profile: profile, request_id: crypto.randomUUID() });
       }}>
         <div className="row">
           <div>
@@ -96,15 +105,44 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
               ))}
             </select>
           </div>
+
+        </div>
+        {data.billing_profile && !data.billing_profile_editable ? (
           <div>
-            <label htmlFor="billing-country">Billing country</label>
-            <select required id="billing-country" name="country">
+            <h3>Company billing address</h3>
+            <p>{data.billing_profile.name}<br />{data.billing_profile.line1}
+              {data.billing_profile.line2 && <><br />{data.billing_profile.line2}</>}
+              <br />{data.billing_profile.postal_code} {data.billing_profile.city}
+              {data.billing_profile.state && <><br />{data.billing_profile.state}</>}
+              <br />{new Intl.DisplayNames(["en"], { type: "region" }).of(data.billing_profile.country) ?? data.billing_profile.country}
+            </p>
+            <p className="small muted">This address is used for invoices and tax. Contact support to change it. Stripe may ask for your legal business name when you provide a tax ID.</p>
+          </div>
+        ) : (
+          <fieldset className="stack" disabled={pending}>
+            <legend>Company billing address</legend>
+            <p className="small muted">Enter the address of the company buying Hedvi. We validate and save it for invoices and tax before opening Stripe. You can correct an address that Stripe rejects. Once setup succeeds or its result is uncertain, contact support to change the saved address.</p>
+            <label htmlFor="billing-name">Company name</label>
+            <input required id="billing-name" name="name" defaultValue={data.billing_profile?.name} autoComplete="organization" maxLength={200} />
+            <label htmlFor="billing-line1">Street address</label>
+            <input required id="billing-line1" name="line1" defaultValue={data.billing_profile?.line1} autoComplete="billing address-line1" maxLength={200} />
+            <label htmlFor="billing-line2">Address line 2 (optional)</label>
+            <input id="billing-line2" name="line2" defaultValue={data.billing_profile?.line2} autoComplete="billing address-line2" maxLength={200} />
+            <label htmlFor="billing-postal">Postal code</label>
+            <input required id="billing-postal" name="postal_code" defaultValue={data.billing_profile?.postal_code} autoComplete="billing postal-code" maxLength={20} />
+            <label htmlFor="billing-city">City</label>
+            <input required id="billing-city" name="city" defaultValue={data.billing_profile?.city} autoComplete="billing address-level2" maxLength={200} />
+            <label htmlFor="billing-state">State or region (optional)</label>
+            <input id="billing-state" name="state" defaultValue={data.billing_profile?.state} autoComplete="billing address-level1" maxLength={200} />
+            <label htmlFor="billing-country">Company billing country</label>
+            <select required id="billing-country" name="country" defaultValue={data.billing_profile?.country} autoComplete="billing country">
               {data.countries.map(country => (
                 <option key={country} value={country}>{new Intl.DisplayNames(["en"], { type: "region" }).of(country) ?? country}</option>
               ))}
             </select>
-          </div>
-        </div>
+          </fieldset>
+        )}
+        <p className="small muted">Your card can be issued in a different country. Payment details entered in Stripe do not change your company billing address.</p>
         <p className="small muted">
           {sku === "flex"
             ? "A first Flex purchase moves a Free organization to prepaid usage. Each pack includes 250 MiB of attachment data."

@@ -3,6 +3,7 @@ import { Logo } from "./Logo";
 import type { Dict } from "@/lib/i18n";
 import { appLink } from "@/lib/navigation";
 import { sourceUrl } from "@/lib/public-site";
+import { ResponsiveNav } from "./ResponsiveNav";
 
 export function SiteHeader({ t, base = "" }: { t: Dict; base?: string }) {
   return (
@@ -12,14 +13,14 @@ export function SiteHeader({ t, base = "" }: { t: Dict; base?: string }) {
         <Link href={base || "/"} aria-label="Hedvi home">
           <Logo />
         </Link>
-        <nav aria-label="Main">
+        <ResponsiveNav id="site-navigation" label="Main" className="site-navigation">
           <Link href="/docs">{t.nav.docs}</Link>
           <Link href={base ? `${base}/priser` : "/pricing"}>{t.nav.pricing}</Link>
           <Link href="/docs/switch-from-resend">{t.nav.switch}</Link>
           <Link href={t.nav.otherHref} hrefLang={base ? "en" : "sv"}>{t.nav.other}</Link>
           <Link href={appLink("/login")}>{t.nav.signin}</Link>
           <Link className="btn btn-primary btn-small" href={appLink(base ? "/signup?locale=sv" : "/signup")}>{t.nav.start}</Link>
-        </nav>
+        </ResponsiveNav>
       </div>
     </header>
   );

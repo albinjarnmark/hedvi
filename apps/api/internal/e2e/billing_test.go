@@ -24,6 +24,16 @@ import (
 
 type billingJSON = map[string]any
 type stripeFixture struct {
+	customerErrorCode                           string
+	customerRetryable                           bool
+	customerAddress                             billingJSON
+	customerShipping                            billingJSON
+	customerDetailsCountry, invoiceCountry      string
+	customerCreates, sessionCreates             int
+	lostCustomerResponses, lostSessionResponses int
+	rejectCustomer                              bool
+	customerKeys, customerForms, checkoutForms  []string
+
 	blockedPath                                                              string
 	missingConsent                                                           bool
 	currency                                                                 string
@@ -72,7 +82,7 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 		if f.missingConsent {
 			consent = ""
 		}
-		return billingJSON{"id": f.session, "consent": billingJSON{"terms_of_service": consent}, "consent_collection": billingJSON{"terms_of_service": "required"}, "mode": mode, "status": f.status, "payment_status": map[bool]string{true: "paid", false: "unpaid"}[f.paid], "customer": "cus_hedvi", "metadata": billingJSON{"hedvi_order": f.order}, "client_reference_id": f.order, "payment_intent": "pi_hedvi", "amount_subtotal": f.amount, "amount_total": total, "currency": f.currency, "automatic_tax": billingJSON{"enabled": true, "status": "complete"}, "customer_details": billingJSON{"address": billingJSON{"country": "SE"}}, "url": "https://checkout.stripe.com/c/pay/mock", "invoice": f.invoiceID, "subscription": f.sub}
+		return billingJSON{"id": f.session, "consent": billingJSON{"terms_of_service": consent}, "consent_collection": billingJSON{"terms_of_service": "required"}, "mode": mode, "status": f.status, "payment_status": map[bool]string{true: "paid", false: "unpaid"}[f.paid], "customer": "cus_hedvi", "metadata": billingJSON{"hedvi_order": f.order}, "client_reference_id": f.order, "payment_intent": "pi_hedvi", "amount_subtotal": f.amount, "amount_total": total, "currency": f.currency, "automatic_tax": billingJSON{"enabled": true, "status": "complete"}, "customer_details": billingJSON{"address": billingJSON{"country": f.customerDetailsCountry}}, "url": "https://checkout.stripe.com/c/pay/mock", "invoice": f.invoiceID, "subscription": f.sub}
 	}
 	var result any
 	switch {
@@ -94,17 +104,49 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 		result = billingJSON{"id": "bps_hedvi", "customer": "cus_hedvi", "configuration": "bpc_hedvi", "url": "https://billing.stripe.com/p/session/mock"}
 	case path == "/customers" && r.Method == "POST":
 		_ = r.ParseForm()
+		f.customerCreates++
+		f.customerKeys = append(f.customerKeys, r.Header.Get("Idempotency-Key"))
+		f.customerForms = append(f.customerForms, r.Form.Encode())
+		if r.Form.Get("tax[validate_location]") != "immediately" {
+			return nil, fmt.Errorf("missing tax location validation")
+		}
+		if f.rejectCustomer {
+			code := f.customerErrorCode
+			if code == "" {
+				code = "customer_tax_location_invalid"
+			}
+			raw, _ := json.Marshal(billingJSON{"error": billingJSON{"code": code, "type": "invalid_request_error"}})
+			headers := make(http.Header)
+			if f.customerRetryable {
+				headers.Set("Stripe-Should-Retry", "true")
+			}
+			return &http.Response{StatusCode: 400, Body: io.NopCloser(bytes.NewReader(raw)), Header: headers}, nil
+		}
 		f.customerRef = r.Form.Get("metadata[hedvi_customer]")
-		result = billingJSON{"id": "cus_hedvi"}
+		f.customerAddress = billingJSON{}
+		for _, key := range []string{"line1", "line2", "city", "state", "postal_code", "country"} {
+			f.customerAddress[key] = r.Form.Get("address[" + key + "]")
+		}
+		result = billingJSON{"id": "cus_hedvi", "address": f.customerAddress}
+		if f.lostCustomerResponses > 0 {
+			f.lostCustomerResponses--
+			return nil, fmt.Errorf("customer created but response lost")
+		}
 	case path == "/customers/cus_hedvi":
-		result = billingJSON{"id": "cus_hedvi", "metadata": billingJSON{"hedvi_customer": f.customerRef}}
+		result = billingJSON{"id": "cus_hedvi", "address": f.customerAddress, "shipping": f.customerShipping, "metadata": billingJSON{"hedvi_customer": f.customerRef}}
 	case path == "/checkout/sessions" && r.Method == "POST":
 		_ = r.ParseForm()
 		f.order = r.Form.Get("client_reference_id")
-		if r.Form.Get("metadata[hedvi_order]") != f.order || r.Form.Get("line_items[0][price]") != f.price || r.Form.Get("automatic_tax[enabled]") != "true" || r.Form.Get("consent_collection[terms_of_service]") != "required" {
+		f.sessionCreates++
+		f.checkoutForms = append(f.checkoutForms, r.Form.Encode())
+		if r.Form.Get("metadata[hedvi_order]") != f.order || r.Form.Get("line_items[0][price]") != f.price || r.Form.Get("automatic_tax[enabled]") != "true" || r.Form.Get("consent_collection[terms_of_service]") != "required" || r.Form.Get("customer_update[address]") != "never" || r.Form.Get("billing_address_collection") != "auto" || r.Form.Get("shipping_address_collection[allowed_countries][0]") != "" {
 			return nil, fmt.Errorf("invalid checkout")
 		}
 		result = cs()
+		if f.lostSessionResponses > 0 {
+			f.lostSessionResponses--
+			return nil, fmt.Errorf("session created but response lost")
+		}
 	case path == "/checkout/sessions":
 		result = items(cs())
 	case path == "/checkout/sessions/"+f.session:
@@ -120,7 +162,11 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 		if f.conflict {
 			customer = "cus_unrelated"
 		}
-		inv := billingJSON{"id": f.invoiceID, "customer": customer, "currency": f.currency, "status": "paid", "subtotal": f.amount, "subtotal_excluding_tax": f.amount, "total_excluding_tax": f.amount, "amount_due": total, "total_taxes": []any{billingJSON{"tax_behavior": "exclusive", "amount": tax}}, "total": total, "amount_paid": total, "amount_remaining": 0, "collection_method": "charge_automatically", "customer_address": billingJSON{"country": "SE"}, "automatic_tax": billingJSON{"enabled": true, "status": "complete"}, "status_transitions": billingJSON{"paid_at": f.start}}
+		invoiceCountry := f.invoiceCountry
+		if invoiceCountry == "" {
+			invoiceCountry = "SE"
+		}
+		inv := billingJSON{"id": f.invoiceID, "customer": customer, "currency": f.currency, "status": "paid", "subtotal": f.amount, "subtotal_excluding_tax": f.amount, "total_excluding_tax": f.amount, "amount_due": total, "total_taxes": []any{billingJSON{"tax_behavior": "exclusive", "amount": tax}}, "total": total, "amount_paid": total, "amount_remaining": 0, "collection_method": "charge_automatically", "customer_address": billingJSON{"country": invoiceCountry}, "automatic_tax": billingJSON{"enabled": true, "status": "complete"}, "status_transitions": billingJSON{"paid_at": f.start}}
 		if f.offStripe {
 			inv["amount_paid_off_stripe"] = total
 		}
@@ -144,7 +190,7 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 	case path == "/payment_intents/pi_hedvi":
 		result = billingJSON{"id": "pi_hedvi", "status": "succeeded", "customer": "cus_hedvi", "amount_received": total, "currency": f.currency, "latest_charge": "ch_hedvi"}
 	case path == "/charges/ch_hedvi":
-		result = billingJSON{"id": "ch_hedvi", "customer": "cus_hedvi", "payment_intent": "pi_hedvi", "paid": true, "captured": true, "amount_captured": total, "currency": f.currency, "amount_refunded": f.refunded, "refunded": f.refunded == total, "disputed": f.dispute != "", "payment_method_details": billingJSON{"type": "card"}}
+		result = billingJSON{"id": "ch_hedvi", "customer": "cus_hedvi", "payment_intent": "pi_hedvi", "paid": true, "captured": true, "amount_captured": total, "currency": f.currency, "amount_refunded": f.refunded, "refunded": f.refunded == total, "disputed": f.dispute != "", "payment_method_details": billingJSON{"type": "card", "card": billingJSON{"country": "US"}}}
 	case path == "/refunds":
 		result = items()
 	case path == "/disputes/dp_hedvi":
@@ -173,7 +219,7 @@ func TestStripeOrdersGrantOnlyCanonicalEconomicSources(t *testing.T) {
 			if product.currency == "usd" {
 				start = now.AddDate(0, 0, -8).Truncate(time.Second)
 			}
-			f := &stripeFixture{sku: sku, currency: product.currency, amount: product.amount, price: "price_hedvi", session: "cs_test_hedvi", invoiceID: "in_hedvi", status: "open", start: start.Unix(), end: start.AddDate(0, 1, 0).Unix()}
+			f := &stripeFixture{customerDetailsCountry: "US", sku: sku, currency: product.currency, amount: product.amount, price: "price_hedvi", session: "cs_test_hedvi", invoiceID: "in_hedvi", status: "open", start: start.Unix(), end: start.AddDate(0, 1, 0).Unix()}
 			if sku != "flex" {
 				f.sub = "sub_hedvi"
 			}
@@ -192,7 +238,7 @@ func TestStripeOrdersGrantOnlyCanonicalEconomicSources(t *testing.T) {
 			e.Console.Billing = srv
 			path := "/console/v1/projects/" + project.String() + "/billing"
 			token := uuid.New()
-			req := map[string]any{"sku": sku, "currency": product.currency, "country": "SE", "request_id": token}
+			req := map[string]any{"sku": sku, "currency": product.currency, "billing_profile": testBillingProfile(), "request_id": token}
 			usage := func(at time.Time) quota.Usage {
 				var u quota.Usage
 				err := db.InOrg(e.Ctx, e.APIPool, org, func(tx pgx.Tx) error {
