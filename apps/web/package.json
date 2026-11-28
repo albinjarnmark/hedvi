@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "next": "16.4.6",
-    "parse5": "7.3.0",
+    "parse5": "8.1.1",
     "qrcode": "1.5.4",
     "react": "19.3.1",
     "react-dom": "19.3.1"
