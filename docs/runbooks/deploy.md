@@ -105,7 +105,7 @@ schema migration and controls service counts.
    72-hour challenge window, have an organization owner/admin accept the current
    documents, then click Verify to provision SES. Publish the displayed DKIM and MAIL FROM records and refresh
    until verified. The worker performs its own DNS/provider check and activates
-   unrestricted new projects automatically at 25/hour and 100/day per project.
+   unrestricted new projects automatically at the active plan’s acceptance limits. Apply migration 0017 before starting the updated API and worker. Verify the project and shared organization limits in Settings.
    Paused projects and restricted organizations never auto-reactivate. Keep the ownership TXT published.
 5. Restore the intended worker count. Use the isolated worker task role and
    database credential for operator commands. For example, a one-off worker

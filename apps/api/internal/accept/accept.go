@@ -90,9 +90,11 @@ func ValidIdempotencyKey(k string) bool {
 // suppressions. The storage budget counts each retained canonical payload once.
 // Neither measure is a commercial quota reservation.
 type liveBudget struct {
-	hourlyLimit, dailyLimit int
-	hourUsed, dayUsed       int
-	storageRemaining        int64
+	hourlyLimit, dailyLimit   int
+	hourUsed, dayUsed         int
+	orgHourLimit, orgDayLimit int
+	orgHourUsed, orgDayUsed   int64
+	storageRemaining          int64
 }
 
 func (b liveBudget) check(recipients int, payloadBytes int64) error {
@@ -104,6 +106,12 @@ func (b liveBudget) check(recipients int, payloadBytes int64) error {
 	}
 	if recipients > b.dailyLimit-b.dayUsed {
 		return liveWindowError("live_day", b.dailyLimit)
+	}
+	if int64(recipients) > int64(b.orgHourLimit)-b.orgHourUsed {
+		return apierr.New(429, "rate_limit_exceeded", "This organization's shared hourly acceptance limit is %d recipients. It resets at the next UTC hour.", b.orgHourLimit)
+	}
+	if int64(recipients) > int64(b.orgDayLimit)-b.orgDayUsed {
+		return apierr.New(429, "daily_quota_exceeded", "This organization's shared daily acceptance limit is %d recipients. It resets at 00:00 UTC.", b.orgDayLimit)
 	}
 	return nil
 }
@@ -137,15 +145,17 @@ type orgContext struct {
 func (s *Service) loadContext(ctx context.Context, tx pgx.Tx, p Principal, m *message.Message, now time.Time, committing bool, oc *orgContext) error {
 	err := tx.QueryRow(ctx, `SELECT hedvi_effective_plan(o.id,$4), o.risk_status, o.metadata_retention_days, o.content_retention_days,
 				o.use_credits_for_overage, o.overage_enabled, o.overage_cap_recipients,
-				p.sending_status, p.hourly_limit, p.daily_limit, p.test_daily_limit, p.test_storage_limit_bytes,
+				p.sending_status, lim.hourly, lim.daily, lim.org_hourly, lim.org_daily, p.test_daily_limit, p.test_storage_limit_bytes,
 				coalesce((SELECT count FROM send_counters WHERE project_id=p.id AND window_kind='test_day' AND window_start=$3),0),
                 p.live_storage_limit_bytes - p.live_stored_payload_bytes,
 				coalesce((SELECT count FROM send_counters WHERE project_id = p.id AND window_kind = 'live_hour' AND window_start = $2), 0),
-				coalesce((SELECT count FROM send_counters WHERE project_id = p.id AND window_kind = 'live_day' AND window_start = $3), 0)
-			FROM projects p JOIN organizations o ON o.id = p.org_id WHERE p.id = $1`, p.ProjectID, now.UTC().Truncate(time.Hour), truncDay(now), now).Scan(
+				coalesce((SELECT count FROM send_counters WHERE project_id = p.id AND window_kind = 'live_day' AND window_start = $3), 0),
+                coalesce((SELECT sum(count) FROM send_counters WHERE org_id=o.id AND window_kind='live_hour' AND window_start=$2),0),
+                coalesce((SELECT sum(count) FROM send_counters WHERE org_id=o.id AND window_kind='live_day' AND window_start=$3),0)
+			FROM projects p JOIN organizations o ON o.id = p.org_id CROSS JOIN LATERAL hedvi_live_limits(p.id,$4) lim WHERE p.id = $1`, p.ProjectID, now.UTC().Truncate(time.Hour), truncDay(now), now).Scan(
 		&oc.plan, &oc.riskStatus, &oc.metadataDays, &oc.contentDays, &oc.useCredits, &oc.overage, &oc.overageCap,
-		&oc.sendingStatus, &oc.liveBudget.hourlyLimit, &oc.liveBudget.dailyLimit, &oc.testDailyLimit, &oc.testStorageLimit, &oc.testDailyUsed,
-		&oc.liveBudget.storageRemaining, &oc.liveBudget.hourUsed, &oc.liveBudget.dayUsed)
+		&oc.sendingStatus, &oc.liveBudget.hourlyLimit, &oc.liveBudget.dailyLimit, &oc.liveBudget.orgHourLimit, &oc.liveBudget.orgDayLimit, &oc.testDailyLimit, &oc.testStorageLimit, &oc.testDailyUsed,
+		&oc.liveBudget.storageRemaining, &oc.liveBudget.hourUsed, &oc.liveBudget.dayUsed, &oc.liveBudget.orgHourUsed, &oc.liveBudget.orgDayUsed)
 	if err != nil {
 		return fmt.Errorf("load project: %w", err)
 	}
@@ -402,7 +412,7 @@ func (s *Service) replay(ctx context.Context, p Principal, operation, key string
 }
 
 func (s *Service) checkPolicy(p Principal, m *message.Message, oc *orgContext, payloadBytes int64) error {
-	if oc.riskStatus == "paused" || oc.riskStatus == "blocked" {
+	if oc.riskStatus == "paused" || oc.riskStatus == "blocked" || (p.Mode == "live" && oc.riskStatus == "restricted") {
 		return apierr.New(403, "security_error", "Sending is paused for this organization. Contact your service operator.")
 	}
 	if p.Mode == "test" {
@@ -421,7 +431,7 @@ func (s *Service) checkPolicy(p Principal, m *message.Message, oc *orgContext, p
 		return apierr.New(403, "security_error", "Live sending is paused for this project. See the dashboard for the reason, or contact your service operator.")
 	default:
 		return apierr.New(403, "validation_error",
-			"Live sending is not enabled for this project yet. Request access under Settings. Test keys work right away.")
+			"Verify a sending domain and accept the current terms to enable live sending. Test keys work right away.")
 	}
 	if oc.domainID == nil {
 		return apierr.New(403, "validation_error",
@@ -444,10 +454,10 @@ func (s *Service) checkPolicy(p Principal, m *message.Message, oc *orgContext, p
 
 func (s *Service) insert(ctx context.Context, tx pgx.Tx, p Principal, m *message.Message,
 	emailID uuid.UUID, key string, hash []byte, payloadBytes int64, idemKey string, now time.Time) error {
-	// Lock in parent-first order. Loop detection spans every project in the
-	// organization, so serialize those live decisions across projects.
+	// Every live request consumes the shared organization windows. Serialize
+	// the final counter read and increment, including when loop detection is off.
 	lockOrg := " FOR SHARE"
-	if p.Mode == "live" && s.LoopThreshold > 0 {
+	if p.Mode == "live" {
 		lockOrg = " FOR NO KEY UPDATE"
 	}
 	if _, err := tx.Exec(ctx, `SELECT id FROM organizations WHERE id=$1`+lockOrg, p.OrgID); err != nil {

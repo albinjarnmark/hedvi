@@ -112,6 +112,8 @@ func (s *Server) Routes(mux *http.ServeMux) {
 	pr("GET", "/domains", dev, s.listDomains)
 	pr("POST", "/domains", dev, s.createDomain)
 	pr("GET", "/domains/{id}", dev, s.getDomain)
+	pr("POST", "/domains/{id}/dns-export", dev, s.prepareDNSExport)
+	pr("PATCH", "/domains/{id}/mail-from", dev, s.changeMailFrom)
 	pr("POST", "/domains/{id}/verify", dev, s.verifyDomain)
 	pr("DELETE", "/domains/{id}", dev, s.deleteDomain)
 	pr("GET", "/webhooks", dev, s.listWebhooks)

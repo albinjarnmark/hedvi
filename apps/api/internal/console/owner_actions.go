@@ -36,11 +36,11 @@ func (s *Server) ownerSummary(ctx context.Context, tx pgx.Tx, r *http.Request, a
    COALESCE((SELECT jsonb_agg(to_jsonb(x)) FROM (SELECT o.id,o.name FROM memberships m JOIN organizations o ON o.id=m.org_id
    WHERE m.user_id=u.id AND m.role='owner' ORDER BY o.created_at,o.id LIMIT 10)x),'[]') organizations
    FROM users u ORDER BY u.created_at DESC,u.id DESC LIMIT 50`},
-		{"reviews", `SELECT p.id,p.name,p.org_id,o.name organization,p.sending_status state,p.hourly_limit,p.daily_limit,
+		{"reviews", `SELECT p.id,p.name,p.org_id,o.name organization,p.sending_status state,lim.hourly hourly_limit,lim.daily daily_limit,lim.manual sending_limits_manual,
   (SELECT count(*) FROM domains d WHERE d.project_id=p.id AND d.status='verified' AND d.deleted_at IS NULL) verified_domains,
   left(p.review_request->>'website',200) website,left(p.review_request->>'use_case',2000) use_case,
   left(p.review_request->>'recipient_consent',1000) consent,left(p.review_request->>'monthly_volume',20) volume
-  FROM projects p JOIN organizations o ON o.id=p.org_id WHERE ($1::uuid IS NULL OR p.id=$1) AND ($2::uuid IS NULL OR p.org_id=$2)
+  FROM projects p JOIN organizations o ON o.id=p.org_id CROSS JOIN LATERAL hedvi_live_limits(p.id,statement_timestamp()) lim WHERE ($1::uuid IS NULL OR p.id=$1) AND ($2::uuid IS NULL OR p.org_id=$2)
   ORDER BY (p.sending_status='pending_review') DESC,p.status_changed_at DESC,p.id LIMIT 50`},
 		{"grants", `SELECT g.id,g.org_id,o.name organization,g.plan,g.starts_at,g.ends_at,g.revoked_at,
   CASE WHEN g.revoked_at IS NOT NULL THEN 'revoked' WHEN g.ends_at<=now() THEN 'expired' ELSE 'active' END AS state,
@@ -247,11 +247,13 @@ func (s *Server) ownerDecide(ctx context.Context, tx pgx.Tx, r *http.Request, a 
 		return nil, err
 	}
 	var req struct {
-		Action string `json:"action"`
-		Hourly int    `json:"hourly_limit"`
-		Daily  int    `json:"daily_limit"`
-		Reason string `json:"reason"`
+		Action  string `json:"action"`
+		UsePlan bool   `json:"use_plan_limits"`
+		Hourly  int    `json:"hourly_limit"`
+		Daily   int    `json:"daily_limit"`
+		Reason  string `json:"reason"`
 	}
+	keepLimits := false
 	switch path.Base(r.URL.Path) {
 	case "approve":
 		var old struct {
@@ -263,6 +265,7 @@ func (s *Server) ownerDecide(ctx context.Context, tx pgx.Tx, r *http.Request, a 
 			return nil, err
 		}
 		req.Action, req.Reason, req.Hourly, req.Daily = "approve", old.Note, old.Hourly, old.Daily
+		keepLimits = req.Hourly == 0 && req.Daily == 0
 		if req.Hourly == 0 {
 			req.Hourly = 25
 		}
@@ -300,10 +303,10 @@ func (s *Server) ownerDecide(ctx context.Context, tx pgx.Tx, r *http.Request, a 
 		return nil, ownerNotFound(err)
 	}
 	if state != "paused" && state != "pending_review" && state != "approved" && !(state == "test_only" && req.Action == "pause") {
-		return nil, ownerConflict("The customer must first submit a live-access request.")
+		return nil, ownerConflict("The project must complete domain activation before its live limits can be managed.")
 	}
 	if req.Action == "approve" {
-		if req.Hourly < 1 || req.Hourly > 50000 || req.Daily < req.Hourly || req.Daily > 250000 {
+		if !req.UsePlan && !keepLimits && (req.Hourly < 1 || req.Hourly > 50000 || req.Daily < req.Hourly || req.Daily > 250000) {
 			return nil, apierr.New(422, "validation_error", "Use 1–50,000 per hour and hourly limit–250,000 per day.")
 		}
 		if risk != "approved" && risk != "new" {
@@ -312,7 +315,8 @@ func (s *Server) ownerDecide(ctx context.Context, tx pgx.Tx, r *http.Request, a 
 		if err = s.Cfg.Env.CheckProjectTenant(pid, tenant); err != nil {
 			return nil, err
 		}
-		_, err = tx.Exec(ctx, `UPDATE projects SET sending_status='approved',hourly_limit=$2,daily_limit=$3,status_changed_at=now(),status_reason=$4 WHERE id=$1`, pid, req.Hourly, req.Daily, note)
+		_, err = tx.Exec(ctx, `UPDATE projects SET sending_status='approved',hourly_limit=CASE WHEN $5 OR $6 THEN hourly_limit ELSE $2 END,daily_limit=CASE WHEN $5 OR $6 THEN daily_limit ELSE $3 END,
+            sending_limits_manual=CASE WHEN $6 THEN sending_limits_manual ELSE NOT $5 END,status_changed_at=CASE WHEN sending_status='approved' THEN status_changed_at ELSE now() END,status_reason=$4 WHERE id=$1`, pid, req.Hourly, req.Daily, note, req.UsePlan, keepLimits)
 		if err != nil {
 			return nil, err
 		}
@@ -332,5 +336,5 @@ func (s *Server) ownerDecide(ctx context.Context, tx pgx.Tx, r *http.Request, a 
 		}
 		state = "paused"
 	}
-	return map[string]string{"state": state, "sending_status": state, "project_id": pid.String()}, s.staffAudit(tx, r, a, &oid, "project."+state, "project", pid.String(), map[string]any{"reason": note, "hourly_limit": req.Hourly, "daily_limit": req.Daily})
+	return map[string]string{"state": state, "sending_status": state, "project_id": pid.String()}, s.staffAudit(tx, r, a, &oid, "project."+state, "project", pid.String(), map[string]any{"reason": note, "use_plan_limits": req.UsePlan, "preserved_limits": keepLimits, "hourly_limit": req.Hourly, "daily_limit": req.Daily})
 }

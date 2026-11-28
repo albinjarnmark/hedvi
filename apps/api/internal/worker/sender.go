@@ -68,17 +68,19 @@ func (s *Sender) Run(ctx context.Context) {
 }
 
 type claimed struct {
-	orgID, projectID uuid.UUID
-	domainID         uuid.UUID
-	payloadRef       *string
-	fromDomain       string
-	deadline         time.Time
-	attempts         int
-	createdAt        time.Time
-	tenant           string
-	sendingStatus    string
-	riskStatus       string
-	domainValid      bool
+	orgID, projectID    uuid.UUID
+	domainID            uuid.UUID
+	payloadRef          *string
+	fromDomain          string
+	deadline            time.Time
+	attempts            int
+	createdAt           time.Time
+	tenant              string
+	sendingStatus       string
+	riskStatus          string
+	domainValid         bool
+	domainRevision      int64
+	domainReconfiguring bool
 }
 
 // Handle processes one send job. A nil error means the job message can be
@@ -124,9 +126,11 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 			  AND e.send_state IN ('queued', 'retry_wait') AND e.next_attempt_at <= now() + interval '2 seconds'
 			RETURNING e.org_id, e.project_id, coalesce(e.domain_id,'00000000-0000-0000-0000-000000000000'::uuid), e.payload_ref, e.from_domain, e.queue_deadline_at, e.attempt_count, e.created_at,
 				p.ses_tenant_name, p.sending_status, o.risk_status,
- EXISTS (SELECT 1 FROM domains d WHERE d.id = e.domain_id AND d.project_id = e.project_id AND d.status = 'verified' AND d.deleted_at IS NULL)`,
+ EXISTS (SELECT 1 FROM domains d WHERE d.id = e.domain_id AND d.project_id = e.project_id AND d.status = 'verified' AND d.deleted_at IS NULL),
+ coalesce((SELECT d.mail_from_revision FROM domains d WHERE d.id=e.domain_id AND d.project_id=e.project_id),0),
+ EXISTS (SELECT 1 FROM domains d WHERE d.id=e.domain_id AND d.project_id=e.project_id AND d.mail_from_reconfiguring AND d.provider_state<>'deleting' AND d.deleted_at IS NULL)`,
 			emailID, s.WorkerID, s.Lease.Milliseconds()).Scan(&c.orgID, &c.projectID, &c.domainID, &c.payloadRef, &c.fromDomain, &c.deadline,
-			&c.attempts, &c.createdAt, &c.tenant, &c.sendingStatus, &c.riskStatus, &c.domainValid)
+			&c.attempts, &c.createdAt, &c.tenant, &c.sendingStatus, &c.riskStatus, &c.domainValid, &c.domainRevision, &c.domainReconfiguring)
 		return err
 	})
 	if db.IsNoRows(err) || (deferred && err == nil) {
@@ -140,11 +144,8 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 	}
 
 	// Pauses stop queued jobs before the next attempt.
-	if c.sendingStatus != "approved" || c.riskStatus == "paused" || c.riskStatus == "blocked" {
-		return s.finish(ctx, emailID, func(tx pgx.Tx, e *emailInfo) error {
-			_, err := tx.Exec(ctx, `UPDATE emails SET send_state = 'held', lease_owner = NULL, lease_expires_at = NULL WHERE id = $1`, emailID)
-			return err
-		})
+	if c.sendingStatus != "approved" || (c.riskStatus != "new" && c.riskStatus != "approved") {
+		return s.hold(ctx, emailID)
 	}
 	if time.Now().After(c.deadline) {
 		return s.fail(ctx, emailID, "queue_deadline", "The email waited longer than the maximum queue time and was not sent.")
@@ -155,6 +156,9 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 	}
 	if err := s.TenantEnv.CheckProjectTenant(c.projectID, c.tenant); err != nil {
 		return s.fail(ctx, emailID, "sender_tenant_unavailable", "The sending project configuration requires operator review.")
+	}
+	if c.domainReconfiguring {
+		return s.waitForDomain(ctx, emailID)
 	}
 	if !c.domainValid {
 		return s.fail(ctx, emailID, "sender_domain_unavailable", "The sending domain was removed or is no longer verified.")
@@ -224,6 +228,9 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 	// Commit the attempt before calling the provider.
 	attemptID := uuid.Must(uuid.NewV7())
 	err = db.Tx(ctx, s.Pool, func(tx pgx.Tx) error {
+		if err := checkAttemptPolicy(ctx, tx, c); err != nil {
+			return err
+		}
 		tag, err := tx.Exec(ctx, `UPDATE emails SET lease_expires_at = now() + $3 * interval '1 millisecond'
 			WHERE id = $1 AND lease_owner = $2 AND send_state = 'sending'`, emailID, s.WorkerID, s.Lease.Milliseconds())
 		if err != nil {
@@ -242,6 +249,21 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 	})
 	if errors.Is(err, errLeaseLost) {
 		return nil
+	}
+	if errors.Is(err, errDomainReconfiguring) {
+		return s.waitForDomain(ctx, emailID)
+	}
+	if errors.Is(err, errDomainUnavailable) {
+		return s.fail(ctx, emailID, "sender_domain_unavailable", "The sending domain was removed or is no longer verified.")
+	}
+	if errors.Is(err, errSendingHeld) {
+		return s.hold(ctx, emailID)
+	}
+	if errors.Is(err, errTenantChanged) {
+		return s.fail(ctx, emailID, "sender_tenant_unavailable", "The sending project configuration requires operator review.")
+	}
+	if errors.Is(err, errSendDeadline) {
+		return s.fail(ctx, emailID, "queue_deadline", "The email waited longer than the maximum queue time and was not sent.")
 	}
 	if err != nil {
 		return s.releaseLease(ctx, emailID, err)
@@ -279,7 +301,74 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 	}
 }
 
-var errLeaseLost = errors.New("lease lost")
+var (
+	errLeaseLost           = errors.New("lease lost")
+	errDomainReconfiguring = errors.New("sender domain is being reconfigured")
+	errDomainUnavailable   = errors.New("sender domain is unavailable")
+	errSendingHeld         = errors.New("sending permission is paused")
+	errTenantChanged       = errors.New("sending tenant changed")
+	errSendDeadline        = errors.New("send queue deadline passed")
+)
+
+// The committed started-attempt is the send authorization boundary. Coordinate
+// with organization/project restrictions and MAIL FROM changes in the same
+// org -> project -> domain order as acceptance. No lock spans provider I/O.
+func checkAttemptPolicy(ctx context.Context, tx pgx.Tx, c claimed) error {
+	var risk, status, tenant string
+	if err := tx.QueryRow(ctx, `SELECT risk_status FROM organizations WHERE id=$1 FOR SHARE`, c.orgID).Scan(&risk); err != nil {
+		return err
+	}
+	if err := tx.QueryRow(ctx, `SELECT sending_status,ses_tenant_name FROM projects WHERE id=$1 AND org_id=$2 FOR SHARE`, c.projectID, c.orgID).Scan(&status, &tenant); err != nil {
+		return err
+	}
+	if status != "approved" || (risk != "new" && risk != "approved") {
+		return errSendingHeld
+	}
+	if tenant != c.tenant {
+		return errTenantChanged
+	}
+	var revision int64
+	var reconfiguring bool
+	var providerState string
+	err := tx.QueryRow(ctx, `SELECT status,provider_state,mail_from_revision,mail_from_reconfiguring FROM domains
+		WHERE id=$1 AND org_id=$2 AND project_id=$3 AND deleted_at IS NULL FOR SHARE`, c.domainID, c.orgID, c.projectID).Scan(&status, &providerState, &revision, &reconfiguring)
+	if db.IsNoRows(err) || (err == nil && providerState == "deleting") {
+		return errDomainUnavailable
+	}
+	if err != nil {
+		return err
+	}
+	if reconfiguring || revision != c.domainRevision {
+		return errDomainReconfiguring
+	}
+	if status != "verified" {
+		return errDomainUnavailable
+	}
+	if time.Now().After(c.deadline) {
+		return errSendDeadline
+	}
+	return nil
+}
+
+func (s *Sender) hold(ctx context.Context, emailID uuid.UUID) error {
+	return s.finish(ctx, emailID, func(tx pgx.Tx, e *emailInfo) error {
+		_, err := tx.Exec(ctx, `UPDATE emails SET send_state='held',lease_owner=NULL,lease_expires_at=NULL WHERE id=$1`, emailID)
+		return err
+	})
+}
+
+// Waiting for customer DNS is not a provider attempt. Keep the existing quota
+// reservation and deadline, and do not increase the provider retry backoff.
+func (s *Sender) waitForDomain(ctx context.Context, emailID uuid.UUID) error {
+	return s.finish(ctx, emailID, func(tx pgx.Tx, e *emailInfo) error {
+		var next time.Time
+		if err := tx.QueryRow(ctx, `UPDATE emails SET send_state='retry_wait',next_attempt_at=LEAST(now()+interval '30 seconds',queue_deadline_at),
+			attempt_count=greatest(attempt_count-1,0),lease_owner=NULL,lease_expires_at=NULL WHERE id=$1 RETURNING next_attempt_at`, emailID).Scan(&next); err != nil {
+			return err
+		}
+		return sendOutbox(ctx, tx, e.OrgID, emailID, next)
+	})
+}
 
 // finishKeepLease runs fn with the email locked if this worker holds the lease.
 func (s *Sender) finishKeepLease(ctx context.Context, emailID uuid.UUID, fn func(pgx.Tx, *emailInfo) error) error {

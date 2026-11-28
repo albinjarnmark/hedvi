@@ -300,6 +300,7 @@ func (s *SES) GetIdentity(ctx context.Context, domain string, claimID uuid.UUID)
 	}
 	if out.MailFromAttributes != nil {
 		st.MailFromStatus = string(out.MailFromAttributes.MailFromDomainStatus)
+		st.MailFromDomain = aws.ToString(out.MailFromAttributes.MailFromDomain)
 	}
 	return st, nil
 }

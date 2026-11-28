@@ -180,6 +180,7 @@ func TestOwnerGrantConcurrencyRevokeAndLiveReview(t *testing.T) {
 	s.unlock(t)
 	e := s.e
 	tn := e.NewTenant("free")
+	e.Exec(`UPDATE projects SET sending_limits_manual=false WHERE id=$1`, tn.ProjectID)
 	gid := uuid.New()
 	grant := map[string]any{"org_id": tn.OrgID, "request_id": gid, "plan": "flex", "reason": "Synthetic pilot membership"}
 	var wg sync.WaitGroup
@@ -205,6 +206,9 @@ func TestOwnerGrantConcurrencyRevokeAndLiveReview(t *testing.T) {
 	if e.Count(`SELECT count(*) FROM billing_orders`) != 0 {
 		t.Fatal("complimentary membership wrote Stripe order")
 	}
+	if e.Count(`SELECT count(*) FROM hedvi_live_limits($1,now()) WHERE hourly=100 AND daily=1000 AND NOT manual`, tn.ProjectID) != 1 {
+		t.Fatal("active complimentary Flex did not enable Flex throughput")
+	}
 	send, err := e.Accept.Send(e.Ctx, tn.Live, "gifted", liveBody(tn, "gift-recipient@example.test"))
 	if err != nil {
 		t.Fatal(err)
@@ -218,6 +222,9 @@ func TestOwnerGrantConcurrencyRevokeAndLiveReview(t *testing.T) {
 	}
 	if e.Count(`SELECT count(*) FROM audit_log WHERE action='membership.revoked' AND target_id=$1`, gid.String()) != 1 {
 		t.Fatal("duplicate revocation")
+	}
+	if e.Count(`SELECT count(*) FROM hedvi_live_limits($1,now()) WHERE hourly=50 AND daily=200 AND NOT manual`, tn.ProjectID) != 1 {
+		t.Fatal("revoked complimentary Flex retained paid throughput")
 	}
 	e.Drain()
 	if e.Count(`SELECT count(*) FROM credit_lots WHERE complimentary_grant=$1 AND consumed=1 AND reserved=0 AND NOT billing_usable`, gid) != 1 {
@@ -244,6 +251,11 @@ func TestOwnerGrantConcurrencyRevokeAndLiveReview(t *testing.T) {
 	s.do(t, 200, "POST", decision, approve)
 	if e.Count(`SELECT count(*) FROM projects WHERE id=$1 AND sending_status='approved' AND hourly_limit=25 AND daily_limit=100`, tn.ProjectID) != 1 {
 		t.Fatal("approved limits missing")
+	}
+	e.Exec(`UPDATE projects SET status_changed_at=now()-interval '5 days' WHERE id=$1`, tn.ProjectID)
+	s.do(t, 200, "POST", decision, map[string]any{"action": "approve", "use_plan_limits": true, "reason": "Restore current plan limits without resetting risk history"})
+	if e.Count(`SELECT count(*) FROM projects p CROSS JOIN LATERAL hedvi_live_limits(p.id,now()) l WHERE p.id=$1 AND NOT l.manual AND l.hourly=50 AND l.daily=200 AND p.status_changed_at<now()-interval '4 days'`, tn.ProjectID) != 1 {
+		t.Fatal("owner could not restore automatic limits while retaining risk history")
 	}
 	s.do(t, 200, "POST", decision, map[string]string{"action": "pause", "reason": "Paused pending external confirmation"})
 	if _, err := e.Accept.Send(e.Ctx, tn.Live, "paused", liveBody(tn, "no-send@example.test")); err == nil {

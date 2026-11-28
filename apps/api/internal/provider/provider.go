@@ -68,6 +68,7 @@ type IdentityStatus struct {
 	VerifiedForSending bool
 	DKIMStatus         string // PENDING, SUCCESS, FAILED, TEMPORARY_FAILURE, NOT_STARTED
 	MailFromStatus     string // PENDING, SUCCESS, FAILED, TEMPORARY_FAILURE
+	MailFromDomain     string
 }
 
 // DomainClaimTag binds the account-wide SES identity to an immutable database row.

@@ -80,6 +80,15 @@ func admin(ctx context.Context, cfg *config.Config, log *slog.Logger, args []str
 	pool := a.WorkerPool
 	switch args[0] {
 	case "approve-project":
+		explicitLimits := false
+		fs.Visit(func(f *flag.Flag) {
+			if f.Name == "hourly" || f.Name == "daily" {
+				explicitLimits = true
+			}
+		})
+		if explicitLimits && (*hourly < 1 || *hourly > 50000 || *daily < *hourly || *daily > 250000) {
+			return errors.New("invalid project hourly or daily limit")
+		}
 		pid, err := uuid.Parse(*project)
 		if err != nil || *note == "" {
 			return errors.New("-project and -note are required")
@@ -96,14 +105,22 @@ func admin(ctx context.Context, cfg *config.Config, log *slog.Logger, args []str
 			return err
 		}
 		return db.Tx(ctx, pool, func(tx pgx.Tx) error {
-			if _, err := tx.Exec(ctx, `UPDATE projects SET sending_status = 'approved', status_reason = $2, status_changed_at = now(),
-				hourly_limit = $3, daily_limit = $4 WHERE id = $1`, pid, *note, *hourly, *daily); err != nil {
+			var risk string
+			if err := tx.QueryRow(ctx, `SELECT risk_status FROM organizations WHERE id=$1 FOR NO KEY UPDATE`, orgID).Scan(&risk); err != nil {
+				return err
+			}
+			if risk != "new" && risk != "approved" {
+				return errors.New("resolve the organization risk restriction before approving its project")
+			}
+			if _, err := tx.Exec(ctx, `UPDATE projects SET sending_status = 'approved', status_reason = $2, status_changed_at = CASE WHEN sending_status='approved' THEN status_changed_at ELSE now() END,
+				hourly_limit=CASE WHEN $5 THEN $3 ELSE hourly_limit END, daily_limit=CASE WHEN $5 THEN $4 ELSE daily_limit END,
+				sending_limits_manual=sending_limits_manual OR $5 WHERE id=$1`, pid, *note, *hourly, *daily, explicitLimits); err != nil {
 				return err
 			}
 			if _, err := tx.Exec(ctx, `UPDATE organizations SET risk_status = 'approved' WHERE id = $1 AND risk_status = 'new'`, orgID); err != nil {
 				return err
 			}
-			return auditSystem(tx, &orgID, "project.approved", "project", pid.String(), map[string]any{"note": *note, "hourly": *hourly, "daily": *daily})
+			return auditSystem(tx, &orgID, "project.approved", "project", pid.String(), map[string]any{"note": *note, "explicit_limits": explicitLimits, "hourly": *hourly, "daily": *daily})
 		})
 	case "pause-project":
 		pid, err := uuid.Parse(*project)
@@ -112,8 +129,11 @@ func admin(ctx context.Context, cfg *config.Config, log *slog.Logger, args []str
 		}
 		return db.Tx(ctx, pool, func(tx pgx.Tx) error {
 			var orgID uuid.UUID
-			if err := tx.QueryRow(ctx, `UPDATE projects SET sending_status = 'paused', status_reason = $2, status_changed_at = now()
-				WHERE id = $1 RETURNING org_id`, pid, *reason).Scan(&orgID); err != nil {
+			if err := tx.QueryRow(ctx, `SELECT o.id FROM organizations o JOIN projects p ON p.org_id=o.id WHERE p.id=$1 FOR NO KEY UPDATE OF o`, pid).Scan(&orgID); err != nil {
+				return err
+			}
+			if _, err := tx.Exec(ctx, `UPDATE projects SET sending_status = 'paused', status_reason = $2, status_changed_at = now()
+				WHERE id = $1`, pid, *reason); err != nil {
 				return err
 			}
 			return auditSystem(tx, &orgID, "project.paused", "project", pid.String(), map[string]any{"reason": *reason})
@@ -283,7 +303,7 @@ func seedLocal(ctx context.Context, a *app.App) error {
 		if projectID, err = console.NewProject(ctx, tx, orgID, "Demo app", a.Cfg.Env); err != nil {
 			return err
 		}
-		if _, err := tx.Exec(ctx, `UPDATE projects SET sending_status = 'approved', status_reason = 'local seed', hourly_limit = 1000, daily_limit = 5000
+		if _, err := tx.Exec(ctx, `UPDATE projects SET sending_status = 'approved', status_reason = 'local seed', sending_limits_manual=true, hourly_limit = 1000, daily_limit = 5000
 			WHERE id = $1`, projectID); err != nil {
 			return err
 		}
@@ -321,7 +341,7 @@ func contractFixture(ctx context.Context, a *app.App) error {
 		if projectID, err = console.NewProject(ctx, tx, orgID, "Contracts", a.Cfg.Env); err != nil {
 			return err
 		}
-		if _, err := tx.Exec(ctx, `UPDATE projects SET sending_status = 'approved', hourly_limit = 10000, daily_limit = 10000 WHERE id = $1`, projectID); err != nil {
+		if _, err := tx.Exec(ctx, `UPDATE projects SET sending_status = 'approved', sending_limits_manual=true, hourly_limit = 10000, daily_limit = 10000 WHERE id = $1`, projectID); err != nil {
 			return err
 		}
 		_, tk, err := console.CreateKey(ctx, tx, a.Hasher, orgID, projectID, nil, "contract test", "test", "full_access", nil)

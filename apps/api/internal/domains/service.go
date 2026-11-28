@@ -24,24 +24,25 @@ import (
 )
 
 type Domain struct {
-	ProviderState string
-	ID            uuid.UUID
-	OrgID         uuid.UUID
-	ProjectID     uuid.UUID
-	Name          string
-	Region        string
-	Status        string
-	MailFrom      string
-	DKIMTokens    []string
-	Records       []Record
-	Analysis      Analysis
-	CheckAttempts int
-	CheckStarted  time.Time
-	LastError     string
-	CreatedAt     time.Time
-	LastCheckedAt *time.Time
-	NextCheckAt   *time.Time
-	VerifiedAt    *time.Time
+	ProviderState    string
+	ID               uuid.UUID
+	OrgID            uuid.UUID
+	ProjectID        uuid.UUID
+	Name             string
+	Region           string
+	Status           string
+	MailFrom         string
+	MailFromRevision int64
+	DKIMTokens       []string
+	Records          []Record
+	Analysis         Analysis
+	CheckAttempts    int
+	CheckStarted     time.Time
+	LastError        string
+	CreatedAt        time.Time
+	LastCheckedAt    *time.Time
+	NextCheckAt      *time.Time
+	VerifiedAt       *time.Time
 }
 
 type Service struct {
@@ -58,14 +59,14 @@ type Service struct {
 
 // DomainColumns is shared by API and worker queries decoded by ScanDomain.
 const DomainColumns = `id, org_id, project_id, name, region, status, mail_from_subdomain, dkim_tokens, records, analysis,
- check_attempts, check_started_at, last_error, created_at, last_checked_at, next_check_at, verified_at, provider_state`
+ check_attempts, check_started_at, last_error, created_at, last_checked_at, next_check_at, verified_at, provider_state, mail_from_revision`
 const selectDomain = "SELECT " + DomainColumns + " FROM domains"
 
 func ScanDomain(row pgx.Row) (*Domain, error) {
 	var d Domain
 	var records, analysis []byte
 	if err := row.Scan(&d.ID, &d.OrgID, &d.ProjectID, &d.Name, &d.Region, &d.Status, &d.MailFrom, &d.DKIMTokens, &records, &analysis,
-		&d.CheckAttempts, &d.CheckStarted, &d.LastError, &d.CreatedAt, &d.LastCheckedAt, &d.NextCheckAt, &d.VerifiedAt, &d.ProviderState); err != nil {
+		&d.CheckAttempts, &d.CheckStarted, &d.LastError, &d.CreatedAt, &d.LastCheckedAt, &d.NextCheckAt, &d.VerifiedAt, &d.ProviderState, &d.MailFromRevision); err != nil {
 		return nil, err
 	}
 	_ = json.Unmarshal(records, &d.Records)
@@ -88,7 +89,7 @@ func (s *Service) Create(ctx context.Context, orgID, projectID uuid.UUID, rawNam
 	if mailFrom == "" {
 		mailFrom = "send"
 	}
-	if !ValidMailFromLabel(mailFrom) {
+	if !ValidMailFromLabel(mailFrom) || len(mailFrom)+1+len(name) > 253 {
 		return nil, apierr.New(422, "validation_error", "`custom_return_path` must be a single DNS label such as \"send\".")
 	}
 	if !s.MockDNS && reservedName(name) {
@@ -215,7 +216,7 @@ func (s *Service) activateVerified(ctx context.Context, tx pgx.Tx, d *Domain) er
 	if err != nil || !ok {
 		return err
 	}
-	if _, err = tx.Exec(ctx, `UPDATE projects SET sending_status='approved',status_reason='Domain verified; live sending enabled automatically',status_changed_at=now(),hourly_limit=LEAST(hourly_limit,25),daily_limit=LEAST(daily_limit,100) WHERE id=$1`, d.ProjectID); err != nil {
+	if _, err = tx.Exec(ctx, `UPDATE projects SET sending_status='approved',status_reason='Domain verified; live sending enabled automatically',status_changed_at=now() WHERE id=$1`, d.ProjectID); err != nil {
 		return err
 	}
 	if _, err = tx.Exec(ctx, `UPDATE organizations SET risk_status='approved' WHERE id=$1 AND risk_status='new'`, d.OrgID); err != nil {
@@ -224,7 +225,10 @@ func (s *Service) activateVerified(ctx context.Context, tx pgx.Tx, d *Domain) er
 	if _, err = tx.Exec(ctx, `UPDATE alerts SET resolved_at=now() WHERE dedupe_key=$1 AND resolved_at IS NULL`, "review:"+d.ProjectID.String()); err != nil {
 		return err
 	}
-	_, err = tx.Exec(ctx, `INSERT INTO audit_log(org_id,actor_kind,action,target_type,target_id,metadata) VALUES($1,'system','project.live_auto_activated','project',$2,$3)`, d.OrgID, d.ProjectID.String(), map[string]any{"domain_id": d.ID.String(), "legal_version": legal.Current().Version, "hourly": 25, "daily": 100})
+	_, err = tx.Exec(ctx, `INSERT INTO audit_log(org_id,actor_kind,action,target_type,target_id,metadata)
+		SELECT $1,'system','project.live_auto_activated','project',$2::uuid::text,
+		jsonb_build_object('domain_id',$3::uuid,'legal_version',$4::text,'hourly',l.hourly,'daily',l.daily)
+		FROM hedvi_live_limits($2::uuid,now()) l`, d.OrgID, d.ProjectID, d.ID, legal.Current().Version)
 	return err
 }
 
@@ -460,7 +464,7 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 				}
 				state := d.ProviderState
 				d, err = ScanDomain(tx.QueryRow(ctx, `UPDATE domains SET records=$2,analysis=$3,status='pending',last_checked_at=now()
-                    WHERE id=$1 AND deleted_at IS NULL AND provider_state=$4 RETURNING `+DomainColumns, d.ID, []Record{record}, analysis, state))
+                    WHERE id=$1 AND deleted_at IS NULL AND provider_state=$4 AND mail_from_revision=$5 RETURNING `+DomainColumns, d.ID, []Record{record}, analysis, state, d.MailFromRevision))
 				if db.IsNoRows(err) {
 					return claimConflict()
 				}
@@ -539,7 +543,9 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 			}); err != nil {
 				return err
 			}
-			ident, err := s.Provider.CreateIdentity(ctx, d.Name, d.MailFrom+"."+d.Name, tenant, d.ID)
+			// The bounce label can change before this operation acquires the
+			// provider lock. Use the generation read under that lock.
+			ident, err := s.Provider.CreateIdentity(ctx, attempt.Name, attempt.MailFrom+"."+attempt.Name, tenant, attempt.ID)
 			if err != nil {
 				return ownershipError(err)
 			}
@@ -590,10 +596,11 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 		d.ProviderState = "active"
 		var verified *bool
 		if !st.FollowDNS {
-			v := st.VerifiedForSending && st.DKIMStatus == "SUCCESS"
+			mailFromReady := st.MailFromStatus == "SUCCESS" && strings.EqualFold(st.MailFromDomain, d.MailFrom+"."+d.Name)
+			v := st.VerifiedForSending && st.DKIMStatus == "SUCCESS" && mailFromReady
 			verified = &v
-			if st.MailFromStatus != "" && st.MailFromStatus != "SUCCESS" {
-				analysis.Findings = append(analysis.Findings, Finding{"info", "mail_from_pending", "Amazon SES has not confirmed the MAIL FROM records yet (" + st.MailFromStatus + ")."})
+			if !mailFromReady {
+				analysis.Findings = append(analysis.Findings, Finding{"info", "mail_from_pending", "Amazon SES has not confirmed the current MAIL FROM domain yet."})
 			}
 		}
 		status = Overall(d.Records, verified)
@@ -641,9 +648,10 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 		}
 		out, err = ScanDomain(tx.QueryRow(ctx, `UPDATE domains SET status=$2,records=$3,analysis=$4,ns_provider=$5,
    check_attempts=$6,check_started_at=$7,last_checked_at=$8,next_check_at=$9,verified_at=CASE WHEN $2='verified' THEN coalesce(verified_at,$8) ELSE NULL END,
-   provider_state=$10,dkim_tokens=$11,provider_identity=name,last_error=$12
+   provider_state=$10,dkim_tokens=$11,provider_identity=name,last_error=$12,
+   mail_from_reconfiguring=mail_from_reconfiguring AND $2<>'verified'
    WHERE id=$1 AND provider_state=$13 AND deleted_at IS NULL AND last_checked_at IS NOT DISTINCT FROM $14
-   AND org_id=$15 AND project_id=$16 AND name=$17 AND mail_from_subdomain=$18 AND dkim_tokens=$11 RETURNING `+DomainColumns, d.ID, status, recordsJSON, analysisJSON, analysis.NSProvider, d.CheckAttempts+1, d.CheckStarted, now, nextPtr, d.ProviderState, d.DKIMTokens, lastErr, originalState, d.LastCheckedAt, d.OrgID, d.ProjectID, d.Name, d.MailFrom))
+   AND org_id=$15 AND project_id=$16 AND name=$17 AND mail_from_subdomain=$18 AND dkim_tokens=$11 AND mail_from_revision=$19 RETURNING `+DomainColumns, d.ID, status, recordsJSON, analysisJSON, analysis.NSProvider, d.CheckAttempts+1, d.CheckStarted, now, nextPtr, d.ProviderState, d.DKIMTokens, lastErr, originalState, d.LastCheckedAt, d.OrgID, d.ProjectID, d.Name, d.MailFrom, d.MailFromRevision))
 		if db.IsNoRows(err) {
 			return apierr.New(409, "validation_error", "Domain changed during verification. Refresh its status.")
 		}

@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -38,14 +39,15 @@ type Record struct {
 
 // Analysis captures what Hedvi found in the customer's existing DNS.
 type Analysis struct {
-	NSProvider   string    `json:"ns_provider"`
-	Nameservers  []string  `json:"nameservers,omitempty"`
-	ProviderTips []string  `json:"provider_tips,omitempty"`
-	RootSPF      []string  `json:"root_spf,omitempty"`
-	DMARC        string    `json:"dmarc,omitempty"`
-	DMARCPolicy  string    `json:"dmarc_policy,omitempty"`
-	Findings     []Finding `json:"findings"`
-	CheckedAt    time.Time `json:"checked_at"`
+	MailFromSafety string    `json:"mail_from_safety,omitempty"`
+	NSProvider     string    `json:"ns_provider"`
+	Nameservers    []string  `json:"nameservers,omitempty"`
+	ProviderTips   []string  `json:"provider_tips,omitempty"`
+	RootSPF        []string  `json:"root_spf,omitempty"`
+	DMARC          string    `json:"dmarc,omitempty"`
+	DMARCPolicy    string    `json:"dmarc_policy,omitempty"`
+	Findings       []Finding `json:"findings"`
+	CheckedAt      time.Time `json:"checked_at"`
 }
 
 type Finding struct {
@@ -228,7 +230,7 @@ func (m MockResolver) LookupTXT(ctx context.Context, name string) ([]string, err
 }
 
 func (m MockResolver) LookupCNAME(ctx context.Context, name string) (string, error) {
-	if !strings.HasSuffix(name, ".test") {
+	if !strings.HasSuffix(strings.TrimSuffix(name, "."), ".test") {
 		return m.Fallback.LookupCNAME(ctx, name)
 	}
 	if rs := m.find(name, "CNAME"); len(rs) > 0 {
@@ -238,7 +240,7 @@ func (m MockResolver) LookupCNAME(ctx context.Context, name string) (string, err
 }
 
 func (m MockResolver) LookupMX(ctx context.Context, name string) ([]*net.MX, error) {
-	if !strings.HasSuffix(name, ".test") {
+	if !strings.HasSuffix(strings.TrimSuffix(name, "."), ".test") {
 		return m.Fallback.LookupMX(ctx, name)
 	}
 	var out []*net.MX
@@ -287,9 +289,19 @@ func Check(ctx context.Context, r Resolver, domain string, records []Record) (An
 	defer cancel()
 	a := Analysis{CheckedAt: time.Now().UTC(), Findings: []Finding{}}
 	temporary := false
+	var mx, spf *Record
 	for i := range records {
 		rec := &records[i]
 		rec.Found = nil
+		if rec.Record == "SPF" {
+			switch rec.Type {
+			case "MX":
+				mx = rec
+			case "TXT":
+				spf = rec
+			}
+			continue
+		}
 		var err error
 		switch rec.Type {
 		case "CNAME":
@@ -300,51 +312,29 @@ func Check(ctx context.Context, r Resolver, domain string, records []Record) (An
 				rec.Found = []string{displayDNS(got)}
 			}
 			rec.Status = statusFor(err, got == strings.ToLower(rec.Value))
-		case "MX":
-			var mxs []*net.MX
-			mxs, err = r.LookupMX(ctx, rec.FQDN)
-			ok := false
-			for _, mx := range mxs {
-				h := strings.TrimSuffix(strings.ToLower(mx.Host), ".")
-				if len(rec.Found) < 16 {
-					rec.Found = append(rec.Found, fmt.Sprintf("%d %s", mx.Pref, displayDNS(h)))
-				}
-				ok = ok || h == strings.ToLower(rec.Value)
-			}
-			rec.Status = statusFor(err, ok)
 		case "TXT":
-			var txts []string
-			name := rec.FQDN
-			if rec.Record == "Ownership" {
-				// An absolute DNS name prevents resolver search-suffix fallback
-				// from accepting proof published for a different domain.
-				name += "."
-			}
-			txts, err = r.LookupTXT(ctx, name)
-			ok := false
-			spfCount := 0
+			// The claim is bound to this absolute name.
+			txts, lookupErr := r.LookupTXT(ctx, rec.FQDN+".")
 			for _, t := range txts {
 				if len(rec.Found) < 16 {
 					rec.Found = append(rec.Found, displayDNS(t))
 				}
-				if rec.Record == "Ownership" {
-					ok = ok || t == rec.Value
-				} else {
-					ok = ok || strings.TrimSpace(t) == rec.Value
-				}
-				if strings.HasPrefix(strings.ToLower(t), "v=spf1") {
-					spfCount++
-				}
 			}
-			if rec.Record == "SPF" && spfCount > 1 {
-				ok = false
-				a.Findings = append(a.Findings, Finding{"error", "multiple_spf_mail_from",
-					fmt.Sprintf("%s has %d SPF records. Receivers treat this as an error (permerror). Keep exactly one.", rec.FQDN, spfCount)})
-			}
-			rec.Status = statusFor(err, ok)
+			rec.Status = statusFor(lookupErr, slices.Contains(txts, rec.Value))
 		}
 		if rec.Status == "temporary_failure" {
 			temporary = true
+		}
+	}
+
+	if mx != nil && spf != nil {
+		a.MailFromSafety = inspectMailFrom(ctx, r, mx, spf)
+		switch a.MailFromSafety {
+		case "conflict":
+			a.Findings = append(a.Findings, Finding{"error", "mail_from_conflict", mx.FQDN + " already has mail or address records. Keep them in DNS and choose an unused MAIL FROM subdomain."})
+		case "unknown":
+			temporary = true
+			a.Findings = append(a.Findings, Finding{"warning", "mail_from_lookup_failed", "DNS could not confirm the MAIL FROM records. Check again before publishing."})
 		}
 	}
 

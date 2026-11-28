@@ -3,8 +3,9 @@ const dnsName = /^(?=.{1,253}$)(?:[a-z0-9_](?:[a-z0-9_-]{0,61}[a-z0-9_])?\.)+[a-
 
 // Export only Hedvi's own records. Fully qualified names prevent a subdomain
 // import from accidentally changing the parent zone's mail or website records.
-export function cloudflareZoneFile(domain: string, records: SendingDNSRecord[], mailFromDomain: string): string {
+export function cloudflareZoneFile(domain: string, records: SendingDNSRecord[], mailFromDomain: string, mailFromSafety?: string): string {
   if (!dnsName.test(domain) || records.length < 1 || records.length > 6) throw new Error("Invalid sending domain records.");
+  if (records.some(r => r.record === "SPF") && mailFromSafety !== "clear") throw new Error("Check the MAIL FROM subdomain for existing records before importing.");
   const mailFromLabel = mailFromDomain.slice(0, -(`.${domain}`).length);
   if (mailFromDomain !== `${mailFromLabel}.${domain}` || !/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(mailFromLabel)) throw new Error("Invalid sending subdomain.");
   const lines = records.map(r => {
@@ -23,5 +24,5 @@ export function cloudflareZoneFile(domain: string, records: SendingDNSRecord[], 
     } else throw new Error("Unexpected DNS record.");
     return `${r.fqdn}. 300 IN ${r.type} ${content}${r.type === "CNAME" ? " ; cf_tags=cf-proxied:false" : ""}`;
   });
-  return `; Hedvi sending records for ${domain}\n; Import into the existing Cloudflare DNS zone. DKIM must stay DNS only.\n; Contains no website, incoming-mail or root SPF/DMARC changes.\n${lines.join("\n")}\n`;
+  return `; Hedvi sending records for ${domain}\n; Import into the existing Cloudflare zone. Keep DKIM DNS only.\n; Confirm the MAIL FROM host is dedicated to Hedvi before adding its MX and SPF.\n${lines.join("\n")}\n`;
 }

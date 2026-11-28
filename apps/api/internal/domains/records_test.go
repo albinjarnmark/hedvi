@@ -17,6 +17,20 @@ type fakeResolver struct {
 	ns    map[string][]*net.NS
 }
 
+type unavailableMailFromDNS struct{ fakeResolver }
+
+func (unavailableMailFromDNS) LookupMX(_ context.Context, name string) ([]*net.MX, error) {
+	return nil, &net.DNSError{Name: name, Err: "timed out", IsTimeout: true}
+}
+
+func TestMAILFromLookupFailureDoesNotPermitImport(t *testing.T) {
+	records := ExpectedRecords("example.com", "bounce", "feedback-smtp.eu-north-1.amazonses.com", nil, uuid.New())
+	a, temporary := Check(t.Context(), unavailableMailFromDNS{}, "example.com", records)
+	if a.MailFromSafety != "unknown" || !temporary || records[0].Status != "temporary_failure" {
+		t.Fatal(a, records)
+	}
+}
+
 func (f fakeResolver) LookupTXT(_ context.Context, n string) ([]string, error) {
 	if v, ok := f.txt[strings.TrimSuffix(n, ".")]; ok {
 		return v, nil
@@ -24,13 +38,13 @@ func (f fakeResolver) LookupTXT(_ context.Context, n string) ([]string, error) {
 	return nil, notFound(n)
 }
 func (f fakeResolver) LookupCNAME(_ context.Context, n string) (string, error) {
-	if v, ok := f.cname[n]; ok {
+	if v, ok := f.cname[strings.TrimSuffix(n, ".")]; ok {
 		return v, nil
 	}
 	return "", notFound(n)
 }
 func (f fakeResolver) LookupMX(_ context.Context, n string) ([]*net.MX, error) {
-	if v, ok := f.mx[n]; ok {
+	if v, ok := f.mx[strings.TrimSuffix(n, ".")]; ok {
 		return v, nil
 	}
 	return nil, notFound(n)
@@ -106,5 +120,46 @@ func TestNextCheckBacksOffAndStops(t *testing.T) {
 	_, ok3 := NextCheck(start, 3, start.Add(73*time.Hour))
 	if !ok1 || n1.Sub(start) != 30*time.Second || n2.Sub(start) != time.Hour || ok3 {
 		t.Fatal("unexpected schedule")
+	}
+}
+
+func TestMailFromRequiresDedicatedHostAndExactMX(t *testing.T) {
+	const host = "bounce.example.com"
+	const expected = "feedback-smtp.eu-north-1.amazonses.com"
+	ours := &net.MX{Host: expected + ".", Pref: 10}
+	other := &net.MX{Host: "mail.protection.outlook.com.", Pref: 5}
+	const spf = "v=spf1 include:amazonses.com ~all"
+	for _, tc := range []struct {
+		name, cname, safety, mxStatus string
+		mx                            []*net.MX
+		txt                           []string
+	}{
+		{name: "unused host", safety: "clear", mxStatus: "pending"},
+		{name: "existing Hedvi records", mx: []*net.MX{ours}, txt: []string{spf, "unrelated verification"}, safety: "clear", mxStatus: "verified"},
+		{name: "Microsoft mail", mx: []*net.MX{other}, safety: "conflict", mxStatus: "pending"},
+		{name: "mixed MX", mx: []*net.MX{ours, other}, safety: "conflict", mxStatus: "pending"},
+		{name: "wrong priority", mx: []*net.MX{{Host: expected + ".", Pref: 20}}, safety: "conflict", mxStatus: "pending"},
+		{name: "Google SPF", txt: []string{"v=spf1 include:_spf.google.com ~all"}, safety: "conflict", mxStatus: "pending"},
+		{name: "multiple SPF policies", mx: []*net.MX{ours}, txt: []string{spf, "v=spf1 -all"}, safety: "conflict", mxStatus: "verified"},
+		{name: "alias", cname: "mail.example.net.", safety: "conflict", mxStatus: "pending"},
+		{name: "implicit MX via address", cname: host + ".", safety: "conflict", mxStatus: "pending"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			r := fakeResolver{mx: map[string][]*net.MX{"example.com": {other}}, txt: map[string][]string{"example.com": {"v=spf1 include:_spf.google.com ~all"}}, cname: map[string]string{}}
+			if tc.mx != nil {
+				r.mx[host] = tc.mx
+			}
+			if tc.txt != nil {
+				r.txt[host] = tc.txt
+			}
+			if tc.cname != "" {
+				r.cname[host] = tc.cname
+			}
+			records := ExpectedRecords("example.com", "bounce", expected, nil, uuid.New())
+			a, _ := Check(t.Context(), r, "example.com", records)
+			if a.MailFromSafety != tc.safety || records[0].Status != tc.mxStatus {
+				t.Fatalf("MAIL FROM safety=%s MX=%s", a.MailFromSafety, records[0].Status)
+			}
+		})
 	}
 }

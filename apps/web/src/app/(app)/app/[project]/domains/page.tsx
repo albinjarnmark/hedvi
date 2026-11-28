@@ -28,7 +28,7 @@ export default function DomainsPage() {
         });
       }}>
         <div style={{ flex: 2, minWidth: 220 }}><label htmlFor="name">Domain</label><input id="name" name="name" placeholder="example.com or mail.example.com" required /></div>
-        <div style={{ flex: 1, minWidth: 140 }}><label htmlFor="mailfrom">MAIL FROM subdomain</label><input id="mailfrom" name="mailfrom" placeholder="send" /></div>
+        <div style={{ flex: 1, minWidth: 140 }}><label htmlFor="mailfrom">MAIL FROM subdomain</label><input id="mailfrom" name="mailfrom" placeholder="send" aria-describedby="mailfrom-help" /><small id="mailfrom-help">Choose a name unused by your mailbox or other sending services.</small></div>
         <button className="btn btn-primary" disabled={pending} style={{ alignSelf: "flex-end" }}>Add domain</button>
       </form>
       {error && <p className="error" role="alert">{error}</p>}

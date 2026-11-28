@@ -14,6 +14,8 @@ Create three active products using the reviewed business SaaS tax code `txcd_101
 | Pro 50k | Licensed, every month | 129 | 13 | 50,000 recipients and 1 GiB per paid invoice cycle |
 | Pro 100k | Licensed, every month | 249 | 25 | 100,000 recipients and 2 GiB per paid invoice cycle |
 
+Migration 0017 sets normal organization-wide acceptance limits from usable allowances. Free allows 50/hour and 200/day, Flex 100/1,000, Pro 50k 250/2,500 and Pro 100k 500/5,000. A hold or expiry removes that allowance from the calculation. The API rechecks limits under the organization lock. Existing counters, pauses and specific owner exceptions survive membership changes.
+
 Free has 5,000 recipients and 100 MiB per UTC calendar month. A first Flex purchase changes a Free baseline to Flex. Billing members can return to Free in Settings. An active Pro cycle takes priority over the baseline. Prepaid credit beyond a Free or Pro allowance requires the organization's explicit opt-in. New postpaid overage is disabled.
 
 ## Configuration

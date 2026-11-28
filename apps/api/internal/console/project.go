@@ -40,14 +40,14 @@ func (s *Server) overview(w http.ResponseWriter, r *http.Request, a *access) {
 	out := map[string]any{}
 	err := s.tx(r.Context(), a, func(tx pgx.Tx) error {
 		var name, status, reason string
-		var hourly, daily int
+		var hourly, daily, orgHourly, orgDaily int
 		var changed time.Time
-		if err := tx.QueryRow(r.Context(), `SELECT name, sending_status, status_reason, status_changed_at, hourly_limit, daily_limit
-			FROM projects WHERE id = $1`, a.ProjectID).Scan(&name, &status, &reason, &changed, &hourly, &daily); err != nil {
+		if err := tx.QueryRow(r.Context(), `SELECT name, sending_status, status_reason, status_changed_at, lim.hourly, lim.daily, lim.org_hourly, lim.org_daily
+			FROM projects p CROSS JOIN LATERAL hedvi_live_limits(p.id,statement_timestamp()) lim WHERE p.id = $1`, a.ProjectID).Scan(&name, &status, &reason, &changed, &hourly, &daily, &orgHourly, &orgDaily); err != nil {
 			return err
 		}
 		out["project"] = map[string]any{"id": a.ProjectID, "name": name, "sending_status": status, "status_reason": reason,
-			"status_changed_at": ts(changed), "hourly_limit": hourly, "daily_limit": daily}
+			"status_changed_at": ts(changed), "hourly_limit": hourly, "daily_limit": daily, "org_hourly_limit": orgHourly, "org_daily_limit": orgDaily}
 		counts := map[string]int{}
 		rows, err := tx.Query(r.Context(), `SELECT mode || ':' || last_event, count(*) FROM emails
 			WHERE project_id = $1 AND created_at > now() - interval '24 hours' GROUP BY 1`, a.ProjectID)
@@ -714,6 +714,47 @@ func (s *Server) verifyDomain(w http.ResponseWriter, r *http.Request, a *access)
 	writeJSON(w, 200, httpapi.DomainJSON(d, true))
 }
 
+func (s *Server) prepareDNSExport(w http.ResponseWriter, r *http.Request, a *access) {
+	id, err := pathUUID(r, "id")
+	if err != nil {
+		s.fail(w, r, err)
+		return
+	}
+	d, err := s.Domains.PrepareDNSExport(r.Context(), a.OrgID, a.ProjectID, id)
+	if err != nil {
+		s.fail(w, r, err)
+		return
+	}
+	writeJSON(w, 200, httpapi.DomainJSON(d, true))
+}
+
+func (s *Server) changeMailFrom(w http.ResponseWriter, r *http.Request, a *access) {
+	id, err := pathUUID(r, "id")
+	if err != nil {
+		s.fail(w, r, err)
+		return
+	}
+	var req struct {
+		Previous string `json:"previous"`
+		Label    string `json:"label"`
+		Revision *int64 `json:"revision"`
+	}
+	if err := decode(r, &req); err != nil {
+		s.fail(w, r, err)
+		return
+	}
+	if req.Revision == nil || *req.Revision < 0 {
+		s.fail(w, r, apierr.New(422, "validation_error", "Refresh the domain to get its current MAIL FROM revision."))
+		return
+	}
+	d, err := s.Domains.ChangeMailFrom(r.Context(), a.OrgID, a.ProjectID, id, a.UserID, req.Previous, req.Label, *req.Revision)
+	if err != nil {
+		s.fail(w, r, err)
+		return
+	}
+	writeJSON(w, 200, httpapi.DomainJSON(d, true))
+}
+
 func (s *Server) deleteDomain(w http.ResponseWriter, r *http.Request, a *access) {
 	id, err := pathUUID(r, "id")
 	if err != nil {
@@ -876,15 +917,16 @@ func (s *Server) getSettings(w http.ResponseWriter, r *http.Request, a *access) 
 			"plan_metadata_days": p.MetadataDays, "plan_max_content_days": p.MaxContentDays, "test_inbox_days": 7}
 		var pname, status, reason string
 		var review []byte
-		var hourly, daily int
-		if err := tx.QueryRow(r.Context(), `SELECT name, sending_status, status_reason, review_request, hourly_limit, daily_limit FROM projects WHERE id = $1`,
-			a.ProjectID).Scan(&pname, &status, &reason, &review, &hourly, &daily); err != nil {
+		var hourly, daily, orgHourly, orgDaily int
+		if err := tx.QueryRow(r.Context(), `SELECT name, sending_status, status_reason, review_request, lim.hourly, lim.daily, lim.org_hourly, lim.org_daily FROM projects p
+			CROSS JOIN LATERAL hedvi_live_limits(p.id,statement_timestamp()) lim WHERE p.id = $1`,
+			a.ProjectID).Scan(&pname, &status, &reason, &review, &hourly, &daily, &orgHourly, &orgDaily); err != nil {
 			return err
 		}
 		var rv any
 		_ = json.Unmarshal(review, &rv)
 		out["project"] = map[string]any{"id": a.ProjectID, "name": pname, "sending_status": status, "status_reason": reason,
-			"review_request": rv, "hourly_limit": hourly, "daily_limit": daily}
+			"review_request": rv, "hourly_limit": hourly, "daily_limit": daily, "org_hourly_limit": orgHourly, "org_daily_limit": orgDaily}
 		out["role"] = a.Role
 		return nil
 	})

@@ -114,7 +114,7 @@ func (r *Reaper) RunOnce(ctx context.Context) error {
 	err = db.Tx(ctx, r.Pool, func(tx pgx.Tx) error {
 		rows, err := tx.Query(ctx, `UPDATE emails e SET send_state = 'queued', next_attempt_at = now()
 			WHERE e.id IN (SELECT h.id FROM emails h JOIN projects p ON p.id=h.project_id JOIN organizations o ON o.id=h.org_id
-			  WHERE h.send_state='held' AND p.sending_status='approved' AND o.risk_status NOT IN ('paused','blocked')
+			  WHERE h.send_state='held' AND p.sending_status='approved' AND o.risk_status IN ('new','approved')
 			  ORDER BY h.created_at,h.id LIMIT 100 FOR UPDATE OF h SKIP LOCKED)
 			RETURNING e.id, e.org_id`)
 		if err != nil {

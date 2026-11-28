@@ -6,7 +6,7 @@ import { formatDate } from "@/lib/api";
 import { useLoad } from "@/lib/hooks";
 
 type Overview = {
-  project: { name: string; sending_status: string; status_reason: string; hourly_limit: number; daily_limit: number };
+  project: { name: string; sending_status: string; status_reason: string; hourly_limit: number; daily_limit: number; org_hourly_limit: number; org_daily_limit: number };
   checklist: { id: string; done: boolean; optional?: boolean; state?: string }[];
   last_24h: Record<string, number>;
   usage: { recipients: { included: number; reserved: number; consumed: number; remaining: number }; period_end: string; credits: { remaining: number; expires_at: string }[] };
@@ -69,7 +69,7 @@ export default function OverviewPage() {
         <div className="card">
           <h2>Limits</h2>
           <p>Live sending: <strong>{data.project.hourly_limit}</strong> recipients/hour, <strong>{data.project.daily_limit}</strong>/day.</p>
-          <p className="small muted">New senders start low and limits are raised after review — not automatically after a quiet period.</p>
+          <p className="small muted">Across this organization: {data.project.org_hourly_limit} recipients/hour and {data.project.org_daily_limit}/day for this project. Other projects share the same counters.</p>
           {data.project.status_reason && <p className="small">Status note: {data.project.status_reason}</p>}
         </div>
       </div>

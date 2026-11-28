@@ -88,7 +88,7 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
     <section className="card stack">
       <h2>Billing</h2>
       {gift}
-      <p>Free includes 5,000 recipients per UTC calendar month. A Flex pack covers 10,000 recipients for 365 days. Pro renews its allowance each paid billing period.</p>
+      <p>Free includes 5,000 recipients per UTC calendar month at up to 50/hour and 200/day. An active Flex pack covers 10,000 recipients for 365 days at up to 100/hour and 1,000/day. Pro 50k allows 250/hour and 2,500/day. Pro 100k allows 500/hour and 5,000/day. Pro allowances renew each paid billing period. Projects share the organization’s hourly and daily limits.</p>
       <form className="stack" onSubmit={event => {
         event.preventDefault();
         const profile = data.billing_profile && !data.billing_profile_editable ? data.billing_profile : billingProfileFromForm(new FormData(event.currentTarget));

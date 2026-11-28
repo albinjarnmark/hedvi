@@ -45,10 +45,10 @@ func TestDomainAndTermsAutomaticallyEnableSending(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	if e.Count(`SELECT count(*) FROM projects WHERE id=$1 AND sending_status='approved' AND hourly_limit=25 AND daily_limit=100`, project) != 1 {
+	if e.Count(`SELECT count(*) FROM projects p CROSS JOIN LATERAL hedvi_live_limits(p.id,now()) l WHERE p.id=$1 AND sending_status='approved' AND NOT l.manual AND l.hourly=50 AND l.daily=200`, project) != 1 {
 		t.Fatal("automatic activation failed")
 	}
-	if e.Count(`SELECT count(*) FROM audit_log WHERE action='project.live_auto_activated' AND target_id=$1`, project.String()) != 1 {
+	if e.Count(`SELECT count(*) FROM audit_log WHERE action='project.live_auto_activated' AND target_id=$1 AND metadata @> '{"hourly":50,"daily":200}'`, project.String()) != 1 {
 		t.Fatal("activation was not exactly once")
 	}
 	e.Exec(`UPDATE projects SET sending_status='paused' WHERE id=$1`, project)

@@ -12,7 +12,7 @@ import { useAction, useLoad } from "@/lib/hooks";
 type Settings = {
   organization: { id: string; name: string; plan_name: string; currency: string; use_credits_for_overage: boolean; overage_enabled: boolean; overage_cap: number; overage_allowed: boolean };
   retention: { metadata_days: number; content_days: number; plan_metadata_days: number; plan_max_content_days: number; test_inbox_days: number };
-  project: { name: string; sending_status: string; status_reason: string; hourly_limit: number; daily_limit: number };
+  project: { name: string; sending_status: string; status_reason: string; hourly_limit: number; daily_limit: number; org_hourly_limit: number; org_daily_limit: number };
   role: string;
 };
 type Usage = {
@@ -52,7 +52,7 @@ export default function SettingsPage() {
           <h2>Live sending</h2>
           <LiveAccess pid={pid} status={s.data.project.sending_status} />
           {s.data.project.sending_status === "paused" && s.data.project.status_reason && <p className="small">Note: {s.data.project.status_reason}</p>}
-          <p className="small muted">Sending limits per project: {s.data.project.hourly_limit}/hour, {s.data.project.daily_limit}/day.</p>
+          <p className="small muted">This project can accept {s.data.project.hourly_limit} recipients/hour and {s.data.project.daily_limit}/day. Shared organization limits for this project are {s.data.project.org_hourly_limit}/hour and {s.data.project.org_daily_limit}/day.</p>
         </section>
         <section className="card stack">
           <h2>Usage and cost control</h2>

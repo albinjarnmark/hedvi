@@ -34,6 +34,16 @@ test("developers content stays inside viewport; menu closes after navigation", a
   const code = page.locator(".code-tabs pre.code:visible").first();
   expect((await toolbar.boundingBox())!.y + (await toolbar.boundingBox())!.height).toBeLessThanOrEqual((await code.boundingBox())!.y + 1);
   await expect(page.getByRole("button", { name: "Copy setup prompt" })).toBeVisible();
+  const revoke = page.getByRole("button", { name: "Revoke", exact: true });
+  await revoke.scrollIntoViewIfNeeded();
+  const revokeBounds = await revoke.boundingBox();
+  expect(revokeBounds).not.toBeNull();
+  expect(revokeBounds!.x).toBeGreaterThanOrEqual(0);
+  expect(revokeBounds!.x + revokeBounds!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+  await expect(page.getByLabel("Domain", { exact: true })).toBeDisabled();
+  await page.getByLabel("Mode", { exact: true }).selectOption("live");
+  await expect(page.getByLabel("Domain", { exact: true })).toBeEnabled();
+  await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: info.outputPath("developers.png"), fullPage: true });
   if (isMobile) {
     await page.getByRole("button", { name: "Open dashboard menu" }).click();
@@ -166,12 +176,14 @@ test("domain onboarding has no live sending application",async({page})=>{
 test("Cloudflare quick setup downloads scoped DNS records and fits mobile", async ({ page }, info) => {
   await fixture(page);
   const domain = "mail.example.com";
-  await page.route(`**/console-api/projects/${pid}/domains/domain`, route => route.fulfill({ json: {
+  const fixtureDomain = {
     id:"domain", name:domain, status:"pending", records:[
       {record:"Ownership",type:"TXT",name:"_hedvi-verification",fqdn:`_hedvi-verification.${domain}`,value:"hedvi-domain=00000000-0000-4000-8000-000000000001",status:"verified",purpose:"Ownership"},
       {record:"DKIM",type:"CNAME",name:"selector._domainkey",fqdn:`selector._domainkey.${domain}`,value:"selector.dkim.amazonses.com",status:"pending",purpose:"Email signing"},
-    ], hedvi:{analysis:{ns_provider:"Cloudflare",findings:[]},last_checked_at:null,next_check_at:null,mail_from_domain:`send.${domain}`}
-  }}));
+    ], hedvi:{analysis:{ns_provider:"Cloudflare",mail_from_safety:"clear",findings:[]},last_checked_at:null,next_check_at:null,mail_from_domain:`send.${domain}`}
+  };
+  await page.route(`**/console-api/projects/${pid}/domains/domain`,route=>route.fulfill({json:fixtureDomain}));
+  await page.route(`**/console-api/projects/${pid}/domains/domain/dns-export`,route=>route.fulfill({json:fixtureDomain}));
   await page.goto(`/app/${pid}/domains/domain`);
   await page.getByRole("button",{name:"Quick setup with Cloudflare"}).click();
   await expect(page.getByRole("link",{name:"Open Cloudflare DNS"})).toHaveAttribute("href","https://dash.cloudflare.com/?to=/:account/:zone/dns/records");

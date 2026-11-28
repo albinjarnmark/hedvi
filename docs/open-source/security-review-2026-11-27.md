@@ -16,7 +16,7 @@ vulnerabilities; reports and reproducible regressions are welcome through SECURI
 - Make TOTP consumption, session creation and MFA changes atomic. Revoke existing
   sessions on privileged bootstrap; require MFA and independently checked user UUID
   and account ownership before a staff grant.
-- Issue per-project DNS challenges. Require current TXT proof and operator-approved live access before allocating a global SES identity. Existing reservations retain their immutable claim tags through ambiguous operations and deletion retries.
+- Issue per-project DNS challenges. Require current TXT proof before allocating a global SES identity. The 28 November self-service update additionally requires current accepted service documents and an unrestricted organization; it replaces the original operator-approval gate. Per-organization resource limits remain, while aggregate resource growth across separate free organizations requires monitoring. Existing reservations retain their immutable claim tags through ambiguous operations and deletion retries.
 - Bound authentication work and failed MFA attempts, validate proxy-derived addresses, isolate public API credentials from privileged worker access, and check effective database permissions at startup.
 - Validate outbound headers and addresses, perform pre-upload quota checks, confirm sending authorization at commit, and atomically audit idempotent console resends.
 - Fence worker claims, bind SES events to their email, preserve unresolved settlement records, and handle complaint suppression precedence. Sanitize email previews and use a nonce-based script policy for authenticated console and sign-in pages.

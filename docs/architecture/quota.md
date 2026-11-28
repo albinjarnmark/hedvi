@@ -17,6 +17,8 @@ Otherwise **hard stop** before acceptance (`429 monthly_quota_exceeded`): nothin
 
 **Warnings.** At 80 % and 95 % of included quota an alert is shown in the dashboard and `hedvi.quota.warning` is sent to subscribed webhooks — channels that keep working when email quota is exhausted.
 
-**Rate windows.** New live projects: 25 recipients/hour and 100/day (raised by staff after review). Test mode: 500 messages/day and 50 MB stored per project, separate from live quota.
+**Live acceptance windows.** The normal Free limit is 50 recipients per hour and 200 per day. Available Flex credits allow 100/1,000. Current usable Pro 50k and Pro 100k invoice or complimentary periods allow 250/2,500 and 500/5,000 respectively. Every project shares the same organization's counters. A lower owner exception limits its project; a higher one permits that project to use its reviewed ceiling against the same shared count. Other projects keep their own ceilings. Switching plans or projects does not clear counters. UTC hour and calendar-day windows count all admitted recipients, including suppressed ones. They cap acceptance into the queue; SES enforces separate regional sending quotas. Test mode allows 500 messages/day and 50 MB stored per project.
+
+Migration 0017 preserves current non-default project limits. Historical ordinary approvals submitted 25/100 even when the owner used the form defaults. Those projects follow the plan unless an earlier recorded approval set different limits before a return to 25/100. Existing pauses remain in force. Apply the migration before rolling out the API and worker together. The owner console can save an explicit limit, including 25/100, or return a project to its plan.
 
 The billing runbook describes invoice verification, refund holds and operator reconciliation. [Hosted billing](../runbooks/billing.md)

@@ -7,6 +7,10 @@
 3. With current DNS proof and accepted terms, Hedvi reserves the canonical name, provisions the tagged SES identity and returns the Easy DKIM CNAMEs and custom MAIL FROM MX/TXT records. The MAIL FROM subdomain defaults to `send.<domain>`. Existing root SPF and DMARC policies are displayed in the DNS guide.
 4. Publish the sending records and keep the ownership TXT in DNS. The domain becomes `verified` once the current challenge, required sending records and provider verification pass. A replacement claim requires a new TXT value even when SES reuses DKIM selectors.
 
+Use a dedicated MAIL FROM subdomain. The console checks public DNS immediately before a Cloudflare download. It withholds a file containing MX or SPF records if the host has another mail route, an incompatible SPF policy or an inconclusive lookup. Confirm the intended host in the authoritative DNS dashboard before importing because public resolvers may cache older answers. Keep the existing mailbox provider’s records.
+
+With migration `0016_mail_from_reconfiguration`, **Change MAIL FROM subdomain** checks a replacement label and pauses live sending from the domain during the change. The claim UUID, scoped API keys, DNS ownership TXT and SES identity stay attached to the same sending domain. Publish the new records and choose **Check now**. Verification requires exactly one priority-10 MX pointing to the configured SES feedback host, one matching SPF policy, and SES confirmation of the current MAIL FROM host.
+
 After provisioning, DNS checks back off from 30 seconds to six hours. An unverified domain stops polling after 72 hours. **Check now** restarts the verification window. Verified domains are checked daily. The local simulator can supply records for `.test` names. Deployed environments reject `.test`, `.example`, `.localhost`, `.invalid` and `.local` sending domains.
 
 ## Provider custody and migration
@@ -29,7 +33,7 @@ identity before activating a new project. It requires the environment-bound tena
 rechecks consent and risk under organization/project locks, and records one
 `project.live_auto_activated` audit event. Paused sibling projects prevent new
 automatic activation. Existing approved limits and observation windows remain
-unchanged. Startup limits are 25 recipients/hour and 100/day per project.
+unchanged. The normal sending limit follows the active allowance and is shared across the organization. See [Quota accounting](quota.md).
 
 Domain claim identifiers and ownership coordinates cannot be rewritten or physically
 deleted by the API role. Provider verification commits only if the checked resource

@@ -51,6 +51,7 @@ export default function DevelopersPage() {
   const hooks = useLoad<{ data: Hook[]; event_types: string[] }>(`/projects/${pid}/webhooks`, 10000);
   const domains = useLoad<{ data: { id: string; name: string; status: string }[] }>(`/projects/${pid}/domains`);
   const [secret, setSecret] = useState<string | null>(null);
+  const [keyMode, setKeyMode] = useState("test");
   const [open, setOpen] = useState<string | null>(null);
   const { pending, error, run } = useAction();
   return (
@@ -72,29 +73,30 @@ export default function DevelopersPage() {
           });
         }}>
           <div style={{ flex: 2, minWidth: 180 }}><label htmlFor="kname">Name</label><input id="kname" name="name" required placeholder="Production server" /></div>
-          <div><label htmlFor="kmode">Mode</label><select id="kmode" name="mode"><option value="test">Test</option><option value="live">Live</option></select></div>
+          <div><label htmlFor="kmode">Mode</label><select id="kmode" name="mode" value={keyMode} onChange={(e) => setKeyMode(e.target.value)}><option value="test">Test</option><option value="live">Live</option></select></div>
           <div><label htmlFor="kperm">Permission</label><select id="kperm" name="permission"><option value="sending_access">Sending only</option><option value="full_access">Full access</option></select></div>
-          <div><label htmlFor="kdom">Domain</label><select id="kdom" name="domain"><option value="">Any verified</option>{(domains.data?.data ?? []).map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}</select></div>
+          <div><label htmlFor="kdom">Domain</label><select id="kdom" name="domain" disabled={keyMode === "test"}><option value="">{keyMode === "test" ? "Test inbox only" : "Any verified"}</option>{(domains.data?.data ?? []).map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}</select></div>
           <button className="btn btn-primary" disabled={pending} style={{ alignSelf: "flex-end" }}>Create key</button>
         </form>
-        <ScrollTable>
-          <thead><tr><th>Name</th><th>Key</th><th>Mode</th><th>Last used</th><th></th></tr></thead>
-          <tbody>
-            {(keys.data?.data ?? []).map((k) => (
-              <tr key={k.id}>
-                <td>{k.name}<div className="tiny muted">{k.permission}{k.domain ? ` · ${k.domain}` : ""}</div></td>
-                <td className="mono small">{k.hint}</td>
-                <td><Status value={k.mode === "live" ? "approved" : "test_only"} label={k.mode} /></td>
-                <td className="small">{k.revoked_at ? `Revoked ${formatDate(k.revoked_at)}` : formatDate(k.last_used_at)}</td>
-                <td>{!k.revoked_at && <button className="btn btn-small btn-danger" onClick={() => run(async () => {
-                  if (!confirm(`Revoke "${k.name}"? Requests using it fail immediately.`)) return;
-                  await api(`/projects/${pid}/api-keys/${k.id}/revoke`, { method: "POST" });
-                  await keys.reload();
-                })}>Revoke</button>}</td>
-              </tr>
-            ))}
-          </tbody>
-        </ScrollTable>
+        <ul className="api-key-list" aria-label="Project API keys">
+          {(keys.data?.data ?? []).map((k) => (
+            <li className="api-key-item" key={k.id}>
+              <div className="api-key-description">
+                <div className="row"><strong>{k.name}</strong><Status value={k.revoked_at ? "paused" : k.mode === "live" ? "approved" : "test_only"} label={k.revoked_at ? "Revoked" : k.mode} /></div>
+                <div className="tiny muted">{k.permission === "full_access" ? "Full access" : "Sending only"}{k.domain ? ` · ${k.domain}` : k.mode === "test" ? " · Test inbox only" : " · Any verified domain"}</div>
+              </div>
+              <div className="api-key-metadata">
+                <span className="mono small">{k.hint}</span>
+                <span className="tiny muted">{k.revoked_at ? `Revoked ${formatDate(k.revoked_at)}` : k.last_used_at ? `Last used ${formatDate(k.last_used_at)}` : "Not used yet"}</span>
+              </div>
+              <div>{!k.revoked_at && <button className="btn btn-small btn-danger" disabled={pending} onClick={() => run(async () => {
+                if (!confirm(`Revoke "${k.name}"? Requests using it fail immediately.`)) return;
+                await api(`/projects/${pid}/api-keys/${k.id}/revoke`, { method: "POST" });
+                await keys.reload();
+              })}>Revoke</button>}</div>
+            </li>
+          ))}
+        </ul>
       </section>
       <section className="card stack" style={{ marginTop: 20 }}>
         <h2>Send with your SDK</h2>

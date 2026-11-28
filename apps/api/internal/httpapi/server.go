@@ -665,7 +665,7 @@ func DomainJSON(d *domains.Domain, withRecords bool) map[string]any {
 			next = ts(*d.NextCheckAt)
 		}
 		out["hedvi"] = map[string]any{"analysis": d.Analysis, "last_checked_at": last, "next_check_at": next,
-			"mail_from_domain": d.MailFrom + "." + d.Name}
+			"mail_from_domain": d.MailFrom + "." + d.Name, "mail_from_revision": d.MailFromRevision}
 	}
 	return out
 }

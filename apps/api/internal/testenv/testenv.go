@@ -245,7 +245,7 @@ func (e *Env) NewTenant(plan string) *Tenant {
 		if t.ProjectID, err = console.NewProject(ctx, tx, t.OrgID, "P", config.EnvTest); err != nil {
 			return err
 		}
-		if _, err := tx.Exec(ctx, `UPDATE projects SET sending_status = 'approved', hourly_limit = 100000, daily_limit = 100000,
+		if _, err := tx.Exec(ctx, `UPDATE projects SET sending_status = 'approved', sending_limits_manual=true, hourly_limit = 100000, daily_limit = 100000,
 			test_daily_limit = 100000 WHERE id = $1`, t.ProjectID); err != nil {
 			return err
 		}

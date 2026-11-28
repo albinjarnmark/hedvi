@@ -198,14 +198,14 @@ export const docs: Doc[] = [
             <tr><td>401</td><td><code>missing_api_key</code></td><td>No <code>Authorization: Bearer</code> header.</td></tr>
             <tr><td>403</td><td><code>invalid_api_key</code></td><td>Unknown or revoked key.</td></tr>
             <tr><td>401</td><td><code>restricted_api_key</code></td><td>Sending-only key used for another endpoint.</td></tr>
-            <tr><td>403</td><td><code>validation_error</code></td><td>Domain not verified or live sending not approved.</td></tr>
+            <tr><td>403</td><td><code>validation_error</code></td><td>Domain not verified, sending inactive or project restricted.</td></tr>
             <tr><td>409</td><td><code>invalid_idempotent_request</code></td><td>Idempotency key reused with another body.</td></tr>
             <tr><td>422</td><td><code>validation_error</code> · <code>missing_required_field</code> · <code>invalid_attachment</code></td><td>Invalid or unsupported request.</td></tr>
             <tr><td>429</td><td><code>rate_limit_exceeded</code></td><td>Too many requests (10/s shared by organization keys), a warm-up limit or an operational resource limit.</td></tr>
             <tr><td>429</td><td><code>daily_quota_exceeded</code> · <code>monthly_quota_exceeded</code></td><td>Daily limit or quota reached. Hard stop: nothing was sent or charged.</td></tr>
           </tbody>
         </ScrollTable>
-        <p>New live projects start at 25 recipients per hour and 100 per day. Limits are raised after review, not automatically.</p>
+        <p>After domain verification, Free supports up to 50 recipients per hour and 200 per day. An active Flex or Pro allowance raises the normal limits automatically. Projects share the organization’s hourly and daily budgets.</p>
         <p>Operational hourly/daily limits count all unique requested recipients, including suppressed addresses. Suppressed recipients do not consume paid sending credits. A separate 1 GiB retained live-payload budget per project protects storage; it is released when content is deleted and is separate from plan attachment allowances.</p>
       </>
     ),
@@ -249,7 +249,7 @@ RESEND_API_KEY=hv_live_…`} />
         <h2>Before you switch</h2>
         <ul className="checks">
           <li>Domain added in Hedvi and current ownership TXT, DKIM and MAIL FROM verified (DNS can take time).</li>
-          <li>Live sending approved for the project.</li>
+          <li>Live sending active for the project after domain verification and acceptance of current terms.</li>
           <li>Suppressions exported from Resend and added in Hedvi.</li>
           <li>Webhook endpoints updated with the Hedvi signing secret.</li>
           <li>Your code uses only supported endpoints and fields (see <Link href="/docs/compatibility">compatibility</Link>).</li>

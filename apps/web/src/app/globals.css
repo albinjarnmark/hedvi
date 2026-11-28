@@ -309,3 +309,17 @@ input:-webkit-autofill { -webkit-text-fill-color: var(--text); -webkit-box-shado
   .main { padding-left: 16px; padding-right: 16px; }
   .table-scroll > table { min-width: 450px; }
 }
+
+/* API key actions stay visible without horizontal scrolling. */
+.api-key-list { list-style: none; padding: 0; margin: 0; }
+.api-key-item { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 18px 0; border-top: 1px solid var(--line); }
+.api-key-description, .api-key-metadata { min-width: 0; overflow-wrap: anywhere; }
+.api-key-description strong { font-size: .9rem; }
+.api-key-description .row { gap: 8px; margin-bottom: 4px; }
+.api-key-metadata { display: grid; gap: 5px; }
+@media (max-width: 640px) {
+  .api-key-item { grid-template-columns: minmax(0, 1fr) auto; gap: 12px; }
+  .api-key-description { grid-column: 1 / -1; }
+  .api-key-item > :last-child { align-self: end; }
+  .api-key-item .btn { min-height: 40px; }
+}

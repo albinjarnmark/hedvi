@@ -44,7 +44,7 @@ The operator database role, the web proxy and hosts running the authentication s
 
 **Operational events** shows up to 50 open operations alerts, failed or uncertain account emails, failed webhook deliveries and rejected, retryable or uncertain sends. Each row contains a fixed category, severity, timestamp, event ID and organization ID when available. Use the event ID in a separate, access-controlled incident investigation. The view does not fetch message bodies, recipients, authentication links, webhook responses or raw provider diagnostics.
 
-**Live sending** shows the project's request, website, recipient consent and expected volume. Review this information before approving a project. New senders normally start at 25 recipients per hour and 100 per day. The console accepts hourly limits up to 50,000 and daily limits from the hourly limit to 250,000. Approval requires a prior review request or reviewed project state and an organization with eligible risk status. Pause or adjust a reviewed project here with an audit reason. DNS and SES ownership verification still apply. Decisions record an organization-visible audit entry.
+**Live sending** shows each project’s current limits and whether it follows the plan. An eligible project activates after verified domain ownership and acceptance of the current terms. Use **Pause sending** for an abuse or operational restriction. **Save custom limits** records a project-specific exception. **Use plan limits** restores automatic changes with active prepaid or subscription entitlements. A resumed project remains subject to the organization’s risk status, domain verification and existing window counters. Decisions require an audit reason.
 
 ## Complimentary membership accounting
 
