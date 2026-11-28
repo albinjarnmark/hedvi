@@ -23,7 +23,7 @@ var accountLogo []byte
 var accountTemplate = template.Must(template.New("account-mail").Parse(accountHTML))
 
 type accountCopy struct {
-	Locale, Subject, Preheader, Eyebrow, Heading, Intro, Action, Expires, Fallback, Ignore, URL string
+	Locale, Subject, Preheader, Eyebrow, Heading, Intro, Action, Expires, Fallback, Ignore, URL, LinkLabel string
 }
 
 func (w *Worker) render(j *job) ([]byte, error) {
@@ -33,7 +33,7 @@ func (w *Worker) render(j *job) ([]byte, error) {
 	}
 	c := accountCopy{Locale: "en", Subject: "Finish creating your Hedvi account", Eyebrow: "Your Hedvi account", Heading: "Welcome to Hedvi.",
 		Intro: "Verify your email address, choose your password, and start building with Hedvi.", Action: "Create your account",
-		Expires: "This secure link expires in 30 minutes and can only be used once.", Fallback: "Button not working? Copy and paste this link into your browser:",
+		Expires: "This secure link expires in 30 minutes and can only be used once.", Fallback: "If the button doesn't work, open this link:",
 		Ignore: "If you did not request this email, you can safely ignore it."}
 	u.Path = "/verify-email"
 	if j.Purpose == "reset" {
@@ -49,7 +49,7 @@ func (w *Worker) render(j *job) ([]byte, error) {
 	if j.Data.Locale == "sv" {
 		c.Locale, c.Subject, c.Eyebrow, c.Heading = "sv", "Slutför ditt Hedvi-konto", "Ditt Hedvi-konto", "Välkommen till Hedvi."
 		c.Intro, c.Action = "Verifiera din e-postadress, välj ditt lösenord och kom igång med Hedvi.", "Skapa ditt konto"
-		c.Expires, c.Fallback = "Den säkra länken gäller i 30 minuter och kan bara användas en gång.", "Fungerar inte knappen? Kopiera länken och klistra in den i webbläsaren:"
+		c.Expires, c.Fallback = "Den säkra länken gäller i 30 minuter och kan bara användas en gång.", "Om knappen inte fungerar, öppna den här länken:"
 		c.Ignore = "Om du inte begärde det här mailet kan du ignorera det."
 		if j.Purpose == "reset" {
 			c.Subject, c.Heading, c.Action = "Återställ ditt Hedvi-lösenord", "En ny start.", "Återställ lösenord"
@@ -65,6 +65,7 @@ func (w *Worker) render(j *job) ([]byte, error) {
 		u.Fragment = ""
 	}
 	c.URL, c.Preheader = u.String(), c.Intro
+	c.LinkLabel = u.Host + u.Path
 	plain := c.Heading + "\n\n" + c.Intro + "\n\n" + c.Action + ":\n" + c.URL + "\n\n"
 	if c.Expires != "" {
 		plain += c.Expires + "\n\n"
@@ -74,37 +75,25 @@ func (w *Worker) render(j *job) ([]byte, error) {
 	if err := accountTemplate.Execute(&html, c); err != nil {
 		return nil, err
 	}
-	var out bytes.Buffer
-	related := multipart.NewWriter(&out)
-	from := (&mail.Address{Name: "Hedvi", Address: w.From}).String()
-	to := (&mail.Address{Address: j.Data.Email}).String()
-	fmt.Fprintf(&out, "From: %s\r\nTo: %s\r\nSubject: %s\r\nMIME-Version: 1.0\r\nContent-Type: multipart/related; boundary=%q\r\n\r\n", from, to, mime.QEncoding.Encode("utf-8", c.Subject), related.Boundary())
-	var alternatives bytes.Buffer
-	alt := multipart.NewWriter(&alternatives)
-	for _, part := range []struct{ kind, body string }{{"text/plain", plain}, {"text/html", html.String()}} {
-		p, err := alt.CreatePart(textproto.MIMEHeader{"Content-Type": {part.kind + "; charset=utf-8"}, "Content-Transfer-Encoding": {"quoted-printable"}})
+	// The outer alternatives let clients choose plaintext or the complete
+	// related HTML package. Use an RFC 2392 message-ID-shaped image CID.
+	var relatedBody bytes.Buffer
+	related := multipart.NewWriter(&relatedBody)
+	writeText := func(writer *multipart.Writer, kind, body string) error {
+		p, err := writer.CreatePart(textproto.MIMEHeader{"Content-Type": {kind + "; charset=utf-8"}, "Content-Transfer-Encoding": {"quoted-printable"}})
 		if err != nil {
-			return nil, err
+			return err
 		}
 		q := quotedprintable.NewWriter(p)
-		if _, err := q.Write([]byte(part.body)); err != nil {
-			return nil, err
+		if _, err := q.Write([]byte(body)); err != nil {
+			return err
 		}
-		if err := q.Close(); err != nil {
-			return nil, err
-		}
+		return q.Close()
 	}
-	if err := alt.Close(); err != nil {
+	if err := writeText(related, "text/html", html.String()); err != nil {
 		return nil, err
 	}
-	part, err := related.CreatePart(textproto.MIMEHeader{"Content-Type": {mime.FormatMediaType("multipart/alternative", map[string]string{"boundary": alt.Boundary()})}})
-	if err != nil {
-		return nil, err
-	}
-	if _, err := part.Write(alternatives.Bytes()); err != nil {
-		return nil, err
-	}
-	logo, err := related.CreatePart(textproto.MIMEHeader{"Content-Type": {"image/png"}, "Content-ID": {"<hedvi-logo>"}, "Content-Disposition": {"inline; filename=hedvi.png"}, "Content-Transfer-Encoding": {"base64"}})
+	logo, err := related.CreatePart(textproto.MIMEHeader{"Content-Type": {"image/png; name=hedvi.png"}, "Content-ID": {"<hedvi-brand@inline.hedvi.dev>"}, "Content-Disposition": {"inline; filename=hedvi.png"}, "Content-Transfer-Encoding": {"base64"}})
 	if err != nil {
 		return nil, err
 	}
@@ -117,6 +106,24 @@ func (w *Worker) render(j *job) ([]byte, error) {
 		encoded = encoded[n:]
 	}
 	if err := related.Close(); err != nil {
+		return nil, err
+	}
+	var out bytes.Buffer
+	alt := multipart.NewWriter(&out)
+	from := (&mail.Address{Name: "Hedvi", Address: w.From}).String()
+	to := (&mail.Address{Address: j.Data.Email}).String()
+	fmt.Fprintf(&out, "From: %s\r\nTo: %s\r\nSubject: %s\r\nMIME-Version: 1.0\r\nContent-Type: multipart/alternative; boundary=%q\r\n\r\n", from, to, mime.QEncoding.Encode("utf-8", c.Subject), alt.Boundary())
+	if err := writeText(alt, "text/plain", plain); err != nil {
+		return nil, err
+	}
+	part, err := alt.CreatePart(textproto.MIMEHeader{"Content-Type": {mime.FormatMediaType("multipart/related", map[string]string{"boundary": related.Boundary(), "type": "text/html"})}})
+	if err != nil {
+		return nil, err
+	}
+	if _, err := part.Write(relatedBody.Bytes()); err != nil {
+		return nil, err
+	}
+	if err := alt.Close(); err != nil {
 		return nil, err
 	}
 	return out.Bytes(), nil

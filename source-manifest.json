@@ -149,19 +149,19 @@
     },
     {
       "path": "apps/api/internal/authmail/render.go",
-      "sha256": "6d1bc9b98e2c82947d8e027cab856fe51a9464d4578034cc9b84bad174d12fd8"
+      "sha256": "5c1653cff5fdd88fda862a67a0619b138af2f2278ace26687b93b8859a9c975a"
     },
     {
       "path": "apps/api/internal/authmail/render_test.go",
-      "sha256": "cfca03e7f701b3878a100a231bd8bc662564aa1df33ecd3ed131ac4d23012ca0"
+      "sha256": "7522f7e02336362998e6eced3d822b57df0501d8ebb3f169cc63052801addb3d"
     },
     {
       "path": "apps/api/internal/authmail/templates/account.html",
-      "sha256": "eebb585c979787db4d1dfd417384a4ac46b28613c4d3c802a90385aa7cb1862f"
+      "sha256": "bc4db3f28788720ad2acafa601d00b81d41a193c468175337fa39bc21e83a3b7"
     },
     {
       "path": "apps/api/internal/authmail/templates/hedvi-logo.png",
-      "sha256": "46abc1675ef39e5aced364cc15683a362f3cb9c838ad42c01ae65854a3d1b4d7"
+      "sha256": "89ba78ab2478b04efcb8cca6c650bdb4a17cf5236304b05a92fa33725e68acf1"
     },
     {
       "path": "apps/api/internal/authmail/worker.go",

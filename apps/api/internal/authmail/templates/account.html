@@ -1,21 +1,35 @@
 <!doctype html>
 <html lang="{{.Locale}}">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"><title>{{.Subject}}</title></head>
-<body style="margin:0;padding:0;background-color:#08090a;color:#f2f3ef;font-family:Arial,Helvetica,sans-serif;-webkit-text-size-adjust:100%;">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only"><meta name="supported-color-schemes" content="light only">
+<title>{{.Subject}}</title>
+<style>
+/* Gmail iOS recolors text independently of image backgrounds. */
+u + .body .gmail-screen { background:#000; mix-blend-mode:screen; }
+u + .body .gmail-difference { background:#000; mix-blend-mode:difference; }
+@media screen and (max-width:480px) { .outer { padding:20px 12px !important; } .content { padding:28px 22px !important; } }
+</style>
+</head>
+<body class="body" style="margin:0;padding:0;background-color:#08090a;color:#ffffff;font-family:Arial,Helvetica,sans-serif;-webkit-text-size-adjust:100%;">
 <div style="display:none;font-size:1px;color:#08090a;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">{{.Preheader}}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#08090a" style="background-color:#08090a;"><tr><td align="center" style="padding:36px 16px;">
-<table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:560px;">
-<tr><td style="padding:0 8px 28px;"><img src="cid:hedvi-logo" width="142" height="44" alt="Hedvi" style="display:block;border:0;width:142px;height:44px;color:#f7f4ea;font-size:28px;font-weight:bold;"></td></tr>
-<tr><td bgcolor="#111413" style="background-color:#111413;border:1px solid #29302b;border-top:3px solid #d5f86b;border-radius:14px;padding:32px 28px;">
-<p style="margin:0 0 18px;font-size:11px;line-height:18px;font-weight:bold;letter-spacing:2px;color:#d5f86b;text-transform:uppercase;">{{.Eyebrow}}</p>
-<h1 style="margin:0 0 18px;font-size:30px;line-height:37px;letter-spacing:-1px;font-weight:600;color:#f2f3ef;">{{.Heading}}</h1>
-<p style="margin:0 0 28px;font-size:16px;line-height:26px;color:#b7beb9;">{{.Intro}}</p>
-<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#d5f86b" style="background-color:#d5f86b;border-radius:8px;mso-padding-alt:15px 24px;"><a href="{{.URL}}" style="display:inline-block;padding:15px 24px;border:1px solid #d5f86b;border-radius:8px;font-size:15px;line-height:20px;font-weight:bold;color:#102c28;text-decoration:none;text-align:center;">{{.Action}} &rarr;</a></td></tr></table>
-{{if .Expires}}<p style="margin:22px 0 0;font-size:13px;line-height:21px;color:#a6ada8;">{{.Expires}}</p>{{end}}
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-top:28px;border-bottom:1px solid #29302b;"></td></tr></table>
-<p style="margin:22px 0 8px;font-size:12px;line-height:20px;color:#a6ada8;">{{.Fallback}}</p>
-<p style="margin:0;font-size:12px;line-height:20px;word-break:break-all;overflow-wrap:anywhere;"><a href="{{.URL}}" style="color:#d5f86b;text-decoration:underline;word-break:break-all;">{{.URL}}</a></p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#08090a" style="background-color:#08090a;background-image:linear-gradient(#08090a,#08090a);"><tr><td class="outer" align="center" style="padding:40px 20px;">
+<table role="presentation" width="520" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:520px;">
+<tr><td style="padding:0 4px 26px;"><img src="cid:hedvi-brand@inline.hedvi.dev" width="142" height="44" alt="Hedvi" style="display:block;border:0;width:142px;height:44px;background-color:#08090a;color:#ffffff;font-size:28px;font-weight:bold;"></td></tr>
+<tr><td class="content" bgcolor="#111413" style="background-color:#111413;background-image:linear-gradient(#111413,#111413);border:1px solid #29302b;border-radius:12px;padding:32px;">
+<table role="presentation" width="32" cellpadding="0" cellspacing="0" border="0"><tr><td height="3" bgcolor="#d5f86b" style="height:3px;background-color:#d5f86b;background-image:linear-gradient(#d5f86b,#d5f86b);font-size:1px;line-height:3px;">&nbsp;</td></tr></table>
+<div class="gmail-screen"><div class="gmail-difference">
+<p style="margin:22px 0 10px;font-size:11px;line-height:18px;font-weight:bold;letter-spacing:1.5px;color:#ffffff;text-transform:uppercase;">{{.Eyebrow}}</p>
+<h1 style="margin:0 0 16px;font-size:27px;line-height:34px;letter-spacing:-0.6px;font-weight:600;color:#ffffff;">{{.Heading}}</h1>
+<p style="margin:0 0 26px;font-size:15px;line-height:25px;color:#ffffff;">{{.Intro}}</p>
+</div></div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#d5f86b" style="background-color:#d5f86b;border-radius:7px;mso-padding-alt:15px 20px;"><a href="{{.URL}}" style="display:block;padding:15px 20px;border:1px solid #d5f86b;border-radius:7px;font-size:15px;line-height:22px;font-weight:bold;color:#102c28;text-decoration:none;text-align:center;">{{.Action}} &rarr;</a></td></tr></table>
+<div class="gmail-screen"><div class="gmail-difference">
+{{if .Expires}}<p style="margin:20px 0 0;font-size:12px;line-height:20px;color:#ffffff;">{{.Expires}}</p>{{end}}
+<p style="margin:24px 0 5px;font-size:12px;line-height:20px;color:#ffffff;">{{.Fallback}}</p>
+<p style="margin:0;font-size:12px;line-height:20px;word-break:break-all;"><a href="{{.URL}}" style="color:#ffffff;text-decoration:underline;word-break:break-all;">{{.LinkLabel}}</a></p>
+</div></div>
 </td></tr>
-<tr><td style="padding:24px 8px 0;"><p style="margin:0 0 14px;font-size:12px;line-height:20px;color:#a6ada8;">{{.Ignore}}</p><p style="margin:0;font-size:12px;line-height:20px;color:#a6ada8;">Hedvi &middot; Email, without the overhead.</p></td></tr>
+<tr><td style="padding:22px 4px 0;"><div class="gmail-screen"><div class="gmail-difference"><p style="margin:0 0 10px;font-size:12px;line-height:20px;color:#ffffff;">{{.Ignore}}</p><p style="margin:0;font-size:12px;line-height:20px;color:#ffffff;">Hedvi &middot; Email, without the overhead.</p></div></div></td></tr>
 </table></td></tr></table>
 </body></html>
