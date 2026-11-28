@@ -23,6 +23,20 @@ each integration in the deployed environment before enabling its customer flow.
 Client-IP resolution uses explicit trusted proxies and signed web attestations.
 
 
+## International launch follow-up
+
+The owner has replaced the Sweden-first plan with an international, English-only
+product. The language switch is removed, legacy Swedish routes redirect to their
+English equivalents, and account onboarding and queued account mail use English.
+New accounts default to USD; established billing currencies are preserved. Stripe
+Checkout, portal and new customer invoice preferences explicitly request English.
+Billing addresses allow Hong Kong and UAE without postal codes; US/CA additionally
+require their region. International account tests include canonical invoice countries
+and zero-tax paid invoices, without weakening payment or address binding.
+These changes require deployment and hosted acceptance before being called live.
+Country availability remains explicit: Stripe Tax support alone does not establish
+tax registration or business eligibility. Global fiscal readiness is not verified.
+
 ## Hosted acceptance on 28 November
 
 Production account email was received and the revised logo and layout were

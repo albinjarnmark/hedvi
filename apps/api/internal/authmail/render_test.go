@@ -51,7 +51,7 @@ func TestBrandedAccountAlternatives(t *testing.T) {
 				}
 				for _, kind := range []string{"text/plain", "text/html"} {
 					body := parts[kind]
-					if !strings.Contains(body, "https://app.example.com"+path+"?locale="+locale) {
+					if !strings.Contains(body, "https://app.example.com"+path+"?locale=en") {
 						t.Fatalf("%s lost account action", kind)
 					}
 					hasToken := strings.Contains(body, "#token=fixture-only.proof")

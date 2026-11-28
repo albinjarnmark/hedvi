@@ -49,6 +49,9 @@ export const orderState: Record<string, string> = {
   payment_pending: "Payment pending",
 };
 
+const countryNames = new Intl.DisplayNames(["en"], { type: "region" });
+const countryName = (code: string) => countryNames.of(code) ?? code;
+
 const prices: Record<string, Record<string, string>> = {
   sek: { flex: "39 kr once", pro_50k: "129 kr/month", pro_100k: "249 kr/month" },
   usd: { flex: "$4 once", pro_50k: "$13/month", pro_100k: "$25/month" },
@@ -60,6 +63,7 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
   const { pending, error, run } = useAction();
   const [choice, setChoice] = useState(preferred.toLowerCase() === "sek" ? "sek" : "usd");
   const [sku, setSKU] = useState("flex");
+  const [countryChoice, setCountryChoice] = useState<string | null>(null);
 
   if (load.error) {
     return <section className="card"><h2>Billing</h2><p role="alert">{load.error.message}</p></section>;
@@ -69,6 +73,9 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
   const gift = grant && <p><strong>Complimentary {productName[grant.plan]} membership</strong> · Ends {formatDate(grant.ends_at)}. There is no charge or renewal. A paid Pro cycle takes precedence over a complimentary allowance.</p>;
   if (!data?.enabled) return gift ? <section className="card"><h2>Membership</h2>{gift}</section> : null;
   const currency = data.currency || choice;
+  const country = countryChoice ?? data.billing_profile?.country ?? "";
+  const regionRequired = country === "US" || country === "CA";
+  const postalRequired = country !== "HK" && country !== "AE";
   const chooseBaseline = data.baseline === "flex" || (data.baseline === "free" && data.has_credits);
 
   function openStripe(action: "checkout" | "portal", body: Record<string, unknown>) {
@@ -98,7 +105,7 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
           <div>
             <label htmlFor="billing-currency">Billing currency</label>
             <select id="billing-currency" value={currency} disabled={!!data.currency || pending} onChange={e => setChoice(e.target.value)}>
-              <option value="sek">SEK</option><option value="usd">USD</option>
+              <option value="usd">USD</option><option value="sek">SEK</option>
             </select>
           </div>
           <div>
@@ -118,7 +125,7 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
               {data.billing_profile.line2 && <><br />{data.billing_profile.line2}</>}
               <br />{data.billing_profile.postal_code} {data.billing_profile.city}
               {data.billing_profile.state && <><br />{data.billing_profile.state}</>}
-              <br />{new Intl.DisplayNames(["en"], { type: "region" }).of(data.billing_profile.country) ?? data.billing_profile.country}
+              <br />{countryName(data.billing_profile.country)}
             </p>
             <p className="small muted">This address is used for invoices and tax. Contact support to change it. Stripe may ask for your legal business name when you provide a tax ID.</p>
           </div>
@@ -132,16 +139,17 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
             <input required id="billing-line1" name="line1" defaultValue={data.billing_profile?.line1} autoComplete="billing address-line1" maxLength={200} />
             <label htmlFor="billing-line2">Address line 2 (optional)</label>
             <input id="billing-line2" name="line2" defaultValue={data.billing_profile?.line2} autoComplete="billing address-line2" maxLength={200} />
-            <label htmlFor="billing-postal">Postal code</label>
-            <input required id="billing-postal" name="postal_code" defaultValue={data.billing_profile?.postal_code} autoComplete="billing postal-code" maxLength={20} />
+            <label htmlFor="billing-postal">Postal code{!postalRequired && " (if applicable)"}</label>
+            <input required={postalRequired} id="billing-postal" name="postal_code" defaultValue={data.billing_profile?.postal_code} autoComplete="billing postal-code" maxLength={20} />
             <label htmlFor="billing-city">City</label>
             <input required id="billing-city" name="city" defaultValue={data.billing_profile?.city} autoComplete="billing address-level2" maxLength={200} />
-            <label htmlFor="billing-state">State or region (optional)</label>
-            <input id="billing-state" name="state" defaultValue={data.billing_profile?.state} autoComplete="billing address-level1" maxLength={200} />
+            <label htmlFor="billing-state">State or region{!regionRequired && " (optional)"}</label>
+            <input required={regionRequired} id="billing-state" name="state" defaultValue={data.billing_profile?.state} autoComplete="billing address-level1" maxLength={200} />
             <label htmlFor="billing-country">Company billing country</label>
-            <select required id="billing-country" name="country" defaultValue={data.billing_profile?.country} autoComplete="billing country">
-              {data.countries.map(country => (
-                <option key={country} value={country}>{new Intl.DisplayNames(["en"], { type: "region" }).of(country) ?? country}</option>
+            <select required id="billing-country" name="country" value={country} onChange={e => setCountryChoice(e.target.value)} autoComplete="billing country">
+              <option value="" disabled>Select your country</option>
+              {[...data.countries].sort((a, b) => countryName(a).localeCompare(countryName(b), "en")).map(country => (
+                <option key={country} value={country}>{countryName(country)}</option>
               ))}
             </select>
           </fieldset>

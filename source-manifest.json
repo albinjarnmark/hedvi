@@ -157,7 +157,7 @@
     },
     {
       "path": "apps/api/internal/authmail/authmail.go",
-      "sha256": "ae03753e6a5410ffc800709ae35f1163fcd76d81431a2d60a80f32a030aae749"
+      "sha256": "56dbf8d4239590a223ce03075d0ea0f88892adc0a1ad767515059fa1f1685e03"
     },
     {
       "path": "apps/api/internal/authmail/read.go",
@@ -165,11 +165,11 @@
     },
     {
       "path": "apps/api/internal/authmail/render.go",
-      "sha256": "5c1653cff5fdd88fda862a67a0619b138af2f2278ace26687b93b8859a9c975a"
+      "sha256": "df6d8d57a305dd6c66b4be09ed5b8e53ec338ee1c156ec8995041fa408cb349f"
     },
     {
       "path": "apps/api/internal/authmail/render_test.go",
-      "sha256": "7522f7e02336362998e6eced3d822b57df0501d8ebb3f169cc63052801addb3d"
+      "sha256": "2230d188460d2f22e4a7aafa7bb8e39b49d2e72c8979bd9b52ca76bf6e9db64b"
     },
     {
       "path": "apps/api/internal/authmail/templates/account.html",
@@ -185,15 +185,15 @@
     },
     {
       "path": "apps/api/internal/billing/checkout.go",
-      "sha256": "d91aa3c0cc15abcc4d907fdcfccfadd5471ae5d6e3f4350c8e15ed2f8592b58d"
+      "sha256": "370148837aec2f571dd8f55ff9d0e1ce050461b41a961caa9ad25cd2d8fef175"
     },
     {
       "path": "apps/api/internal/billing/invoice.go",
-      "sha256": "2891daf1de3b8096e27d7a6380cff66950578f9f81dadfc678848c782abe6a0e"
+      "sha256": "fc95cd23cd58a8e0c8a95cfe1bb716b522e5cfc65affca2bf0aa5131e40f1caa"
     },
     {
       "path": "apps/api/internal/billing/profile.go",
-      "sha256": "3fbcc69904275fe4ae4d24ecff6ecaa099b260982424a3e105fbce7275486030"
+      "sha256": "81ef050249f20d2ecdab2b95a5cebfb828982b91573a57eae3e873b6ac61bcd1"
     },
     {
       "path": "apps/api/internal/billing/stripe.go",
@@ -205,7 +205,7 @@
     },
     {
       "path": "apps/api/internal/billing/worker.go",
-      "sha256": "9367747ef389fed67c9ea156157848aee5db2defb14ba03c1f11a992a1de7193"
+      "sha256": "2c1674a0cf1e9b9a9de22a33cdb9a93a7abf130f5acd3d8bd88299d24cf8b99a"
     },
     {
       "path": "apps/api/internal/blob/blob.go",
@@ -241,7 +241,7 @@
     },
     {
       "path": "apps/api/internal/console/auth.go",
-      "sha256": "04d2ec19727f1532464db8f2ab732f9573573df66bae02050fb7c26f803642b0"
+      "sha256": "9441767c6765f7fd0320d854a71fb97b427ecbbba1b8aaa8e372338efc925cd9"
     },
     {
       "path": "apps/api/internal/console/billing.go",
@@ -356,6 +356,10 @@
       "sha256": "fb261203887e1c8761ff59e0aebe01c70205fbe526155fc424148c6c359a50d6"
     },
     {
+      "path": "apps/api/internal/db/migrations/0020_billing_request_versions.sql",
+      "sha256": "54820a22c3e6d10ae0ef6cec2d5f604c58494c2af2051c4e4c7ae3edfffa00f5"
+    },
+    {
       "path": "apps/api/internal/domains/mail_from.go",
       "sha256": "0d43880c5e7faff48b5b705cbe18f29a81ba91c7010e9ab29d62b320aff85ee0"
     },
@@ -381,7 +385,7 @@
     },
     {
       "path": "apps/api/internal/e2e/account_boundaries_test.go",
-      "sha256": "f87177b1fb9c0bb21d863ddbe61f3099d842ef4f924b45b9464223b04e431985"
+      "sha256": "09022edd0ba1d5410c12371ac6aebcf36512ec9e0c2cb86c6c1367714a80d317"
     },
     {
       "path": "apps/api/internal/e2e/account_crashes_test.go",
@@ -401,11 +405,11 @@
     },
     {
       "path": "apps/api/internal/e2e/billing_address_test.go",
-      "sha256": "4828a763573b867e2065cc72ff5adc655c543b9577166f8849f126922383359b"
+      "sha256": "a9d83254a90c2abc4c0f8da8eb002c9350b4aa58c7f27a59faa9ef57af034249"
     },
     {
       "path": "apps/api/internal/e2e/billing_test.go",
-      "sha256": "b7f8609adb29abda7c346d366ecfa108b7ea10ee11581b985c6a29f970ca7635"
+      "sha256": "a629d8059df73e667cd61307fa93fb9569f6df68ef5ab7d4daba607c832308da"
     },
     {
       "path": "apps/api/internal/e2e/domain_dns_ownership_test.go",
@@ -929,7 +933,7 @@
     },
     {
       "path": "apps/web/src/app/(site)/layout.tsx",
-      "sha256": "413b6155d930c28e8e68ff775a442a5ea5f83c2bbbebb51cd790645afad403d3"
+      "sha256": "3433b998dd80a8ff60741a9b9d30640893d6844cbb351ff91be1b096904927f1"
     },
     {
       "path": "apps/web/src/app/(site)/legal/accept/page.tsx",
@@ -989,15 +993,15 @@
     },
     {
       "path": "apps/web/src/app/(sv)/sv/layout.tsx",
-      "sha256": "8d6e9c16066e20301974950158e4b838614e0d1c4c4707d84e5409c67372cf26"
+      "sha256": "c36f0e2bfe64aa67d4ef30b5d708b194e921ea670f153b2a4a87859131fdce36"
     },
     {
       "path": "apps/web/src/app/(sv)/sv/page.tsx",
-      "sha256": "c16e454743e57fb36e9f977dbe50da41a29a1c384f2e800e95c8fbc08f92f32d"
+      "sha256": "636934800e4eefbf7db174f407c71e366f76f7db5740bf8a529e9a2fe167e653"
     },
     {
       "path": "apps/web/src/app/(sv)/sv/priser/page.tsx",
-      "sha256": "a1f0d2ceae5b5ed4f8bf880d8a0c335f70b560a35ac72ed1ab1559711ea4e371"
+      "sha256": "b1a83cfb58be88466be909a99a7f41a345f0cf745a690def8fb999c48e158c61"
     },
     {
       "path": "apps/web/src/app/globals.css",
@@ -1005,7 +1009,7 @@
     },
     {
       "path": "apps/web/src/components/AccountRecovery.tsx",
-      "sha256": "5e31cb93c961897cb78f9fda6511b4a306a4493b07182530459bbfbebb2cf18b"
+      "sha256": "03a4ded225db9694d55e21878a9d53888014a2cc9178e510e4f1e6739180c45a"
     },
     {
       "path": "apps/web/src/components/AgentSetup.tsx",
@@ -1021,7 +1025,7 @@
     },
     {
       "path": "apps/web/src/components/BillingSettings.tsx",
-      "sha256": "893157770fb9e531fbeb080a059d42ae419905fe73b12f5f388a59c8986fe4f4"
+      "sha256": "b3db537c21433461b88971ccacf613e0bc1a4dc4483104f0ceab6e5ff9902303"
     },
     {
       "path": "apps/web/src/components/CloudflareSetup.tsx",
@@ -1077,7 +1081,7 @@
     },
     {
       "path": "apps/web/src/components/Site.tsx",
-      "sha256": "f0749e2a2aeeddcb9adebf38a11d6bfd43207a73bb42a68315d79572b2b5ee5b"
+      "sha256": "3179521110786005215acc4bede83cfd4b61ea23199c4d1d9b6fa0ee19566af1"
     },
     {
       "path": "apps/web/src/components/Status.tsx",
@@ -1205,7 +1209,7 @@
     },
     {
       "path": "apps/web/src/lib/api.ts",
-      "sha256": "9db20835235a33739e9d5a11150d92924c503809c93190c7f1d218d12f6c8f49"
+      "sha256": "540585a77e4ce32ac2e8edf85e634e3b0cf2594dd5797801bf52c9a5b35afceb"
     },
     {
       "path": "apps/web/src/lib/billing-profile.test.ts",
@@ -1237,11 +1241,11 @@
     },
     {
       "path": "apps/web/src/lib/i18n.test.ts",
-      "sha256": "900a5a890554943d0654e976c184df18bcf38570fef68e47e01bfd120f1b67a9"
+      "sha256": "91ba2533577bb02dbad9a3ad1600c6a36d66c00707cef2d02d6ff57375da5400"
     },
     {
       "path": "apps/web/src/lib/i18n.ts",
-      "sha256": "dddd5e7290ad4eefef5a35419520ab6760890569391b5f8c2547df42bbb61c50"
+      "sha256": "9165f679af8fc59da98182ea71539d69aeb9d200a95f56f74878e3123fe56957"
     },
     {
       "path": "apps/web/src/lib/navigation.test.ts",
@@ -1269,11 +1273,11 @@
     },
     {
       "path": "apps/web/src/proxy.ts",
-      "sha256": "515258cc99b5e4b9fb53f25f292082de3d3c21bd9d1976ab63722b54ae9bdd15"
+      "sha256": "150df520e365344e6cc304b04b801546509fac26853fa08e4adfd3cb851a1cbe"
     },
     {
       "path": "apps/web/tests/browser/release.spec.ts",
-      "sha256": "bc8702138abd4de844430519b49a736adade828d93564af3a9982a751fd669ec"
+      "sha256": "94d489c8ab8a50904cb7b323ef94c8bd5657e3b3d2b72800679a601132e40640"
     },
     {
       "path": "apps/web/tests/browser/status.spec.ts",
@@ -1549,7 +1553,7 @@
     },
     {
       "path": "docs/runbooks/billing.md",
-      "sha256": "57dbc8ed9ab5afd4101edc458195fd833718875e3d5d7f2c931bc1a06042c33f"
+      "sha256": "623af8ac8f3a022dea84d50e2357bee8fa3f9a38efd948601756477cb54d5955"
     },
     {
       "path": "docs/runbooks/database-bootstrap.md",
@@ -1589,7 +1593,7 @@
     },
     {
       "path": "docs/status.md",
-      "sha256": "e43955f18288d856809c2826924be9c448879db809644e2cf57e8572105af21b"
+      "sha256": "321001a8565b6608803f751ceacfbb9d66d960750f59d176ca3c59437bce65d8"
     },
     {
       "path": "infra/terraform/AUTH-MAIL.md",

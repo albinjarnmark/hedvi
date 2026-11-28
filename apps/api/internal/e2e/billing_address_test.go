@@ -54,6 +54,7 @@ func TestStripeBillingAddressBoundBeforeCheckout(t *testing.T) {
 	h := newBillingAddressHarness(t)
 	for _, mutate := range []func(*billing.Profile){
 		func(p *billing.Profile) { p.Country = "DE" },
+		func(p *billing.Profile) { p.Name = "" },
 		func(p *billing.Profile) { p.PostalCode = "" },
 		func(p *billing.Profile) { p.Line1 = "line\nheader" },
 	} {
@@ -390,5 +391,118 @@ func TestStripeBillingAddressCreationSerializesAcrossReplicas(t *testing.T) {
 	status, err := replica.Status(h.e.Ctx, h.org, h.user)
 	if err != nil || !status.ProfileEditable {
 		t.Fatal("exclusive rejection was not editable", err)
+	}
+}
+
+// An allowed international company must receive exactly one allowance from its
+// canonical paid invoice, even when the card address is in another country.
+func TestStripeInternationalBillingAndZeroTax(t *testing.T) {
+	for _, country := range []string{"DE", "US", "GB", "HK"} {
+		t.Run(country, func(t *testing.T) {
+			h := newBillingAddressHarness(t)
+			h.e.Console.Billing.C.Countries[country] = true
+			h.f.zeroTax = country != "DE"
+			p := testBillingProfile()
+			p.Country = country
+			if country == "US" {
+				p.State, p.PostalCode = "CA", "94103"
+			}
+			if country == "HK" {
+				p.PostalCode = ""
+			}
+			if got := h.request(p); got != 200 {
+				t.Fatalf("international checkout: %d", got)
+			}
+			// Market closure blocks new purchases, not an already issued paid order.
+			delete(h.e.Console.Billing.C.Countries, country)
+			if got := h.request(p); got != 422 {
+				t.Fatalf("closed market accepted new checkout: %d", got)
+			}
+			h.f.paid, h.f.status, h.f.invoiceCountry = true, "complete", country
+			if err := h.worker.RunOnce(h.e.Ctx); err != nil {
+				t.Fatal(err)
+			}
+			if h.e.Count(`SELECT count(*) FROM credit_lots WHERE granted=10000`) != 1 || h.e.Count(`SELECT count(*) FROM billing_invoices WHERE state='granted'`) != 1 {
+				t.Fatal("paid international invoice did not grant exactly one allowance")
+			}
+			if err := h.worker.RunOnce(h.e.Ctx); err != nil {
+				t.Fatal(err)
+			}
+			if h.e.Count(`SELECT count(*) FROM credit_lots`) != 1 {
+				t.Fatal("duplicate allowance")
+			}
+		})
+	}
+}
+
+func TestStripeNorthAmericanAddressRequiresRegion(t *testing.T) {
+	h := newBillingAddressHarness(t)
+	for _, country := range []string{"US", "CA"} {
+		h.e.Console.Billing.C.Countries[country] = true
+		p := testBillingProfile()
+		p.Country = country
+		if got := h.request(p); got != 422 {
+			t.Fatalf("missing region accepted: %d", got)
+		}
+		p.State, p.PostalCode = "CA", ""
+		if got := h.request(p); got != 422 {
+			t.Fatalf("missing postal code accepted: %d", got)
+		}
+	}
+	if h.f.customerCreates != 0 || h.f.sessionCreates != 0 {
+		t.Fatal("invalid address reached Stripe")
+	}
+}
+
+func TestStripeLegacyRequestBodiesSurviveRollingRelease(t *testing.T) {
+	h := newBillingAddressHarness(t)
+	p := testBillingProfile()
+	// An old API writer omits the new field; its pending create must stay v1.
+	h.e.Exec(`INSERT INTO billing_customers(org_id,currency,billing_profile) VALUES($1,'sek',$2)`, h.org, p)
+	h.f.legacyCustomer, h.f.lostCustomerResponses = true, 1
+	if got := h.request(p); got != 503 {
+		t.Fatalf("lost legacy customer response: %d", got)
+	}
+	if got := h.request(p); got != 200 {
+		t.Fatalf("legacy customer retry: %d", got)
+	}
+	if len(h.f.customerForms) != 2 || h.f.customerForms[0] != h.f.customerForms[1] || h.f.customerKeys[0] != h.f.customerKeys[1] {
+		t.Fatal("legacy customer changed idempotent request")
+	}
+	if h.e.Count(`SELECT count(*) FROM billing_customers WHERE request_version=1`) != 1 {
+		t.Fatal("legacy version upgraded")
+	}
+	if h.e.Count(`SELECT count(*) FROM billing_orders WHERE request_version=2`) != 1 {
+		t.Fatal("new writer did not select v2")
+	}
+	if _, err := h.e.WorkerPool.Exec(h.e.Ctx, `UPDATE billing_customers SET request_version=2`); err == nil {
+		t.Fatal("customer version was mutable")
+	}
+}
+
+func TestStripeLegacyCheckoutRetriesUnchanged(t *testing.T) {
+	h := newBillingAddressHarness(t)
+	p := testBillingProfile()
+	// A confirmed legacy customer, then a pending v1 order from an older API.
+	h.e.Exec(`INSERT INTO billing_customers(org_id,currency,billing_profile,customer_id) VALUES($1,'sek',$2,'cus_hedvi')`, h.org, p)
+	var id uuid.UUID
+	if err := h.e.WorkerPool.QueryRow(h.e.Ctx, `SELECT id FROM billing_customers WHERE org_id=$1`, h.org).Scan(&id); err != nil {
+		t.Fatal(err)
+	}
+	h.f.customerRef = id.String()
+	h.f.customerAddress = billingJSON{"line1": p.Line1, "line2": p.Line2, "city": p.City, "state": p.State, "postal_code": p.PostalCode, "country": p.Country}
+	h.e.Exec(`INSERT INTO billing_orders(org_id,request_id,sku,currency,country,price_id,amount,return_project_id) VALUES($1,$2,'flex','sek','SE','price_hedvi',3900,$3)`, h.org, uuid.New(), h.project)
+	h.f.legacyCheckout, h.f.lostSessionResponses = true, 1
+	if got := h.request(p); got != 503 {
+		t.Fatalf("lost legacy session response: %d", got)
+	}
+	if got := h.request(p); got != 200 {
+		t.Fatalf("legacy checkout retry: %d", got)
+	}
+	if len(h.f.checkoutForms) != 2 || h.f.checkoutForms[0] != h.f.checkoutForms[1] {
+		t.Fatal("legacy checkout changed idempotent request")
+	}
+	if _, err := h.e.WorkerPool.Exec(h.e.Ctx, `UPDATE billing_orders SET request_version=2`); err == nil {
+		t.Fatal("order version was mutable")
 	}
 }

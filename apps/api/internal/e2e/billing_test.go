@@ -33,6 +33,8 @@ type stripeFixture struct {
 	checkoutIntent                              string
 	missingCheckoutIntent, emptyCheckoutIntent  bool
 	uncaptured, underCaptured                   bool
+	zeroTax                                     bool
+	legacyCustomer, legacyCheckout              bool
 	customerCreates, sessionCreates             int
 	lostCustomerResponses, lostSessionResponses int
 	rejectCustomer                              bool
@@ -66,6 +68,9 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 		}
 	}
 	tax := int64(97)
+	if f.zeroTax {
+		tax = 0
+	}
 	total := f.amount + tax
 	if f.reduced {
 		total = f.amount - 1
@@ -120,7 +125,11 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 		f.customerCreates++
 		f.customerKeys = append(f.customerKeys, r.Header.Get("Idempotency-Key"))
 		f.customerForms = append(f.customerForms, r.Form.Encode())
-		if r.Form.Get("tax[validate_location]") != "immediately" {
+		expectedLocale := "en"
+		if f.legacyCustomer {
+			expectedLocale = ""
+		}
+		if r.Form.Get("tax[validate_location]") != "immediately" || r.Form.Get("preferred_locales[0]") != expectedLocale {
 			return nil, fmt.Errorf("missing tax location validation")
 		}
 		if f.rejectCustomer {
@@ -157,7 +166,11 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 		if r.Form.Get("allowed_payment_method_types[0]") != "card" || r.Form.Has("payment_method_types[0]") || r.Form.Has("allowed_payment_method_types[1]") {
 			return nil, fmt.Errorf("invalid checkout payment-method filter")
 		}
-		if r.Form.Get("metadata[hedvi_order]") != f.order || r.Form.Get("line_items[0][price]") != f.price || r.Form.Get("automatic_tax[enabled]") != "true" || r.Form.Get("consent_collection[terms_of_service]") != "required" || r.Form.Get("customer_update[address]") != "never" || r.Form.Get("billing_address_collection") != "auto" || r.Form.Get("shipping_address_collection[allowed_countries][0]") != "" {
+		expectedLocale := "en"
+		if f.legacyCheckout {
+			expectedLocale = ""
+		}
+		if r.Form.Get("locale") != expectedLocale || r.Form.Get("metadata[hedvi_order]") != f.order || r.Form.Get("line_items[0][price]") != f.price || r.Form.Get("automatic_tax[enabled]") != "true" || r.Form.Get("consent_collection[terms_of_service]") != "required" || r.Form.Get("customer_update[address]") != "never" || r.Form.Get("billing_address_collection") != "auto" || r.Form.Get("shipping_address_collection[allowed_countries][0]") != "" {
 			return nil, fmt.Errorf("invalid checkout")
 		}
 		result = cs()

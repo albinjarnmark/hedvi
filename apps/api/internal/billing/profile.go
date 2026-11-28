@@ -24,7 +24,7 @@ type Profile struct {
 }
 
 func (s *Service) normalizeProfile(p *Profile) (Profile, error) {
-	invalid := apierr.New(422, "billing_address", "Provide your company's billing name, street address, city, postal code and an available billing country.")
+	invalid := apierr.New(422, "billing_address", "Provide your company's billing name, street address, city and an available billing country.")
 	if p == nil {
 		return Profile{}, invalid
 	}
@@ -36,20 +36,27 @@ func (s *Service) normalizeProfile(p *Profile) (Profile, error) {
 		}
 	}
 	v.Country = strings.ToUpper(v.Country)
-	if v.Name == "" || v.Line1 == "" || v.City == "" || v.PostalCode == "" || utf8.RuneCountInString(v.PostalCode) > 20 || !countryCode.MatchString(v.Country) || !s.C.Countries[v.Country] {
+	if v.Name == "" || v.Line1 == "" || v.City == "" || (v.PostalCode == "" && v.Country != "HK" && v.Country != "AE") || utf8.RuneCountInString(v.PostalCode) > 20 || !countryCode.MatchString(v.Country) || !s.C.Countries[v.Country] {
 		return Profile{}, invalid
+	}
+	if (v.Country == "US" || v.Country == "CA") && (v.State == "" || v.PostalCode == "") {
+		return Profile{}, apierr.New(422, "billing_address", "Provide your state or province and postal code for this billing country.")
 	}
 	return v, nil
 }
 
-func (p Profile) customerParams(local string) url.Values {
-	return url.Values{
+func (p Profile) customerParams(local string, version int) url.Values {
+	v := url.Values{
 		"metadata[hedvi_customer]": {local}, "name": {p.Name},
 		"address[line1]": {p.Line1}, "address[line2]": {p.Line2},
 		"address[city]": {p.City}, "address[postal_code]": {p.PostalCode},
 		"address[state]": {p.State}, "address[country]": {p.Country},
 		"tax[validate_location]": {"immediately"},
 	}
+	if version >= 2 {
+		v.Set("preferred_locales[0]", "en")
+	}
+	return v
 }
 
 func (p Profile) matchesCustomer(c *stripe.Customer) bool {

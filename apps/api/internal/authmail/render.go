@@ -46,20 +46,6 @@ func (w *Worker) render(j *job) ([]byte, error) {
 		c.Subject, c.Heading, c.Action = "Your Hedvi account", "You're already with us.", "Recover your account"
 		c.Intro, c.Expires = "An account already uses this email address. Sign in with your existing password, or request a secure password reset.", ""
 	}
-	if j.Data.Locale == "sv" {
-		c.Locale, c.Subject, c.Eyebrow, c.Heading = "sv", "Slutför ditt Hedvi-konto", "Ditt Hedvi-konto", "Välkommen till Hedvi."
-		c.Intro, c.Action = "Verifiera din e-postadress, välj ditt lösenord och kom igång med Hedvi.", "Skapa ditt konto"
-		c.Expires, c.Fallback = "Den säkra länken gäller i 30 minuter och kan bara användas en gång.", "Om knappen inte fungerar, öppna den här länken:"
-		c.Ignore = "Om du inte begärde det här mailet kan du ignorera det."
-		if j.Purpose == "reset" {
-			c.Subject, c.Heading, c.Action = "Återställ ditt Hedvi-lösenord", "En ny start.", "Återställ lösenord"
-			c.Intro = "Välj ett nytt lösenord för ditt Hedvi-konto. Tvåstegsverifieringen är fortsatt aktiverad om du har ställt in den."
-		}
-		if j.Existing {
-			c.Subject, c.Heading, c.Action = "Ditt Hedvi-konto", "Du är redan med oss.", "Återställ kontot"
-			c.Intro, c.Expires = "Ett konto använder redan den här e-postadressen. Logga in med ditt befintliga lösenord eller begär en säker lösenordsåterställning.", ""
-		}
-	}
 	u.RawPath, u.RawQuery, u.Fragment = "", "locale="+c.Locale, "token="+j.Data.Token
 	if j.Existing {
 		u.Fragment = ""

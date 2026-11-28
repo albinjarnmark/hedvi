@@ -6,7 +6,6 @@ export const metadata: Metadata = {
   title: { default: "Hedvi — Email, without the overhead.", template: "%s · Hedvi" },
   description: "Building a simpler email API: test safely, understand delivery, control cost. Made in Sweden.",
   icons: { icon: "/favicon.svg", apple: "/icon-180.png" },
-  alternates: { languages: { en: "/", sv: "/sv" } },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

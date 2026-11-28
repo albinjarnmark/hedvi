@@ -23,7 +23,7 @@ export function proxy(request: NextRequest) {
   }
   const svHost = process.env.HEDVI_SWEDISH_HOST?.toLowerCase();
   if (svHost && hostname.toLowerCase() === svHost && process.env.HEDVI_SITE_URL) {
-    return NextResponse.redirect(new URL(`/sv${pathname === "/" ? "" : pathname}${search}`, process.env.HEDVI_SITE_URL), 308);
+    return NextResponse.redirect(new URL(`${pathname === "/priser" ? "/pricing" : pathname}${search}`, process.env.HEDVI_SITE_URL), 308);
   }
   if (pathname === "/console-api" || pathname.startsWith("/console-api/")) {
     const publicAPI = process.env.HEDVI_API_INTERNAL_URL ?? "http://127.0.0.1:8780";

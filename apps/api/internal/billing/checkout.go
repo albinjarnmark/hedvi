@@ -129,12 +129,13 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 	defer done()
 	var customerUUID uuid.UUID
 	var customerCreated time.Time
+	var customerVersion, orderVersion int
 	var o Order
 	err = s.customerTx(ctx, org, user, func(tx pgx.Tx) error {
 		if _, err := tx.Exec(ctx, `SELECT id FROM organizations WHERE id=$1 FOR UPDATE`, org); err != nil {
 			return err
 		}
-		if _, err := tx.Exec(ctx, `INSERT INTO billing_customers(org_id,currency,billing_profile) VALUES($1,$2,$3) ON CONFLICT DO NOTHING`, org, currency, profile); err != nil {
+		if _, err := tx.Exec(ctx, `INSERT INTO billing_customers(org_id,currency,billing_profile,request_version) VALUES($1,$2,$3,2) ON CONFLICT DO NOTHING`, org, currency, profile); err != nil {
 			return err
 		}
 		if _, err := tx.Exec(ctx, `SELECT hedvi_retry_billing_profile($1,$2,$3)`, org, profile, currency); err != nil {
@@ -142,7 +143,7 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 		}
 		var boundCurrency string
 		var boundProfile *Profile
-		if err := tx.QueryRow(ctx, `SELECT id,created_at,currency,coalesce(customer_id,''),billing_profile FROM billing_customers WHERE org_id=$1`, org).Scan(&customerUUID, &customerCreated, &boundCurrency, &o.Customer, &boundProfile); err != nil {
+		if err := tx.QueryRow(ctx, `SELECT id,created_at,currency,coalesce(customer_id,''),billing_profile,request_version FROM billing_customers WHERE org_id=$1`, org).Scan(&customerUUID, &customerCreated, &boundCurrency, &o.Customer, &boundProfile, &customerVersion); err != nil {
 			return err
 		}
 		if boundProfile == nil {
@@ -178,7 +179,7 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 			return "", err
 		}
 		var customer stripe.Customer
-		err = s.call(ctx, "POST", "/customers", profile.customerParams(customerUUID.String()), "hedvi-customer-"+customerUUID.String(), &customer)
+		err = s.call(ctx, "POST", "/customers", profile.customerParams(customerUUID.String(), customerVersion), "hedvi-customer-"+customerUUID.String(), &customer)
 		if err == nil && (!stripeID.MatchString(customer.ID) || customer.Livemode != s.C.Live || !profile.matchesCustomer(&customer)) {
 			err = errors.New("unexpected Stripe customer")
 		}
@@ -225,9 +226,9 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 			return err
 		}
 		// A timed-out create, double-click or second browser tab reuses an open checkout.
-		err := tx.QueryRow(ctx, `SELECT return_project_id,id,sku,currency,country,coalesce(session_id,''),state,created_at FROM billing_orders WHERE org_id=$1 AND (request_id=$2 OR (sku=$3 AND state IN ('creating','open','review')) OR ($3<>'flex' AND sku<>'flex' AND state NOT IN ('ended','expired'))) ORDER BY (request_id=$2) DESC,created_at LIMIT 1`, org, token, sku).Scan(&project, &o.ID, &o.SKU, &o.Currency, &o.Country, &o.Session, &o.State, &o.Created)
+		err := tx.QueryRow(ctx, `SELECT return_project_id,id,sku,currency,country,coalesce(session_id,''),state,created_at,request_version FROM billing_orders WHERE org_id=$1 AND (request_id=$2 OR (sku=$3 AND state IN ('creating','open','review')) OR ($3<>'flex' AND sku<>'flex' AND state NOT IN ('ended','expired'))) ORDER BY (request_id=$2) DESC,created_at LIMIT 1`, org, token, sku).Scan(&project, &o.ID, &o.SKU, &o.Currency, &o.Country, &o.Session, &o.State, &o.Created, &orderVersion)
 		if errors.Is(err, pgx.ErrNoRows) {
-			return tx.QueryRow(ctx, `INSERT INTO billing_orders(org_id,request_id,sku,currency,country,price_id,amount,return_project_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id,state,created_at`, org, token, sku, currency, country, p.ID, p.Amount, project).Scan(&o.ID, &o.State, &o.Created)
+			return tx.QueryRow(ctx, `INSERT INTO billing_orders(org_id,request_id,sku,currency,country,price_id,amount,return_project_id,request_version) VALUES($1,$2,$3,$4,$5,$6,$7,$8,2) RETURNING id,state,created_at,request_version`, org, token, sku, currency, country, p.ID, p.Amount, project).Scan(&o.ID, &o.State, &o.Created, &orderVersion)
 		}
 		if err != nil {
 			return err
@@ -250,6 +251,9 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 		// Stable return destinations are required when a purchase is retried from a different project.
 		dest := s.C.AppURL + "/app/" + project.String() + "/settings/billing-return"
 		v := url.Values{"mode": {p.mode()}, "customer": {o.Customer}, "line_items[0][price]": {p.ID}, "line_items[0][quantity]": {"1"}, "allowed_payment_method_types[0]": {"card"}, "adaptive_pricing[enabled]": {"false"}, "allow_promotion_codes": {"false"}, "consent_collection[terms_of_service]": {"required"}, "billing_address_collection": {"auto"}, "customer_update[address]": {"never"}, "customer_update[name]": {"auto"}, "tax_id_collection[enabled]": {"true"}, "automatic_tax[enabled]": {"true"}, "client_reference_id": {o.ID.String()}, "metadata[hedvi_order]": {o.ID.String()}, "success_url": {dest + "?order=" + o.ID.String()}, "cancel_url": {dest + "?order=" + o.ID.String()}}
+		if orderVersion >= 2 {
+			v.Set("locale", "en")
+		}
 		if sku == "flex" {
 			v.Set("invoice_creation[enabled]", "true")
 			v.Set("payment_intent_data[metadata][hedvi_order]", o.ID.String())
@@ -328,7 +332,7 @@ func (s *Service) Portal(ctx context.Context, org, user, project uuid.UUID) (str
 		return "", errors.New("the Stripe portal policy does not match the supported billing contract")
 	}
 	var result stripe.BillingPortalSession
-	err = s.call(ctx, "POST", "/billing_portal/sessions", url.Values{"configuration": {s.C.Portal}, "customer": {customer}, "return_url": {s.C.AppURL + "/app/" + project.String() + "/settings"}}, "hedvi-portal-"+uuid.NewString(), &result)
+	err = s.call(ctx, "POST", "/billing_portal/sessions", url.Values{"locale": {"en"}, "configuration": {s.C.Portal}, "customer": {customer}, "return_url": {s.C.AppURL + "/app/" + project.String() + "/settings"}}, "hedvi-portal-"+uuid.NewString(), &result)
 	if err != nil {
 		return "", err
 	}

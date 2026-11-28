@@ -38,7 +38,7 @@ export async function api<T = Record<string, unknown>>(path: string, init: { met
 export function formatDate(iso: string | null | undefined): string {
   if (!iso) return "—";
   const d = new Date(iso);
-  return isNaN(d.getTime()) ? "—" : d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  return isNaN(d.getTime()) ? "—" : d.toLocaleString("en", { dateStyle: "medium", timeStyle: "short" });
 }
 
 export function bytes(n: number): string {

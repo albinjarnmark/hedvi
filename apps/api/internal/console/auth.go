@@ -151,10 +151,7 @@ func (s *Server) signupComplete(w http.ResponseWriter, r *http.Request) {
 		s.fail(w, r, apierr.New(422, "validation_error", "%s", err))
 		return
 	}
-	locale := proof.Locale
-	if locale != "sv" {
-		locale = "en"
-	}
+	locale := "en"
 	orgName := strings.TrimSpace(req.Organization)
 	if orgName == "" {
 		orgName = strings.SplitN(addr.Domain, ".", 2)[0]
@@ -186,9 +183,6 @@ func (s *Server) signupComplete(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 		currency := "USD"
-		if locale == "sv" {
-			currency = "SEK"
-		}
 		if _, err := tx.Exec(r.Context(), `INSERT INTO organizations (id, name, currency) VALUES ($1, $2, $3)`, orgID, orgName, currency); err != nil {
 			return err
 		}

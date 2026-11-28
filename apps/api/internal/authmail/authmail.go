@@ -80,9 +80,8 @@ func (s *Service) Request(ctx context.Context, purpose, email, locale, ip string
 	if purpose != "signup" && purpose != "reset" {
 		return ErrLink
 	}
-	if locale != "sv" {
-		locale = "en"
-	}
+	// Accept legacy clients but always use the product language.
+	locale = "en"
 	if a, err := netip.ParseAddr(ip); err == nil && a.Is6() {
 		ip = netip.PrefixFrom(a, 64).Masked().String()
 	}

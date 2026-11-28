@@ -278,7 +278,7 @@ func (s *Service) checkOrder(ctx context.Context, j job) error {
 			// The payment method address may legitimately differ from the locked
 			// company address. inspectInvoice still requires the canonical invoice
 			// country, complete automatic tax and the paid economic source.
-			if !termsAccepted || !s.C.Countries[o.Country] || cs.AutomaticTax == nil || !cs.AutomaticTax.Enabled || cs.AutomaticTax.Status != "complete" || string(cs.Currency) != o.Currency || cs.AmountSubtotal != o.Amount || len(items.Data) != 1 || items.More || items.Data[0].Price == nil || items.Data[0].Price.ID != o.PriceID || items.Data[0].Quantity != 1 {
+			if !termsAccepted || cs.AutomaticTax == nil || !cs.AutomaticTax.Enabled || cs.AutomaticTax.Status != "complete" || string(cs.Currency) != o.Currency || cs.AmountSubtotal != o.Amount || len(items.Data) != 1 || items.More || items.Data[0].Price == nil || items.Data[0].Price.ID != o.PriceID || items.Data[0].Quantity != 1 {
 				state = "review"
 				delay = 3600
 				break

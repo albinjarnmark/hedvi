@@ -57,7 +57,7 @@ Hedvi authenticates the original body, deduplicates the event ID and retains ide
 - A full refund or lost dispute permanently revokes the original source. A partial refund or an unresolved credit note/dispute holds remaining spending. A verified won dispute, canceled or failed refund, or voided credit note can restore spending if all other evidence still matches. A previous paid-but-revoked period may be replaced by a separately verified payment. Two usable intervals cannot overlap.
 - Existing reserved sends can finish. Settlement always charges or releases their original reservation. Keep paid invoices, held usage periods, lots, ledger entries and adjustment history intact when investigating.
 - The organization supplies its company billing name and complete invoice address before Checkout. The API validates the configured country, binds an immutable profile in PostgreSQL, creates the Customer with `tax[validate_location]=immediately`, and checks the returned and subsequently retrieved address. Checkout uses `customer_update[address]=never`, `billing_address_collection=auto`, and no shipping address. Existing shipping information causes a pre-checkout rejection because it can override the saved tax location. The tax-ID flow can still update the legal business name, but cannot change this invoice address. [Stripe Checkout address priority](https://docs.stripe.com/tax/checkout/page)
-- Invoice-country eligibility is separate from card issuance and payment-method billing details. A foreign-issued card or a different payment-method address does not change the saved company invoice address. The worker still requires the canonical paid invoice's country to match the bound order and allowed markets, with complete automatic tax and all existing payment, price, consent and reversal evidence. An unexpected invoice country still holds service and raises an alert for reconciliation; this is defense in depth, not a substitute for the pre-payment address control.
+- Invoice-country eligibility is separate from card issuance and payment-method billing details. A foreign-issued card or a different payment-method address does not change the saved company invoice address. The worker still requires the canonical paid invoice's country to match the immutable, previously admitted order, with complete automatic tax and all existing payment, price, consent and reversal evidence. An unexpected invoice country still holds service and raises an alert for reconciliation; this is defense in depth, not a substitute for the pre-payment address control.
 - A profile is fixed once Customer creation succeeds or has an uncertain outcome. A PostgreSQL lease serializes creation across API replicas without keeping a transaction open during Stripe I/O. Only HTTP 400 `customer_tax_location_invalid`, without a retry instruction, from the first exclusive attempt makes the profile editable; no local order or Checkout exists yet. Correcting it rotates the attempt UUID and idempotency key. Other errors, expired leases, crashes and transport timeouts permanently mark that attempt uncertain. A later address rejection or stale response cannot unlock it. The UI reloads the saved/editable state after an error. Uncertain retries reuse the exact Customer parameters and key within the existing 23-hour window; after that, request operator reconciliation before another creation. Checkout retries retain their existing durable order/idempotency rules.
 - Stripe tax-location validation establishes that an address can be used to calculate tax; it does not prove the company's real-world identity or residence. Tax-ID collection does not synchronously establish business eligibility. [Stripe customer locations](https://docs.stripe.com/tax/customer-locations), [tax-ID validation](https://docs.stripe.com/tax/checkout/tax-ids)
 - Billing recovery warnings appear in the normal organization alerts. After three consecutive read failures the worker records an alert and retries with increasing delays. Inspect merchant, mode, restricted permissions, country, tax totals, price, checkout/customer bindings and payment/refund evidence in Stripe. Resolve credentials or merchant configuration in the secret store.
@@ -78,3 +78,35 @@ Do not hand-edit an established profile or Customer address while any linked ses
 Restrict manual Stripe Customer edits to this process. The API detects address/shipping drift before returning a new or reused URL, but it cannot revoke a URL already handed out or intercept a subscription renewal after an administrator changes Stripe directly. Current Stripe behavior can finalize subscription invoices without automatic tax when the customer's location becomes invalid, so address drift is an operational incident, not something to repair after the next charge. [Stripe finalization behavior](https://docs.stripe.com/tax/customer-locations)
 
 Before live release, verify in the actual Stripe sandbox that an SE company profile remains the invoice and tax address when payment-method details change. Cover Flex and both Pro tiers, SEK/USD, foreign-issued cards, card replacement through the portal and a subsequent Pro invoice. Confirm the invoice's saved address and tax totals, not just the Checkout success page. Also prove that expired old URLs cannot be paid and that unsupported/missing company countries cannot create a session. The local HTTP fixture suite checks request and reconciliation invariants; it does not emulate Stripe's real hosted UI or tax engine.
+
+
+## International launch and request compatibility
+
+The public product uses English. New accounts default to USD; existing customer
+currencies remain fixed. New Stripe requests select English for Checkout, the
+portal and Customer invoice preferences. Migration0020 binds the request format
+to each durable customer attempt/order: old writers default to v1, new writers
+explicitly insert v2, and neither format may change after creation. Lost responses
+reuse the original key and exact parameter set across a rolling deployment.
+
+`HEDVI_STRIPE_COUNTRIES` admits new purchases. Removing a country does not revoke
+an already issued order or paid entitlement; canonical invoice country must still
+match its immutable order. Future subscription renewals continue the existing
+contract unless canceled through the supported portal/operator process. Update
+both environment services deliberately, worker first then API.
+
+Stripe Tax `complete` means a calculation finished, not that the merchant has every
+required registration. Zero tax can mean `not_collecting`, `not_supported`, a
+reverse charge or a non-taxable sale. Do not open all108 tax-supported countries
+based only on that status. The Swedish small-seller registration supports qualifying
+EU sales under the owner's confirmed threshold; it does not establish registrations
+outside the EU. For each new market, establish the business-only sale rules,
+registration threshold, existing sales and required registrations. Tax-ID collection
+is not synchronous government verification. Keep threshold alerts active and include
+other StackX sales in the obligation review. Do not manufacture a foreign address
+or mark a buyer exempt merely to make a test pass.
+
+Sources checked28November2026: [Stripe zero tax](https://docs.stripe.com/tax/zero-tax),
+[EU small sellers](https://docs.stripe.com/tax/supported-countries/european-union),
+[tax-ID validation](https://docs.stripe.com/tax/checkout/tax-ids),
+[threshold monitoring](https://docs.stripe.com/tax/monitoring).

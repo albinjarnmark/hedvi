@@ -209,3 +209,36 @@ test("Cloudflare quick setup downloads scoped DNS records and fits mobile", asyn
   await fits(page);
   await page.screenshot({path:info.outputPath("cloudflare-quick-setup.png"),fullPage:true});
 });
+
+
+test("legacy Swedish links and browser language still show the English product", async ({ page }) => {
+  const calls = await fixture(page);
+  await page.goto("/sv");
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(page.getByRole("link", { name: "Svenska", exact: true })).toHaveCount(0);
+  await page.goto("/sv/priser");
+  await expect(page).toHaveURL(/\/pricing$/);
+  await expect(page.getByRole("heading", { name: "Three simple choices" })).toBeVisible();
+  await page.goto("/signup?locale=sv");
+  await expect(page.getByRole("heading", { name: "Create your account" })).toBeVisible();
+  await page.getByLabel("Email", {exact:true}).fill("fixture@example.com");
+  await page.getByRole("button", { name: "Send link", exact:true }).click();
+  expect(calls.find(c => c.path === "/auth/signup")?.body.locale).toBe("en");
+});
+
+test("international billing starts with a deliberate country and supports addresses without postcodes", async ({ page }) => {
+  await fixture(page);
+  await page.route(`**/console-api/projects/${pid}/billing`, route => route.fulfill({json: {
+    enabled:true, baseline:"free", has_credits:false, has_pro:false, currency:"", countries:["US","SE","HK","DE"], has_customer:false, billing_profile:null, billing_profile_editable:true, orders:[]
+  }}));
+  await page.goto(`/app/${pid}/settings`);
+  await expect(page.getByLabel("Billing currency", {exact:true})).toHaveValue("usd");
+  await expect(page.getByLabel("Company billing country", {exact:true})).toHaveValue("");
+  await page.getByLabel("Company billing country", {exact:true}).selectOption("US");
+  await expect(page.locator("#billing-state")).toHaveAttribute("required", "");
+  await expect(page.locator("#billing-postal")).toHaveAttribute("required", "");
+  await page.getByLabel("Company billing country", {exact:true}).selectOption("HK");
+  await expect(page.locator("#billing-postal")).not.toHaveAttribute("required", "");
+  await fits(page);
+});

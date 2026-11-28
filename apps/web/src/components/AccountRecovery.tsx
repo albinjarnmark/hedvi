@@ -2,33 +2,31 @@
 import Link from "next/link";
 import { MFAForm } from "./MFASettings";
 import type { Me } from "./AppShell";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api";
 import { useAction, useLoad } from "@/lib/hooks";
 import { consumeProofFragment, legalConsent, type LegalManifest } from "@/lib/account-proof";
 
 export function RequestAccountMail({ signup = false }: { signup?: boolean }) {
-  const params = useSearchParams();
-  const sv = params.get("locale") === "sv";
   const [accepted, setAccepted] = useState(false);
   const { pending, error, run } = useAction();
   return <form className="card stack" onSubmit={async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const result = await run(() => api(signup ? "/auth/signup" : "/auth/password-reset/request", {
-      method: "POST", body: { email: data.get("email"), locale: sv ? "sv" : "en" },
+      method: "POST", body: { email: data.get("email"), locale: "en" },
     }));
     if (result) setAccepted(true);
   }}>
-    <h1 style={{ fontSize: "1.8rem" }}>{signup ? (sv ? "Skapa konto" : "Create your account") : (sv ? "Återställ lösenord" : "Reset your password")}</h1>
-    {accepted ? <p role="status">{sv ? "Om adressen kan användas skickar vi ett meddelande med nästa steg. Kontrollera även skräpposten. Vänta en stund innan du försöker igen." : "If this address can be used, we will send a message with the next step. Check your spam folder too. Wait a little before trying again."}</p> : <>
-      <p className="small muted">{signup ? (sv ? "Verifiera din e-postadress först. Därefter väljer du lösenord och får din testinkorg." : "Verify your email first. Then choose your password and get your test inbox.") : (sv ? "Vi skickar en länk för att välja ett nytt lösenord. Din autentiseringsapp behövs fortfarande om den är aktiverad." : "Request a link to choose a new password. Your authenticator is still required if enabled.")}</p>
+    <h1 style={{ fontSize: "1.8rem" }}>{signup ? ("Create your account") : ("Reset your password")}</h1>
+    {accepted ? <p role="status">{"If this address can be used, we will send a message with the next step. Check your spam folder too. Wait a little before trying again."}</p> : <>
+      <p className="small muted">{signup ? ("Verify your email first. Then choose your password and get your test inbox.") : ("Request a link to choose a new password. Your authenticator is still required if enabled.")}</p>
       <div className="field"><label htmlFor="email">Email</label><input id="email" name="email" type="email" autoComplete="email" maxLength={254} required /></div>
-      <button className="btn btn-primary" disabled={pending}>{sv ? "Skicka länk" : "Send link"}</button>
+      <button className="btn btn-primary" disabled={pending}>{"Send link"}</button>
     </>}
     {error && <p className="error" role="alert">{error}</p>}
-    <Link href="/login">{sv ? "Till inloggning" : "Back to sign in"}</Link>
+    <Link href="/login">{"Back to sign in"}</Link>
   </form>;
 }
 
@@ -42,7 +40,6 @@ function LegalAcknowledgement({ manifest }: { manifest: LegalManifest }) {
 
 export function CompleteAccountMail({ signup = false }: { signup?: boolean }) {
   const router = useRouter();
-  const sv = useSearchParams().get("locale") === "sv";
   const captured = useRef<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -54,14 +51,14 @@ export function CompleteAccountMail({ signup = false }: { signup?: boolean }) {
     const value = captured.current;
     void Promise.resolve().then(() => setToken(value));
   }, []);
-  if (done) return <section className="card stack"><h1>{sv ? "Lösenordet är ändrat" : "Password changed"}</h1><p>{sv ? "Alla tidigare sessioner har loggats ut. Logga in med ditt nya lösenord och din autentiseringsapp om den är aktiverad." : "All previous sessions have been signed out. Sign in with your new password and your authenticator if enabled."}</p><Link href="/login">{sv ? "Logga in" : "Sign in"}</Link></section>;
-  if (token === null) return <p aria-busy="true">{sv ? "Öppnar länken…" : "Opening your link…"}</p>;
+  if (done) return <section className="card stack"><h1>{"Password changed"}</h1><p>{"All previous sessions have been signed out. Sign in with your new password and your authenticator if enabled."}</p><Link href="/login">{"Sign in"}</Link></section>;
+  if (token === null) return <p aria-busy="true">{"Opening your link…"}</p>;
   if (!token) return <section className="card stack"><h1>Open your email link</h1><p>The link is missing or malformed. Request another link to continue.</p><Link href={signup ? "/signup" : "/forgot-password"}>Request a new link</Link><Link href="/login">Sign in if you already completed this step</Link></section>;
   return <form className="card stack" onSubmit={async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     if (data.get("password") !== data.get("confirm-password")) {
-      setPasswordError(sv ? "Lösenorden matchar inte." : "Passwords do not match.");
+      setPasswordError("Passwords do not match.");
       event.currentTarget.querySelector<HTMLInputElement>("#confirm-password")?.focus();
       return;
     }
@@ -80,18 +77,18 @@ export function CompleteAccountMail({ signup = false }: { signup?: boolean }) {
       router.replace(`/app/${result.project.id}/test-inbox?welcome=1`);
     } else setDone(true);
   }}>
-    <h1 style={{ fontSize: "1.8rem" }}>{signup ? (sv ? "Slutför ditt konto" : "Finish your account") : (sv ? "Välj ett nytt lösenord" : "Choose a new password")}</h1>
-    <p className="small muted">{sv ? "Länken används först när du skickar formuläret. Den gäller i 30 minuter efter begäran." : "Only submitting this form uses the link. It expires 30 minutes after it was requested."}</p>
+    <h1 style={{ fontSize: "1.8rem" }}>{signup ? ("Finish your account") : ("Choose a new password")}</h1>
+    <p className="small muted">{"Only submitting this form uses the link. It expires 30 minutes after it was requested."}</p>
     {signup && <>
-      <div className="field"><label htmlFor="name">{sv ? "Namn" : "Name"}</label><input id="name" name="name" autoComplete="name" maxLength={100} /></div>
-      <div className="field"><label htmlFor="organization">{sv ? "Företag eller projekt" : "Company or project"}</label><input id="organization" name="organization" autoComplete="organization" maxLength={100} /></div>
+      <div className="field"><label htmlFor="name">{"Name"}</label><input id="name" name="name" autoComplete="name" maxLength={100} /></div>
+      <div className="field"><label htmlFor="organization">{"Company or project"}</label><input id="organization" name="organization" autoComplete="organization" maxLength={100} /></div>
     </>}
-    <div className="field"><label htmlFor="password">{sv ? "Nytt lösenord (minst 12 tecken)" : "New password (at least 12 characters)"}</label><input id="password" name="password" type="password" minLength={12} maxLength={256} autoComplete="new-password" required /></div>
-    <div className="field"><label htmlFor="confirm-password">{sv ? "Bekräfta lösenord" : "Confirm password"}</label><input id="confirm-password" name="confirm-password" type="password" minLength={12} maxLength={256} autoComplete="new-password" aria-invalid={!!passwordError} aria-describedby={passwordError ? "password-mismatch" : undefined} onChange={() => setPasswordError("")} required /></div>
+    <div className="field"><label htmlFor="password">{"New password (at least 12 characters)"}</label><input id="password" name="password" type="password" minLength={12} maxLength={256} autoComplete="new-password" required /></div>
+    <div className="field"><label htmlFor="confirm-password">{"Confirm password"}</label><input id="confirm-password" name="confirm-password" type="password" minLength={12} maxLength={256} autoComplete="new-password" aria-invalid={!!passwordError} aria-describedby={passwordError ? "password-mismatch" : undefined} onChange={() => setPasswordError("")} required /></div>
     {passwordError && <p id="password-mismatch" className="error" role="alert">{passwordError}</p>}
     {signup && manifest && <LegalAcknowledgement manifest={manifest} />}
     {(error || manifestError) && <p className="error" role="alert">{error ?? manifestError?.message}</p>}
-    <button className="btn btn-primary" disabled={pending || (signup && !manifest)}>{signup ? (sv ? "Skapa konto" : "Create account") : (sv ? "Ändra lösenord" : "Change password")}</button>
+    <button className="btn btn-primary" disabled={pending || (signup && !manifest)}>{signup ? ("Create account") : ("Change password")}</button>
     <p className="small">Already completed this step? <Link href="/login">Sign in</Link>. Otherwise, <Link href={signup ? "/signup" : "/forgot-password"}>request a new link</Link>.</p>
   </form>;
 }

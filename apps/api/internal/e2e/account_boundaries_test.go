@@ -99,8 +99,8 @@ func TestIDNALoginAndSignupLocaleAreCanonical(t *testing.T) {
 	if c != 201 {
 		t.Fatal(c, out)
 	}
-	if e.Count(`SELECT count(*) FROM users WHERE locale='sv'`) != 1 || e.Count(`SELECT count(*) FROM organizations WHERE currency='SEK'`) != 1 {
-		t.Fatal("verified locale lost")
+	if e.Count(`SELECT count(*) FROM users WHERE locale='en'`) != 1 || e.Count(`SELECT count(*) FROM organizations WHERE currency='USD'`) != 1 {
+		t.Fatal("legacy locale must normalize to English and USD")
 	}
 	for _, email := range []string{email, "owner@xn--bcher-kva.example"} {
 		if c, b, _ := authRequest(t, e, "login", map[string]any{"email": email, "password": "owner-password-123"}); c != 200 {

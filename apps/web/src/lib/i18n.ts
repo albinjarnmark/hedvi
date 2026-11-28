@@ -1,12 +1,12 @@
 import { supportEmail } from "./public-site";
-// Marketing copy in English (main) and Swedish. Claims follow brand/README.md:
+// Public product copy in English. Claims follow brand/README.md:
 // no deliverability, uptime, compliance or price-comparison claims before
-// they are verified. Prices are targets, not published offers.
-export type Locale = "en" | "sv";
+// they are verified.
+export type Locale = "en";
 
 export const dict = {
   en: {
-    nav: { docs: "Docs", pricing: "Pricing", switch: "Switch from Resend", signin: "Sign in", start: "Start testing", other: "Svenska", otherHref: "/sv" },
+    nav: { docs: "Docs", pricing: "Pricing", switch: "Switch from Resend", signin: "Sign in", start: "Start testing" },
     status: "Open source · Hosted in the EU",
     hero: {
       title: "Email, without the overhead.",
@@ -38,41 +38,6 @@ export const dict = {
       pro: { name: "Pro", price: "$13", per: "/month for 50k · $25 for 100k", points: ["No hourly or daily plan limit", "Signed webhooks and test inbox", "25 or 100 domains", "90 days metadata, 7 days content", "Optional use of prepaid Flex credits"] },
       larger: "Larger volume: quote for now.",
       notes: ["A recipient is each unique address in To, Cc and Bcc.", "Your application’s sending stops when eligible units run out, including its sign-in and password emails. Warnings appear at 80% and 95% of included quota.", "Pro 50k includes 1 GiB of attachment data per paid invoice cycle."],
-    },
-  },
-  sv: {
-    nav: { docs: "Dokumentation", pricing: "Priser", switch: "Byt från Resend", signin: "Logga in", start: "Börja testa", other: "English", otherHref: "/" },
-    status: "Öppen källkod · Drift inom EU",
-    hero: {
-      title: "Email, without the overhead.",
-      lead: "Ett enklare API för transaktionell e-post: testa tryggt, förstå leveransen och kontrollera kostnaden. Byggt i Sverige, för utvecklare överallt.",
-      cta: "Skicka ditt första testmail",
-      secondary: "Läs snabbstarten",
-    },
-    pillars: [
-      { title: "Testa tryggt", text: "Varje projekt får en testnyckel och en testinkorg. Testmail fångas och levereras aldrig, och nyckelns läge kontrolleras i databasen — inte på prefixet." },
-      { title: "Förstå leveransen", text: "Köad, accepterad av sändningsleverantören och mottagarserverns svar visas som separata steg per mottagare. ”Delivered” betyder att servern tog emot mailet, inte inkorgsplacering." },
-      { title: "Kontrollera kostnaden", text: "Få varningar vid 80 och 95 procent. Välj om förbetalda krediter ska användas när den inkluderade kvoten tar slut." },
-    ],
-    flowTitle: "En väg från test till produktion",
-    flow: ["Testa", "Lägg till domän", "Verifieras automatiskt", "Skicka", "Följ varje mottagare"],
-    honestyTitle: "Det här lovar vi i dag",
-    honesty: [
-      "Mailinnehåll lagras och skickas via AWS i Stockholm. Appen, databasen och säkerhetskopiorna finns hos Railway i Amsterdam. Läs guiden om data och lagring.",
-      "Accepterat betyder varaktigt sparat: vi svarar först när mailet, kvotreservationen och sändningsjobbet är sparade.",
-      "Om leverantörens svar är osäkert visar vi ”leverans okänd” i stället för att skicka om i blindo och riskera dubbletter.",
-    ],
-    codeTitle: "Fungerar med Resends SDK:er du redan använder",
-    codeNote: "En dokumenterad delmängd av Resends API. Byt bas-URL och använd en Hedvi-nyckel. Se exakt vad som stöds.",
-    footer: { company: "Hedvi är en tjänst från StackX AB, Sverige.", contact: supportEmail },
-    pricing: {
-      title: "Tre enkla val",
-      lead: "Priser före moms. När betalning är aktiverad visar Stripe Checkout valuta, skatt och totalsumma innan du betalar.",
-      free: { name: "Free", price: "0 kr", per: "", points: ["Upp till 5 000 mottagare/mån efter verifierad domän", "50 mottagare/timme · 200/dag", "3 domäner", "Testinkorg", "14 dagars metadata, högst 7 dagars innehåll"] },
-      flex: { name: "Flex", price: "39 kr", per: "per 10 000 mottagare", points: ["Förbetalda krediter utan abonnemang", "Ingen fast tim- eller dagsgräns", "Giltiga i 365 dagar, utgångsdatum syns alltid", "Upp till 10 domäner", "30 dagars metadata, 7 dagars innehåll"] },
-      pro: { name: "Pro", price: "129 kr", per: "/mån för 50 000 · 249 kr för 100 000", points: ["Ingen fast tim- eller dagsgräns", "Signerade webhooks och testinkorg", "25 eller 100 domäner", "90 dagars metadata, 7 dagars innehåll", "Använd förbetalda Flex-krediter vid behov"] },
-      larger: "Större volym: offert tills vidare.",
-      notes: ["En mottagare är varje unik adress i To, Cc och Bcc.", "När tillgängliga enheter tar slut stoppas din applikations utskick, även dess inloggnings- och lösenordsmejl. Du får varningar vid 80 och 95 procent av den inkluderade kvoten.", "Pro 50k inkluderar 1 GiB bilagedata per betald fakturaperiod."],
     },
   },
 } as const;
