@@ -90,7 +90,7 @@ export default function SettingsPage() {
           <MFASettings />
           <h3>Members</h3>
           <ul className="small">{(members.data?.data ?? []).map((m) => <li key={m.id}>{m.email} · {m.role}{m.mfa_enabled ? " · 2FA" : ""}</li>)}</ul>
-          <p className="tiny muted">Inviting team members arrives with team roles in the beta.</p>
+          <p className="tiny muted">Team invitations are not available yet.</p>
         </section>
       </div>
       {["owner", "admin", "developer"].includes(s.data.role) && <Suppressions pid={pid} role={s.data.role} />}

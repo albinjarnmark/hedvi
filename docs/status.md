@@ -34,9 +34,12 @@ retention code completed there, and the clone was removed afterwards.
 Real Stripe sandbox Checkout, VAT, prepaid Flex, Pro 50k allowance, customer portal,
 cancellation at period end and a full Flex refund passed. Both currencies, Pro
 100k and accelerated renewal still need the complete hosted acceptance matrix.
-Six live prices and three business-SaaS products are prepared. Live billing remains
-disabled while Stripe support corrects the merchant legal entity and the live
-credentials, webhook, tax configuration and payment acceptance are completed.
+Six live prices and three business-SaaS products passed restricted-key checks.
+Both live keys are privately stored in their respective production services; the
+worker passed all thirteen resource-read checks and denied customer/refund writes.
+The dedicated live portal and signed 23-event snapshot webhook are configured.
+Live billing remains disabled while Stripe support corrects the merchant legal
+entity and live tax configuration and payment acceptance are completed.
 A sandbox success does not verify live payments.
 
 Source revision `a2f6b407c347a04cd4542f406bb477af452a9af4` is deployed to staging

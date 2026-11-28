@@ -63,6 +63,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           })}
           {me.user.is_staff && me.user.mfa_enabled && me.user.session_mfa && <Link href="/app/admin" aria-current={pathname.startsWith("/app/admin") ? "page" : undefined}>Owner console</Link>}
           <div className="spacer" />
+          <a href="https://status.hedvi.dev" className="tiny">Service status</a>
           <a href={sourceUrl} className="tiny">Source · AGPL-3.0</a>
           {me.environment.aws_mode === "mock" && <p className="tiny" style={{ color: "var(--lime)", padding: "0 8px" }}>Local simulator: nothing leaves this machine.</p>}
           <p className="tiny" style={{ padding: "0 8px", color: "var(--text-3)" }}>{me.user.email}</p>

@@ -857,7 +857,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/settings/page.tsx",
-      "sha256": "3e51362c4dcfdf3f14acd380ce574be25aaf2da2b84f206d4eb3102c1749cdfa"
+      "sha256": "c2f5fbc4abd66390300799fff06b293f88e1fd06bef736f11ce04955094c985b"
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/test-inbox/page.tsx",
@@ -985,7 +985,7 @@
     },
     {
       "path": "apps/web/src/components/AppShell.tsx",
-      "sha256": "6524dfaf01334f75ee58df94b5fbd144c343c15bbfc5b5399ab9e90904ad1348"
+      "sha256": "a69675f83814f9f54de3d2f1e1d2e75e9b73b3b8a191b6ab1d6859a2f70d8adb"
     },
     {
       "path": "apps/web/src/components/AuthForms.tsx",
@@ -1045,7 +1045,7 @@
     },
     {
       "path": "apps/web/src/components/Site.tsx",
-      "sha256": "29d92a352e5f1cd5cf8bb080e9b8d06d58f0f5b811500c064f614ba1492fcdce"
+      "sha256": "f0749e2a2aeeddcb9adebf38a11d6bfd43207a73bb42a68315d79572b2b5ee5b"
     },
     {
       "path": "apps/web/src/components/Status.tsx",
@@ -1545,7 +1545,7 @@
     },
     {
       "path": "docs/runbooks/status-page.md",
-      "sha256": "ca5dad487a91ec758402c4e04ede8ca6346cc981e22634524090fa37b05f423a"
+      "sha256": "db9f5f1feed10c9640d09d84e4bd1032c606e6d49f5ecf1b3bc44f338b9da9d9"
     },
     {
       "path": "docs/runbooks/unknown-sends.md",
@@ -1557,7 +1557,7 @@
     },
     {
       "path": "docs/status.md",
-      "sha256": "cb75b9ba5a790102139271088a074f11102630a1009e2082a454b7ba5f905108"
+      "sha256": "6eec34122cc0c0ca0f0382d3f132d4e44f816603236f7b59675c3de009900c00"
     },
     {
       "path": "infra/terraform/AUTH-MAIL.md",

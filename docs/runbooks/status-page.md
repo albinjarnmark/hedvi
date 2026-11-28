@@ -1,6 +1,7 @@
 # Independent public status
 
-The hosted status page is a static GitHub Pages site, independent of Railway.
+The hosted status page at https://status.hedvi.dev is a static GitHub Pages site,
+independent of Railway. HTTPS is enforced; the Cloudflare record is DNS-only.
 The `Hosted status` workflow checks only fixed public endpoints, approximately
 every five minutes. It has no AWS, Stripe, database or customer credentials.
 The scheduled job is disabled in forks and requires the repository variable

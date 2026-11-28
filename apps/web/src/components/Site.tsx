@@ -44,6 +44,7 @@ export function SiteFooter({ t }: { t: Dict }) {
           <Link href="/legal/cookies">Cookies</Link>
           <Link href="/docs/data-and-retention">Data &amp; retention</Link>
           <Link href="/docs/compatibility">Compatibility</Link>
+          <a href="https://status.hedvi.dev">Status</a>
           <a href={sourceUrl}>Source · AGPL-3.0</a>
           <a href="https://x.com/Hedvidev" rel="noopener noreferrer">X / @Hedvidev</a>
         </div>
