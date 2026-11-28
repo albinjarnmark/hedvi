@@ -62,6 +62,7 @@ type Config struct {
 	AuthMailTenant    string
 	AuthMailConfigSet string
 	SESConfigSet      string
+	SESSendRate       int
 	SESMailFromMX     string
 	BlobDir           string
 	MockDNS           bool
@@ -163,6 +164,13 @@ func Load() (*Config, error) {
 	}
 	if c.MaxQueueTime, err = time.ParseDuration(get("HEDVI_MAX_QUEUE_TIME", "72h")); err != nil {
 		return nil, fmt.Errorf("HEDVI_MAX_QUEUE_TIME: %w", err)
+	}
+	defaultSendRate := "10"
+	if c.Env == EnvStaging {
+		defaultSendRate = "2"
+	}
+	if c.SESSendRate, err = strconv.Atoi(get("HEDVI_SES_SEND_RATE", defaultSendRate)); err != nil || c.SESSendRate < 1 || c.SESSendRate > 10000 {
+		return nil, errors.New("HEDVI_SES_SEND_RATE must be 1–10000 recipients per second, within this environment's share of the SES account quota")
 	}
 	if prefix, set := os.LookupEnv("HEDVI_SES_TENANT_PREFIX"); set && prefix != c.Env.CustomerTenantPrefix() {
 		return nil, errors.New("HEDVI_SES_TENANT_PREFIX must match the customer namespace for HEDVI_ENV")

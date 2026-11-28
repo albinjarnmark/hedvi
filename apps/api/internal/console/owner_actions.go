@@ -40,7 +40,7 @@ func (s *Server) ownerSummary(ctx context.Context, tx pgx.Tx, r *http.Request, a
   (SELECT count(*) FROM domains d WHERE d.project_id=p.id AND d.status='verified' AND d.deleted_at IS NULL) verified_domains,
   left(p.review_request->>'website',200) website,left(p.review_request->>'use_case',2000) use_case,
   left(p.review_request->>'recipient_consent',1000) consent,left(p.review_request->>'monthly_volume',20) volume
-  FROM projects p JOIN organizations o ON o.id=p.org_id CROSS JOIN LATERAL hedvi_live_limits(p.id,statement_timestamp()) lim WHERE ($1::uuid IS NULL OR p.id=$1) AND ($2::uuid IS NULL OR p.org_id=$2)
+  FROM projects p JOIN organizations o ON o.id=p.org_id CROSS JOIN LATERAL hedvi_live_limits_v2(p.id,statement_timestamp()) lim WHERE ($1::uuid IS NULL OR p.id=$1) AND ($2::uuid IS NULL OR p.org_id=$2)
   ORDER BY (p.sending_status='pending_review') DESC,p.status_changed_at DESC,p.id LIMIT 50`},
 		{"grants", `SELECT g.id,g.org_id,o.name organization,g.plan,g.starts_at,g.ends_at,g.revoked_at,
   CASE WHEN g.revoked_at IS NOT NULL THEN 'revoked' WHEN g.ends_at<=now() THEN 'expired' ELSE 'active' END AS state,

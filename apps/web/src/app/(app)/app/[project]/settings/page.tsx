@@ -1,4 +1,5 @@
 "use client";
+import { SendingLimits } from "@/components/SendingLimits";
 import { ScrollTable } from "@/components/ScrollTable";
 import Link from "next/link";
 import { BillingSettings } from "@/components/BillingSettings";
@@ -52,7 +53,7 @@ export default function SettingsPage() {
           <h2>Live sending</h2>
           <LiveAccess pid={pid} status={s.data.project.sending_status} />
           {s.data.project.sending_status === "paused" && s.data.project.status_reason && <p className="small">Note: {s.data.project.status_reason}</p>}
-          <p className="small muted">This project can accept {s.data.project.hourly_limit} recipients/hour and {s.data.project.daily_limit}/day. Shared organization limits for this project are {s.data.project.org_hourly_limit}/hour and {s.data.project.org_daily_limit}/day.</p>
+          <SendingLimits limits={s.data.project} />
         </section>
         <section className="card stack">
           <h2>Usage and cost control</h2>

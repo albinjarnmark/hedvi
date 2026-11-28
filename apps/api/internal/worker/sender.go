@@ -47,6 +47,9 @@ type Sender struct {
 	Timeout              time.Duration
 	Faults               *faults.Injector
 	Log                  *slog.Logger
+	// ProviderRecipientsPerSecond paces shared provider capacity across replicas.
+	// It delays queued work, never rejects a customer's paid allowance.
+	ProviderRecipientsPerSecond int
 }
 
 type sendJob struct {
@@ -227,6 +230,7 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 
 	// Commit the attempt before calling the provider.
 	attemptID := uuid.Must(uuid.NewV7())
+	capacityWait := false
 	err = db.Tx(ctx, s.Pool, func(tx pgx.Tx) error {
 		if err := checkAttemptPolicy(ctx, tx, c); err != nil {
 			return err
@@ -238,6 +242,20 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 		}
 		if tag.RowsAffected() == 0 {
 			return errLeaseLost
+		}
+		if s.ProviderRecipientsPerSecond > 0 {
+			next, err := s.providerSlot(ctx, tx, len(recipients))
+			if err != nil {
+				return err
+			}
+			if !next.IsZero() {
+				capacityWait = true
+				if _, err := tx.Exec(ctx, `UPDATE emails SET send_state='retry_wait',next_attempt_at=LEAST($2,queue_deadline_at),
+					attempt_count=greatest(attempt_count-1,0),lease_owner=NULL,lease_expires_at=NULL WHERE id=$1`, emailID, next); err != nil {
+					return err
+				}
+				return sendOutbox(ctx, tx, c.orgID, emailID, next)
+			}
 		}
 		routeID, err := bindProviderSendRoute(ctx, tx, c, s.ConfigSet)
 		if err != nil {
@@ -267,6 +285,9 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 	}
 	if err != nil {
 		return s.releaseLease(ctx, emailID, err)
+	}
+	if capacityWait {
+		return nil // no provider attempt was started; the durable job will resume
 	}
 	if err := s.Faults.Check(faults.SendAfterAttemptStart); err != nil {
 		return err

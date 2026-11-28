@@ -101,16 +101,16 @@ func (b liveBudget) check(recipients int, payloadBytes int64) error {
 	if payloadBytes > b.storageRemaining {
 		return apierr.New(429, "live_storage_limit_exceeded", "This project has reached its live email storage limit. Space becomes available when content retention removes payloads. Contact support for a reviewed limit increase.")
 	}
-	if recipients > b.hourlyLimit-b.hourUsed {
+	if b.hourlyLimit > 0 && recipients > b.hourlyLimit-b.hourUsed {
 		return liveWindowError("live_hour", b.hourlyLimit)
 	}
-	if recipients > b.dailyLimit-b.dayUsed {
+	if b.dailyLimit > 0 && recipients > b.dailyLimit-b.dayUsed {
 		return liveWindowError("live_day", b.dailyLimit)
 	}
-	if int64(recipients) > int64(b.orgHourLimit)-b.orgHourUsed {
+	if b.orgHourLimit > 0 && int64(recipients) > int64(b.orgHourLimit)-b.orgHourUsed {
 		return apierr.New(429, "rate_limit_exceeded", "This organization's shared hourly acceptance limit is %d recipients. It resets at the next UTC hour.", b.orgHourLimit)
 	}
-	if int64(recipients) > int64(b.orgDayLimit)-b.orgDayUsed {
+	if b.orgDayLimit > 0 && int64(recipients) > int64(b.orgDayLimit)-b.orgDayUsed {
 		return apierr.New(429, "daily_quota_exceeded", "This organization's shared daily acceptance limit is %d recipients. It resets at 00:00 UTC.", b.orgDayLimit)
 	}
 	return nil
@@ -152,7 +152,7 @@ func (s *Service) loadContext(ctx context.Context, tx pgx.Tx, p Principal, m *me
 				coalesce((SELECT count FROM send_counters WHERE project_id = p.id AND window_kind = 'live_day' AND window_start = $3), 0),
                 coalesce((SELECT sum(count) FROM send_counters WHERE org_id=o.id AND window_kind='live_hour' AND window_start=$2),0),
                 coalesce((SELECT sum(count) FROM send_counters WHERE org_id=o.id AND window_kind='live_day' AND window_start=$3),0)
-			FROM projects p JOIN organizations o ON o.id = p.org_id CROSS JOIN LATERAL hedvi_live_limits(p.id,$4) lim WHERE p.id = $1`, p.ProjectID, now.UTC().Truncate(time.Hour), truncDay(now), now).Scan(
+			FROM projects p JOIN organizations o ON o.id = p.org_id CROSS JOIN LATERAL hedvi_live_limits_v2(p.id,$4) lim WHERE p.id = $1`, p.ProjectID, now.UTC().Truncate(time.Hour), truncDay(now), now).Scan(
 		&oc.plan, &oc.riskStatus, &oc.metadataDays, &oc.contentDays, &oc.useCredits, &oc.overage, &oc.overageCap,
 		&oc.sendingStatus, &oc.liveBudget.hourlyLimit, &oc.liveBudget.dailyLimit, &oc.liveBudget.orgHourLimit, &oc.liveBudget.orgDayLimit, &oc.testDailyLimit, &oc.testStorageLimit, &oc.testDailyUsed,
 		&oc.liveBudget.storageRemaining, &oc.liveBudget.hourUsed, &oc.liveBudget.dayUsed, &oc.liveBudget.orgHourUsed, &oc.liveBudget.orgDayUsed)
@@ -674,14 +674,14 @@ func (s *Service) quotaWarnings(ctx context.Context, tx pgx.Tx, orgID uuid.UUID,
 var errLimit = errors.New("limit reached")
 
 func bumpCounter(ctx context.Context, tx pgx.Tx, p Principal, kind string, window time.Time, n, limit int) error {
-	if n > limit {
+	if limit > 0 && n > limit {
 		return errLimit
 	}
 	var count int
 	err := tx.QueryRow(ctx, `INSERT INTO send_counters (org_id, project_id, window_kind, window_start, count)
 		VALUES ($1, $2, $3, $4, $5)
 		ON CONFLICT (project_id, window_kind, window_start)
-		DO UPDATE SET count = send_counters.count + EXCLUDED.count WHERE send_counters.count <= $6 - EXCLUDED.count
+		DO UPDATE SET count = send_counters.count + EXCLUDED.count WHERE $6 = 0 OR send_counters.count <= $6 - EXCLUDED.count
 		RETURNING count`, p.OrgID, p.ProjectID, kind, window, n, limit).Scan(&count)
 	if db.IsNoRows(err) {
 		return errLimit

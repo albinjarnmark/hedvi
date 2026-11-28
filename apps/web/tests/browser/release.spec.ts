@@ -2,6 +2,20 @@ import { test, expect, type Page } from "@playwright/test";
 
 const pid = "11111111-1111-4111-8111-111111111111";
 const password = "browser-fixture-password";
+
+test("paid capacity is shown without a misleading zero sending allowance", async ({ page }) => {
+  await fixture(page);
+  await page.route(`**/console-api/projects/${pid}/settings`, route => route.fulfill({json: {
+    organization: { id: "org", name: "Example", plan_name: "Pro 50k", currency: "USD", use_credits_for_overage: false },
+    retention: { metadata_days: 90, content_days: 7, plan_metadata_days: 90, plan_max_content_days: 7, test_inbox_days: 7 },
+    project: { name: "Default", sending_status: "approved", status_reason: "", hourly_limit: 0, daily_limit: 0, org_hourly_limit: 0, org_daily_limit: 0 }, role: "owner"
+  }}));
+  await page.goto(`/app/${pid}/settings`);
+  await expect(page.getByText("No hourly or daily plan limit.", {exact:true})).toBeVisible();
+  await expect(page.getByText("Available recipients and attachment data still apply.", {exact:false})).toBeVisible();
+  await expect(page.getByText(/0 recipients\/hour|0\/day/)).toHaveCount(0);
+  await fits(page);
+});
 async function fixture(page: Page, mfa = true) {
   const calls: { path: string; body: Record<string, unknown> }[] = [];
   await page.route("**/console-api/**", async route => {

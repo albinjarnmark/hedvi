@@ -205,7 +205,7 @@ export const docs: Doc[] = [
             <tr><td>429</td><td><code>daily_quota_exceeded</code> · <code>monthly_quota_exceeded</code></td><td>Daily limit or quota reached. Hard stop: nothing was sent or charged.</td></tr>
           </tbody>
         </ScrollTable>
-        <p>After domain verification, Free supports up to 50 recipients per hour and 200 per day. An active Flex or Pro allowance raises the normal limits automatically. Projects share the organization’s hourly and daily budgets.</p>
+        <p>After domain verification, Free supports up to 50 recipients per hour and 200 per day. An active usable Flex or Pro allowance removes hourly and daily plan caps automatically. Projects share recipient and attachment allowances; Free limits and explicit abuse restrictions remain.</p>
         <p>Operational hourly/daily limits count all unique requested recipients, including suppressed addresses. Suppressed recipients do not consume paid sending credits. A separate 1 GiB retained live-payload budget per project protects storage; it is released when content is deleted and is separate from plan attachment allowances.</p>
       </>
     ),

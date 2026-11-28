@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { SendingLimits } from "@/components/SendingLimits";
 import { useProjectId } from "@/components/AppShell";
 import { Status } from "@/components/Status";
 import { formatDate } from "@/lib/api";
@@ -68,8 +69,7 @@ export default function OverviewPage() {
         </div>
         <div className="card">
           <h2>Limits</h2>
-          <p>Live sending: <strong>{data.project.hourly_limit}</strong> recipients/hour, <strong>{data.project.daily_limit}</strong>/day.</p>
-          <p className="small muted">Across this organization: {data.project.org_hourly_limit} recipients/hour and {data.project.org_daily_limit}/day for this project. Other projects share the same counters.</p>
+          <SendingLimits limits={data.project} />
           {data.project.status_reason && <p className="small">Status note: {data.project.status_reason}</p>}
         </div>
       </div>

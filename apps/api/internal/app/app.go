@@ -217,7 +217,7 @@ func (a *App) Workers() *Workers {
 		AuthMail:   am,
 		Dispatcher: &worker.Dispatcher{Pool: a.WorkerPool, Queues: a.Queues, Faults: a.Faults, Log: a.Log},
 		Sender: &worker.Sender{TenantEnv: cfg.Env, ReservedSenderDomain: cfg.AuthDomain(), Pool: a.WorkerPool, Queue: a.Queues.Send, Provider: a.Provider, Blobs: a.Blobs, ConfigSet: cfg.SESConfigSet,
-			WorkerID: cfg.WorkerID, Lease: 2 * time.Minute, Timeout: 30 * time.Second, Faults: a.Faults, Log: a.Log},
+			WorkerID: cfg.WorkerID, Lease: 2 * time.Minute, Timeout: 30 * time.Second, Faults: a.Faults, Log: a.Log, ProviderRecipientsPerSecond: cfg.SESSendRate},
 		Events: &worker.Events{AuthMail: am, Pool: a.WorkerPool, Queue: a.Queues.Events, Faults: a.Faults, Log: a.Log},
 		Webhooks: &webhooks.Deliverer{Pool: a.WorkerPool, Queue: a.Queues.Webhook, Sealer: a.Sealer, Faults: a.Faults, Log: a.Log,
 			Client: netsafe.NewClient(netsafe.Options{AllowPrivate: cfg.WebhookAllowPrivate, AllowHTTP: cfg.WebhookAllowHTTP})},

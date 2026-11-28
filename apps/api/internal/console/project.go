@@ -43,7 +43,7 @@ func (s *Server) overview(w http.ResponseWriter, r *http.Request, a *access) {
 		var hourly, daily, orgHourly, orgDaily int
 		var changed time.Time
 		if err := tx.QueryRow(r.Context(), `SELECT name, sending_status, status_reason, status_changed_at, lim.hourly, lim.daily, lim.org_hourly, lim.org_daily
-			FROM projects p CROSS JOIN LATERAL hedvi_live_limits(p.id,statement_timestamp()) lim WHERE p.id = $1`, a.ProjectID).Scan(&name, &status, &reason, &changed, &hourly, &daily, &orgHourly, &orgDaily); err != nil {
+			FROM projects p CROSS JOIN LATERAL hedvi_live_limits_v2(p.id,statement_timestamp()) lim WHERE p.id = $1`, a.ProjectID).Scan(&name, &status, &reason, &changed, &hourly, &daily, &orgHourly, &orgDaily); err != nil {
 			return err
 		}
 		out["project"] = map[string]any{"id": a.ProjectID, "name": name, "sending_status": status, "status_reason": reason,
@@ -919,7 +919,7 @@ func (s *Server) getSettings(w http.ResponseWriter, r *http.Request, a *access) 
 		var review []byte
 		var hourly, daily, orgHourly, orgDaily int
 		if err := tx.QueryRow(r.Context(), `SELECT name, sending_status, status_reason, review_request, lim.hourly, lim.daily, lim.org_hourly, lim.org_daily FROM projects p
-			CROSS JOIN LATERAL hedvi_live_limits(p.id,statement_timestamp()) lim WHERE p.id = $1`,
+			CROSS JOIN LATERAL hedvi_live_limits_v2(p.id,statement_timestamp()) lim WHERE p.id = $1`,
 			a.ProjectID).Scan(&pname, &status, &reason, &review, &hourly, &daily, &orgHourly, &orgDaily); err != nil {
 			return err
 		}

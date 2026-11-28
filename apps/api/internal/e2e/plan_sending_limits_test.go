@@ -22,7 +22,7 @@ func TestLiveLimitsFollowUsableSourcesAndOwnerExceptions(t *testing.T) {
 	e.Exec(`UPDATE projects SET sending_limits_manual=false WHERE id=$1`, tn.ProjectID)
 	limits := func(wantH, wantD, wantOrgH, wantOrgD int, manual bool) {
 		t.Helper()
-		if n := e.Count(`SELECT count(*) FROM hedvi_live_limits($1,now()) WHERE hourly=$2 AND daily=$3 AND org_hourly=$4 AND org_daily=$5 AND manual=$6`, tn.ProjectID, wantH, wantD, wantOrgH, wantOrgD, manual); n != 1 {
+		if n := e.Count(`SELECT count(*) FROM hedvi_live_limits_v2($1,now()) WHERE hourly=$2 AND daily=$3 AND org_hourly=$4 AND org_daily=$5 AND manual=$6`, tn.ProjectID, wantH, wantD, wantOrgH, wantOrgD, manual); n != 1 {
 			t.Fatal("unexpected effective limits", wantH, wantD, wantOrgH, wantOrgD, manual)
 		}
 	}
@@ -33,17 +33,17 @@ func TestLiveLimitsFollowUsableSourcesAndOwnerExceptions(t *testing.T) {
 	e.Exec(`INSERT INTO billing_orders(id,org_id,request_id,sku,currency,price_id,amount,state,country,return_project_id) VALUES($1,$2,$3,'pro_50k','sek','fixture_price',12900,'open','SE',$4)`, order, tn.OrgID, uuid.New(), tn.ProjectID)
 	limits(50, 200, 50, 200, false)
 	e.Exec(`INSERT INTO credit_lots(org_id,source,granted,expires_at) VALUES($1,'grant',10000,now()+interval '1 day')`, tn.OrgID)
-	limits(100, 1000, 100, 1000, false)
+	limits(0, 0, 0, 0, false)
 	e.Exec(`INSERT INTO billing_invoices(id,org_id,order_id,state) VALUES('capacity_invoice',$1,$2,'granted')`, tn.OrgID, order)
 	e.Exec(`INSERT INTO usage_periods(org_id,period_start,period_end,plan,included,data_included,stripe_invoice) VALUES($1,now()-interval '1 hour',now()+interval '27 days','pro_50k',50000,1073741824,'capacity_invoice')`, tn.OrgID)
-	limits(250, 2500, 250, 2500, false)
+	limits(0, 0, 0, 0, false)
 	e.Exec(`UPDATE usage_periods SET plan='pro_100k' WHERE stripe_invoice='capacity_invoice'`)
-	limits(500, 5000, 500, 5000, false)
-	if e.Count(`SELECT count(*) FROM hedvi_live_limits($1,now()+interval '28 days') WHERE hourly=50 AND daily=200`, tn.ProjectID) != 1 {
+	limits(0, 0, 0, 0, false)
+	if e.Count(`SELECT count(*) FROM hedvi_live_limits_v2($1,now()+interval '28 days') WHERE hourly=50 AND daily=200`, tn.ProjectID) != 1 {
 		t.Fatal("expired paid cycle or Flex lot extended throughput")
 	}
 	e.Exec(`UPDATE projects SET sending_limits_manual=true,hourly_limit=25,daily_limit=100 WHERE id=$1`, tn.ProjectID)
-	limits(25, 100, 500, 5000, true)
+	limits(25, 100, 0, 0, true)
 	if err := db.InOrg(e.Ctx, e.APIPool, tn.OrgID, func(tx pgx.Tx) error {
 		_, err := tx.Exec(e.Ctx, `UPDATE projects SET sending_limits_manual=false WHERE id=$1`, tn.ProjectID)
 		return err
@@ -52,7 +52,7 @@ func TestLiveLimitsFollowUsableSourcesAndOwnerExceptions(t *testing.T) {
 	}
 	e.Exec(`UPDATE projects SET sending_limits_manual=false WHERE id=$1`, tn.ProjectID)
 	e.Exec(`UPDATE usage_periods SET billing_usable=false WHERE stripe_invoice='capacity_invoice'`)
-	limits(100, 1000, 100, 1000, false)
+	limits(0, 0, 0, 0, false)
 	e.Exec(`UPDATE credit_lots SET reserved=granted WHERE org_id=$1`, tn.OrgID)
 	limits(50, 200, 50, 200, false)
 	e.Exec(`UPDATE credit_lots SET reserved=0,consumed=granted WHERE org_id=$1`, tn.OrgID)
@@ -70,7 +70,7 @@ func TestLiveLimitsFollowUsableSourcesAndOwnerExceptions(t *testing.T) {
 	other := e.NewTenant("free")
 	if err := db.InOrg(e.Ctx, e.APIPool, other.OrgID, func(tx pgx.Tx) error {
 		var n int
-		if err := tx.QueryRow(e.Ctx, `SELECT count(*) FROM hedvi_live_limits($1,now())`, tn.ProjectID).Scan(&n); err != nil {
+		if err := tx.QueryRow(e.Ctx, `SELECT count(*) FROM hedvi_live_limits_v2($1,now())`, tn.ProjectID).Scan(&n); err != nil {
 			return err
 		}
 		if n != 0 {
