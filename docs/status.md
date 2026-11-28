@@ -52,8 +52,9 @@ live unpaid Checkout acceptance are separate evidence. Expiring the unpaid live
 order produced a real signed webhook; the worker reconciled it to expired with
 zero failures and no allowance grant.
 
-API, worker and web revision `0d33c086ed0edb0c64a4789a83f6f9f63e6e5940` is deployed
-to staging and production, with migrations through 0019. Usable paid Flex and
+API and worker revision `0d33c086ed0edb0c64a4789a83f6f9f63e6e5940` is deployed
+to staging and production, with migrations through 0019. The web release includes
+the matching sending-capacity copy; its Source link identifies the shipped build. Usable paid Flex and
 Pro allowances have no hourly or daily plan admission cap. Free retains 50/hour
 and 200/day; purchased units, abuse protections, manual restrictions and shared
 provider capacity remain enforced. Workers pace SES calls before payload reads.

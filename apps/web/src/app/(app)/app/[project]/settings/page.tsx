@@ -46,7 +46,7 @@ export default function SettingsPage() {
   const save = (body: Record<string, unknown>) => run(async () => { await api(`/projects/${pid}/settings/org`, { method: "PATCH", body }); await s.reload(); await u.reload(); });
   return (
     <>
-      <div className="page-head"><div><h1>Settings</h1><p className="muted small">{o.name} · {o.plan_name} · prices in {o.currency}</p></div></div>
+      <div className="page-head"><div><h1>Settings</h1><p className="muted small">{o.name} · {o.plan_name}</p></div></div>
       {error && <p className="error" role="alert">{error}</p>}
       <div className="split">
         <section className="card stack">

@@ -885,7 +885,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/settings/page.tsx",
-      "sha256": "3678886196599a8dab180e03324e4d74352b2a499b7580002a3d28fa3f4879ed"
+      "sha256": "2c6953ce60fce3b127bb5fedac7677ebd744a96f16645b8f9f8afe7a1c04d5e0"
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/test-inbox/page.tsx",
@@ -1589,7 +1589,7 @@
     },
     {
       "path": "docs/status.md",
-      "sha256": "48e060ad2613b16e4c1cebba1cdf27b075b4f298602daba6e6e7b2c43caa4c90"
+      "sha256": "e43955f18288d856809c2826924be9c448879db809644e2cf57e8572105af21b"
     },
     {
       "path": "infra/terraform/AUTH-MAIL.md",
