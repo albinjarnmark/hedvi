@@ -205,7 +205,7 @@ func TestPlanLimitsUpgradePreservesReviewedExceptions(t *testing.T) {
 	DROP FUNCTION hedvi_guard_sending_limit_mode(); DROP FUNCTION hedvi_live_limits(uuid,timestamptz);
 	DROP TRIGGER prevent_api_counter_reset ON send_counters; DROP FUNCTION hedvi_guard_send_counter();
 	ALTER TABLE projects DROP COLUMN sending_limits_manual; DROP INDEX send_counters_org_window;
-	DELETE FROM schema_migrations WHERE version IN ('0017_plan_sending_limits','0018_paid_sending_capacity')`); err != nil {
+	DELETE FROM schema_migrations WHERE version IN ('0017_plan_sending_limits','0018_paid_sending_capacity','0019_sending_work_guards')`); err != nil {
 		t.Fatal(err)
 	}
 	for _, tn := range []*testenv.Tenant{ordinary, reduced} {
@@ -215,7 +215,7 @@ func TestPlanLimitsUpgradePreservesReviewedExceptions(t *testing.T) {
 	e.Exec(`INSERT INTO audit_log(org_id,actor_kind,action,target_type,target_id,metadata,created_at) VALUES($1,'system','project.approved','project',$2,'{"hourly":75,"daily":300}',now()-interval '10 days')`, reduced.OrgID, reduced.ProjectID.String())
 	e.Exec(`UPDATE projects SET hourly_limit=11,daily_limit=70,sending_status='paused' WHERE id=$1`, manual.ProjectID)
 	applied, err := db.Migrate(e.Ctx, owner)
-	if err != nil || len(applied) != 2 || applied[0] != "0017_plan_sending_limits" || applied[1] != "0018_paid_sending_capacity" {
+	if err != nil || len(applied) != 3 || applied[0] != "0017_plan_sending_limits" || applied[1] != "0018_paid_sending_capacity" || applied[2] != "0019_sending_work_guards" {
 		t.Fatal("migration", applied, err)
 	}
 	if e.Count(`SELECT count(*) FROM hedvi_live_limits($1,now()) WHERE NOT manual AND hourly=50 AND daily=200`, ordinary.ProjectID) != 1 ||

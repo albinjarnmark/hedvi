@@ -349,7 +349,11 @@
     },
     {
       "path": "apps/api/internal/db/migrations/0018_paid_sending_capacity.sql",
-      "sha256": "a34d926218ac9073a4c2818cdec6fa0a909d5ba30dc91122e07ca2a269fd8ad2"
+      "sha256": "1a331e1ad9cd579d3f1901e9c74ebe6c5acf996930b6af6a1bf57edcf7b1e5f4"
+    },
+    {
+      "path": "apps/api/internal/db/migrations/0019_sending_work_guards.sql",
+      "sha256": "fb261203887e1c8761ff59e0aebe01c70205fbe526155fc424148c6c359a50d6"
     },
     {
       "path": "apps/api/internal/domains/mail_from.go",
@@ -445,7 +449,7 @@
     },
     {
       "path": "apps/api/internal/e2e/paid_capacity_test.go",
-      "sha256": "99106d408166eb199055973c6e452a4a52124407d703a5cf2240448a1fa440d8"
+      "sha256": "13ba960c47a3c847b213ea2615d3bd359f6dbb2c8455ffd10fa6782a209b4192"
     },
     {
       "path": "apps/api/internal/e2e/pipeline_test.go",
@@ -453,7 +457,7 @@
     },
     {
       "path": "apps/api/internal/e2e/plan_sending_limits_test.go",
-      "sha256": "161ceb2be6af9f5a85fb1327f364ec2a37ff6ad7ac2aefac4282e76f45fe04ab"
+      "sha256": "7964f668a55514bcbae07426f51a31b039be6a5367ba2f822aab2af0143eb77a"
     },
     {
       "path": "apps/api/internal/e2e/provider_send_incidents_test.go",
@@ -605,7 +609,7 @@
     },
     {
       "path": "apps/api/internal/quota/quota.go",
-      "sha256": "2633faac2f096a190bb33cb91ee097a609a248e6f28d3713baa3541b0ceddd63"
+      "sha256": "e5e521ac6477a1e97455207c0d6c771472c022d4398c3a08af64bb9e434267b8"
     },
     {
       "path": "apps/api/internal/quota/suppression_work.go",

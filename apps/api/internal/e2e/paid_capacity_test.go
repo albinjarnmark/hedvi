@@ -7,12 +7,115 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 
 	"hedvi.dev/api/internal/blob"
 	"hedvi.dev/api/internal/db"
+	"hedvi.dev/api/internal/quota"
 	"hedvi.dev/api/internal/testenv"
 )
+
+func TestPaidGuardsUpgradeBothPublishedMigration18Shapes(t *testing.T) {
+	for _, alreadyHadCounter := range []bool{false, true} {
+		t.Run(fmt.Sprint(alreadyHadCounter), func(t *testing.T) {
+			e := testenv.New(t)
+			cfg := e.WorkerPool.Config()
+			cfg.ConnConfig.User, cfg.ConnConfig.Password = "hedvi_owner", "hedvi_owner_dev"
+			owner, err := pgxpool.NewWithConfig(e.Ctx, cfg)
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer owner.Close()
+			if !alreadyHadCounter {
+				if _, err := owner.Exec(e.Ctx, `DROP TABLE suppression_work_counters`); err != nil {
+					t.Fatal(err)
+				}
+			}
+			if _, err := owner.Exec(e.Ctx, `DELETE FROM schema_migrations WHERE version='0019_sending_work_guards'`); err != nil {
+				t.Fatal(err)
+			}
+			applied, err := db.Migrate(e.Ctx, owner)
+			if err != nil || len(applied) != 1 || applied[0] != "0019_sending_work_guards" {
+				t.Fatal("published 0018 upgrade", applied, err)
+			}
+			tn := e.NewTenant("free")
+			if _, err := e.Accept.Send(e.Ctx, tn.Live, "upgrade", liveBody(tn, "upgrade@example.test")); err != nil {
+				t.Fatal("upgraded admission", err)
+			}
+			if e.Count(`SELECT count(*) FROM suppression_work_counters WHERE org_id=$1`, tn.OrgID) != 1 {
+				t.Fatal("counter absent after upgrade")
+			}
+		})
+	}
+}
+
+func TestQuotaSettlementCannotDeadlockConcurrentRevocation(t *testing.T) {
+	e := testenv.New(t)
+	tn := e.NewTenant("flex")
+	e.Exec(`INSERT INTO credit_lots(org_id,source,granted,expires_at) VALUES($1,'grant',10,now()+interval '1 day')`, tn.OrgID)
+	res, err := e.Accept.Send(e.Ctx, tn.Live, "revoke-race", liveBody(tn, "r@example.test"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var rid uuid.UUID
+	if err := e.WorkerPool.QueryRow(e.Ctx, `SELECT id FROM recipients WHERE email_id=$1`, res.EmailID).Scan(&rid); err != nil {
+		t.Fatal(err)
+	}
+	ctx, cancel := context.WithTimeout(e.Ctx, 8*time.Second)
+	defer cancel()
+	revoke, err := e.WorkerPool.Begin(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer revoke.Rollback(context.Background())
+	if _, err := revoke.Exec(ctx, `SELECT id FROM organizations WHERE id=$1 FOR UPDATE`, tn.OrgID); err != nil {
+		t.Fatal(err)
+	}
+	settlement, err := e.WorkerPool.Begin(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer settlement.Rollback(context.Background())
+	pid := settlement.Conn().PgConn().PID()
+	done := make(chan error, 1)
+	go func() {
+		_, err := quota.Release(ctx, settlement, tn.OrgID, []uuid.UUID{rid})
+		if err == nil {
+			err = settlement.Commit(ctx)
+		}
+		done <- err
+	}()
+	for {
+		var blocked bool
+		if err := revoke.QueryRow(ctx, `SELECT cardinality(pg_blocking_pids($1))>0`, pid).Scan(&blocked); err != nil {
+			t.Fatal(err)
+		}
+		if blocked {
+			break
+		}
+		select {
+		case <-ctx.Done():
+			t.Fatal(ctx.Err())
+		case <-time.After(10 * time.Millisecond):
+		}
+	}
+	// This is the same org -> credit ordering as a gift revoke/refund. Before
+	// the fix, settlement held the credit row while waiting for the org FK.
+	if _, err := revoke.Exec(ctx, `UPDATE credit_lots SET billing_usable=false WHERE org_id=$1`, tn.OrgID); err != nil {
+		t.Fatal("revocation deadlocked settlement", err)
+	}
+	if err := revoke.Commit(ctx); err != nil {
+		t.Fatal(err)
+	}
+	if err := <-done; err != nil {
+		t.Fatal("settlement", err)
+	}
+	if e.Count(`SELECT released FROM quota_reservations WHERE email_id=$1`, res.EmailID) != 1 {
+		t.Fatal("reservation not released")
+	}
+}
 
 type countedPayloadReads struct {
 	blob.Store

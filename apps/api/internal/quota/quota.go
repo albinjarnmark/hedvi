@@ -234,6 +234,11 @@ func settle(ctx context.Context, tx pgx.Tx, orgID uuid.UUID, recipientIDs []uuid
 	if len(recipientIDs) == 0 {
 		return 0, nil
 	}
+	// Credit-ledger inserts take this FK lock too. Acquire it before quota
+	// rows, so revocation (org -> quota) cannot deadlock settlement.
+	if _, err := tx.Exec(ctx, `SELECT id FROM organizations WHERE id=$1 FOR KEY SHARE`, orgID); err != nil {
+		return 0, err
+	}
 	column := map[string]string{"consumed": "consumed", "released": "released"}[to]
 	rows, err := tx.Query(ctx, `
 		WITH moved AS (
