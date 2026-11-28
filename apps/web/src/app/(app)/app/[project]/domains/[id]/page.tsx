@@ -1,4 +1,5 @@
 "use client";
+import { CloudflareSetup } from "@/components/CloudflareSetup";
 import { ScrollTable } from "@/components/ScrollTable";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -45,6 +46,7 @@ export default function DomainPage() {
         <p className="small muted">Detected from your nameservers as a hint — your records may be managed elsewhere.</p>
         {(a.provider_tips ?? []).map((tip) => <p key={tip} className="small">• {tip}</p>)}
       </div>
+      <CloudflareSetup key={data.records.length} domain={data.name} mailFromDomain={data.hedvi.mail_from_domain} records={data.records} pending={pending} onCheck={() => { void run(async () => { await api(`/projects/${pid}/domains/${id}/verify`, { method: "POST" }); await reload(); }); }} />
       <h2 style={{ marginTop: 24 }}>Records to publish</h2>
       <p className="small muted">First publish the ownership TXT record and choose Check now. New claims expire after 72 hours. The check generates your DKIM and MAIL FROM records. Publish those and check again. Sending activates automatically when all checks pass. Keep the ownership record in DNS.</p>
       <ScrollTable>

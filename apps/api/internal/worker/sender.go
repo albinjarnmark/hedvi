@@ -69,6 +69,7 @@ func (s *Sender) Run(ctx context.Context) {
 
 type claimed struct {
 	orgID, projectID uuid.UUID
+	domainID         uuid.UUID
 	payloadRef       *string
 	fromDomain       string
 	deadline         time.Time
@@ -121,10 +122,10 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 			FROM projects p, organizations o
 			WHERE e.id = $1 AND p.id = e.project_id AND o.id = e.org_id AND e.mode = 'live'
 			  AND e.send_state IN ('queued', 'retry_wait') AND e.next_attempt_at <= now() + interval '2 seconds'
-			RETURNING e.org_id, e.project_id, e.payload_ref, e.from_domain, e.queue_deadline_at, e.attempt_count, e.created_at,
+			RETURNING e.org_id, e.project_id, coalesce(e.domain_id,'00000000-0000-0000-0000-000000000000'::uuid), e.payload_ref, e.from_domain, e.queue_deadline_at, e.attempt_count, e.created_at,
 				p.ses_tenant_name, p.sending_status, o.risk_status,
  EXISTS (SELECT 1 FROM domains d WHERE d.id = e.domain_id AND d.project_id = e.project_id AND d.status = 'verified' AND d.deleted_at IS NULL)`,
-			emailID, s.WorkerID, s.Lease.Milliseconds()).Scan(&c.orgID, &c.projectID, &c.payloadRef, &c.fromDomain, &c.deadline,
+			emailID, s.WorkerID, s.Lease.Milliseconds()).Scan(&c.orgID, &c.projectID, &c.domainID, &c.payloadRef, &c.fromDomain, &c.deadline,
 			&c.attempts, &c.createdAt, &c.tenant, &c.sendingStatus, &c.riskStatus, &c.domainValid)
 		return err
 	})
@@ -231,8 +232,12 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 		if tag.RowsAffected() == 0 {
 			return errLeaseLost
 		}
-		_, err = tx.Exec(ctx, `INSERT INTO send_attempts (id, org_id, email_id, worker_id, state) VALUES ($1, $2, $3, $4, 'started')`,
-			attemptID, c.orgID, emailID, s.WorkerID)
+		routeID, err := bindProviderSendRoute(ctx, tx, c, s.ConfigSet)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec(ctx, `INSERT INTO send_attempts (id, org_id, email_id, worker_id, state, provider_route_id) VALUES ($1, $2, $3, $4, 'started', $5)`,
+			attemptID, c.orgID, emailID, s.WorkerID, routeID)
 		return err
 	})
 	if errors.Is(err, errLeaseLost) {
@@ -348,7 +353,18 @@ func failEmail(ctx context.Context, tx pgx.Tx, e *emailInfo, code, reason string
 // RecordAccepted settles an attempt that SES accepted. It is idempotent and
 // also used when SES events reconcile an attempt with unknown outcome.
 func RecordAccepted(ctx context.Context, pool *pgxpool.Pool, emailID, attemptID uuid.UUID, messageID string) error {
-	return db.Tx(ctx, pool, func(tx pgx.Tx) error { return recordAcceptedTx(ctx, tx, emailID, attemptID, messageID, "") })
+	return db.Tx(ctx, pool, func(tx pgx.Tx) error {
+		if err := recordAcceptedTx(ctx, tx, emailID, attemptID, messageID, ""); err != nil {
+			return err
+		}
+		// Only the direct, confirmed SendEmail response establishes recovery.
+		// Manual decisions and delayed SES event reconciliation use the lower
+		// level settlement helper without changing provider incident health.
+		if messageID == "" {
+			return nil
+		}
+		return recordProviderSendResult(ctx, tx, emailID, attemptID, "", true)
+	})
 }
 
 func recordAcceptedTx(ctx context.Context, tx pgx.Tx, emailID, attemptID uuid.UUID, messageID, note string) error {
@@ -430,8 +446,7 @@ func (s *Sender) recordRetryable(ctx context.Context, emailID, attemptID uuid.UU
 			return err
 		}
 		if se.Alert {
-			if err := raiseAlert(ctx, tx, nil, nil, "provider_sending_paused", "critical", "provider:"+se.Code,
-				"SES refused sending ("+se.Code+"). Queued emails are held and retried. Check the AWS account and configuration set.", nil); err != nil {
+			if err := recordProviderSendResult(ctx, tx, emailID, attemptID, se.Code, false); err != nil {
 				return err
 			}
 		}

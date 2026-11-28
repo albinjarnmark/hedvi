@@ -4,6 +4,7 @@
 //	hedvi api              public + console API
 //	hedvi worker           background workers
 //	hedvi dev              api and worker in one process (local only)
+//	hedvi provider-check  pre-deploy SES provisioning and optional simulator send
 //	hedvi admin <command>  operator tasks, see `hedvi admin help`
 package main
 
@@ -29,7 +30,7 @@ import (
 func main() {
 	log := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	if len(os.Args) < 2 {
-		fmt.Fprintln(os.Stderr, "usage: hedvi migrate|api|worker|dev|admin")
+		fmt.Fprintln(os.Stderr, "usage: hedvi migrate|api|worker|dev|admin|provider-check")
 		os.Exit(2)
 	}
 	cfg, err := config.Load()
@@ -44,6 +45,8 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	switch os.Args[1] {
+	case "provider-check":
+		err = checkProvider(ctx, cfg, log, os.Args[2:])
 	case "migrate":
 		err = migrate(ctx, cfg, log)
 	case "api":

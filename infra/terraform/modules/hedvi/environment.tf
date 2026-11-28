@@ -3,6 +3,11 @@
 locals {
   customer_tenant_prefix = var.ses_tenant_prefix != "" ? var.ses_tenant_prefix : (var.env == "production" ? "hedvi-production-" : "hedvi-")
   foreign_environment    = var.env == "production" ? "staging" : "production"
+  # IAM '?' matches one character. The application derives the 32 lowercase
+  # hex characters from the project UUID before it makes the SES request.
+  tenant_id_pattern             = "????????????????????????????????"
+  customer_send_tenant_pattern  = "${local.customer_tenant_prefix}${local.tenant_id_pattern}"
+  foreign_customer_send_pattern = var.env == "staging" ? "hedvi-production-*" : "hedvi-${local.tenant_id_pattern}"
 }
 data "aws_iam_policy_document" "environment_guard" {
   statement {

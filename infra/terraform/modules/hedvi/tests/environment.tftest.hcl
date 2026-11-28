@@ -52,6 +52,25 @@ run "legacy_staging_excludes_production" {
     error_message = "Existing staging tenant names must not change."
   }
   assert {
+    condition = one([
+      for s in data.aws_iam_policy_document.worker.statement : (
+        s.effect == "Allow" && toset(s.actions) == toset(["ses:SendRawEmail"]) &&
+        toset(s.resources) == toset(["arn:aws:ses:eu-north-1:123456789012:identity/*", "arn:aws:ses:eu-north-1:123456789012:configuration-set/hedvi-staging"]) &&
+        one([for c in s.condition : c.test == "StringLike" && c.variable == "ses:TenantName" && toset(c.values) == toset(["hedvi-${join("", [for i in range(32) : "?"])}"])])
+      ) if s.sid == "SendCustomerRaw"
+    ])
+    error_message = "Raw mail requires exactly one 32-character staging tenant and the staging identity/configuration resources. A resource-tag condition breaks real MIME sends."
+  }
+  assert {
+    condition = one([
+      for s in data.aws_iam_policy_document.worker.statement : (
+        s.effect == "Deny" && toset(s.resources) == toset(["*"]) && toset(s.actions) == toset(["ses:SendEmail", "ses:SendRawEmail"]) &&
+        one([for c in s.condition : c.test == "StringLike" && c.variable == "ses:TenantName" && toset(c.values) == toset(["hedvi-production-*", "operator-hedvi-production-auth"])])
+      ) if s.sid == "DenyForeignSendTenant"
+    ])
+    error_message = "Both send actions must explicitly deny production tenant names even when authorizing an identity ARN with no tag context."
+  }
+  assert {
     condition     = alltrue([for p in [data.aws_iam_policy_document.api.source_policy_documents[1], data.aws_iam_policy_document.worker.source_policy_documents[1]] : length([for s in jsondecode(p).Statement : s if s.Sid == "DenyProductionSESNamespace" && s.Effect == "Deny" && contains(s.Resource, "arn:aws:ses:eu-north-1:123456789012:tenant/hedvi-production-*")]) == 1])
     error_message = "The legacy staging wildcard must explicitly deny production tenants in both roles."
   }
@@ -72,8 +91,23 @@ run "production_uses_only_production_tenants" {
     error_message = "Production must not allocate or mutate legacy staging tenants."
   }
   assert {
-    condition     = length([for s in data.aws_iam_policy_document.worker.statement : s if s.sid == "Send" && length([for c in s.condition : c if c.variable == "ses:TenantName" && toset(c.values) == toset(["hedvi-production-*"])]) == 1 && length([for c in s.condition : c if c.variable == "aws:ResourceTag/environment" && c.test == "StringEquals" && toset(c.values) == toset(["production"])]) == 1]) == 1
-    error_message = "Customer send must bind both production tenant prefix and identity/config environment."
+    condition = one([
+      for s in data.aws_iam_policy_document.worker.statement : (
+        s.effect == "Allow" && toset(s.actions) == toset(["ses:SendRawEmail"]) &&
+        toset(s.resources) == toset(["arn:aws:ses:eu-north-1:123456789012:identity/*", "arn:aws:ses:eu-north-1:123456789012:configuration-set/hedvi-production"]) &&
+        one([for c in s.condition : c.test == "StringLike" && c.variable == "ses:TenantName" && toset(c.values) == toset(["hedvi-production-${join("", [for i in range(32) : "?"])}"])])
+      ) if s.sid == "SendCustomerRaw"
+    ])
+    error_message = "Production RAW must require the exact tenant shape, local identity resources and only the production customer configuration set."
+  }
+  assert {
+    condition = one([
+      for s in data.aws_iam_policy_document.worker.statement : (
+        s.effect == "Deny" && toset(s.resources) == toset(["*"]) && toset(s.actions) == toset(["ses:SendEmail", "ses:SendRawEmail"]) &&
+        one([for c in s.condition : c.test == "StringLike" && c.variable == "ses:TenantName" && toset(c.values) == toset(["hedvi-${join("", [for i in range(32) : "?"])}", "operator-hedvi-staging-auth"])])
+      ) if s.sid == "DenyForeignSendTenant"
+    ])
+    error_message = "Production must deny staging customer and operator tenants on all send resources."
   }
   assert {
     condition     = alltrue([for p in [data.aws_iam_policy_document.api.source_policy_documents[1], data.aws_iam_policy_document.worker.source_policy_documents[1]] : length([for s in jsondecode(p).Statement : s if s.Sid == "DenyForeignEnvironmentSESResources" && s.Effect == "Deny" && s.Condition.StringEquals["aws:ResourceTag/environment"] == "staging"]) == 1])

@@ -164,3 +164,22 @@ SNS, independently of SES, and a successful provider check resolves it. DNS
 propagation and missing customer records remain visible in the domain guide;
 these are distinct from a provider permissions incident. A domain-check failure
 returns retryable `domain_verification_unavailable`, never email-resend advice.
+
+For Railway API and worker services, configure the pre-deploy command
+`/hedvi provider-check` with a 60-second limit. It runs under that service's
+existing AWS credentials and checks creation/retry, exact tenant/environment
+ownership and configuration-set association. The API check sends no email and never opens the application database.
+For each worker, add `--sender-project=<pilot-project-uuid>
+--sender-domain-claim=<pilot-domain-uuid> --sender-from=canary@<pilot-domain>`
+using an existing verified operator-owned pilot domain. This additionally sends
+one raw MIME message to `success@simulator.amazonses.com` through the **customer**
+policy branch, with the real worker credentials, tenant and configuration set.
+There is no configurable recipient and no automatic send retry. A failed or
+uncertain canary prevents promotion; account-security mail is not a substitute
+for this customer sending check. A positive result proves SES acceptance, while
+application delivery events and quota settlement still require the end-to-end
+checks above. The probe reuses one deterministic tenant per
+environment, so repeated releases do not accumulate resources. If the check
+fails, keep the previous deployment live; do not bypass it by using admin AWS
+credentials. This checks provider provisioning permissions, not recipient
+inbox placement or the entire customer journey above.

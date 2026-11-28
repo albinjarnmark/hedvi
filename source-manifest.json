@@ -17,7 +17,7 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "1e1dfdc602ab18a4e476f9fd95ff144d3f12d3bf4d24c29ddeb434f140bbc803"
+      "sha256": "a6dd5b121438e2c943ee9b96392de6de4a03714b81cc38c2e5cda2f801667d5d"
     },
     {
       "path": ".github/workflows/deploy.yml",
@@ -85,7 +85,15 @@
     },
     {
       "path": "apps/api/cmd/hedvi/main.go",
-      "sha256": "c504e29072e0e358c266aed752dbcdb90b6452f649ee58604f1d85ca6704579e"
+      "sha256": "f7939ab9a857e1c7f40ec712b99f1e684986f5571b387d4d29090a79e2447eaf"
+    },
+    {
+      "path": "apps/api/cmd/hedvi/provider_check.go",
+      "sha256": "47c01a720cf2a1cb42e549521d173c4658ff86f97f04c3020ae65e4ebbd9c275"
+    },
+    {
+      "path": "apps/api/cmd/hedvi/provider_check_test.go",
+      "sha256": "d63adb3ddd2f4a797082fcdbf12df7c9f9cbee3c26b9410aab5b2f575ea17d13"
     },
     {
       "path": "apps/api/go.mod",
@@ -324,6 +332,10 @@
       "sha256": "df8e5c1ad775afa42d73b0e65e92d42380f4fae295a9dd737043e26e1eb96932"
     },
     {
+      "path": "apps/api/internal/db/migrations/0015_provider_send_incidents.sql",
+      "sha256": "ed1433105411bbb5c6cddf999cce527368c61ae26a9886102fdba057a4fbb6aa"
+    },
+    {
       "path": "apps/api/internal/domains/ownership_test.go",
       "sha256": "294721e47859e43de07b324e321c06a6466e4da9115c2be7c6d82611c4816cdb"
     },
@@ -337,7 +349,7 @@
     },
     {
       "path": "apps/api/internal/domains/service.go",
-      "sha256": "782e7ff29dfb49fbb1e21ef79628c249e426f78d3d89ffffb0337c6349fbfcee"
+      "sha256": "aec414a158a5d5355094a179b995b93256e08f96663fcc96b567a313a554890d"
     },
     {
       "path": "apps/api/internal/e2e/acceptance_test.go",
@@ -381,7 +393,7 @@
     },
     {
       "path": "apps/api/internal/e2e/domain_provider_failure_test.go",
-      "sha256": "fb6777c9d546369b66300fb100d37d6c4699bd47c3f05e5bfabc0ec273ea2a02"
+      "sha256": "cd0a17132dc5918427758e3b4d5de0acfe2f16950c1ba8e323ee6c31551f9ba0"
     },
     {
       "path": "apps/api/internal/e2e/helpers_test.go",
@@ -406,6 +418,10 @@
     {
       "path": "apps/api/internal/e2e/pipeline_test.go",
       "sha256": "6999aa5d61c826dac7b5000d842a44b57d66e6b723137466204b8ef2e5dddeb0"
+    },
+    {
+      "path": "apps/api/internal/e2e/provider_send_incidents_test.go",
+      "sha256": "c17d0248ea60762d13f73c747c5ed7da0bdba4b713c713c1787ac52da328aff3"
     },
     {
       "path": "apps/api/internal/e2e/remember_me_test.go",
@@ -525,11 +541,11 @@
     },
     {
       "path": "apps/api/internal/provider/ses.go",
-      "sha256": "4c95f82e8c2e0c20c6dc677303d62317b0671126c9ab5fbac1045ef9b02f97ee"
+      "sha256": "48c5f8fd1034bf8ba1262d99bc50bacd025835459780d336092353f383eddd21"
     },
     {
       "path": "apps/api/internal/provider/ses_test.go",
-      "sha256": "c6bd3cb95e574fc1d173f39e6e89cad38977c25a066623bbf00fcdc9fb46f4f8"
+      "sha256": "27e4dc8b55c64cbdf816aff42346c16a14737de78961be978cedc229573f3da6"
     },
     {
       "path": "apps/api/internal/provider/simulator.go",
@@ -617,7 +633,7 @@
     },
     {
       "path": "apps/api/internal/worker/common.go",
-      "sha256": "967b42da831e046502393fb06aa509271f2d65a6ccb33e222a51545257748542"
+      "sha256": "2023e74e588e2acb5053af65ecb92862f0297614c6ae83a43a49b86c41f231ed"
     },
     {
       "path": "apps/api/internal/worker/dispatcher.go",
@@ -637,7 +653,7 @@
     },
     {
       "path": "apps/api/internal/worker/sender.go",
-      "sha256": "37232cf969e1bb39f11f6558fb8a6e485163ca5589c9f63f1e30b0db940040ce"
+      "sha256": "8efa621aec3668bf70366bb0f85619455b755dfde0cc94795bf41fa51525cf50"
     },
     {
       "path": "apps/web/AGENTS.md",
@@ -769,7 +785,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/domains/[id]/page.tsx",
-      "sha256": "77d5641e9cfc0cd90b462b470971064ed33ead93300a426b06520689e19b0269"
+      "sha256": "872076546d13d4a7db0e566e1d998ac413a5b76cc2e022c89a604ff63635e4a9"
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/domains/page.tsx",
@@ -821,7 +837,7 @@
     },
     {
       "path": "apps/web/src/app/(site)/docs/guides.tsx",
-      "sha256": "bec9fe33c6ef769e4e4fa6ab41c5a3a9cc2676f06b07c97f8d847ccab14cbf75"
+      "sha256": "4074134e9fd28b41e05ad1a3c586adb4ca7006c4251789f6d3e500c482db364d"
     },
     {
       "path": "apps/web/src/app/(site)/docs/layout.tsx",
@@ -930,6 +946,10 @@
     {
       "path": "apps/web/src/components/BillingSettings.tsx",
       "sha256": "7b3a31583ac47efa2214b88866daec5142a2618b0766cbe3c8e5601c9a45ebc3"
+    },
+    {
+      "path": "apps/web/src/components/CloudflareSetup.tsx",
+      "sha256": "d574a2d8296b5e44bf501f4a49058353679b14bcbf6e163248311246318b81e7"
     },
     {
       "path": "apps/web/src/components/CodeTabs.tsx",
@@ -1105,7 +1125,7 @@
     },
     {
       "path": "apps/web/src/lib/api.ts",
-      "sha256": "1d2e1c43c113912bd865de1819a337fd4689524e98fb85150444673ea5475142"
+      "sha256": "9db20835235a33739e9d5a11150d92924c503809c93190c7f1d218d12f6c8f49"
     },
     {
       "path": "apps/web/src/lib/billing-profile.test.ts",
@@ -1114,6 +1134,14 @@
     {
       "path": "apps/web/src/lib/billing-profile.ts",
       "sha256": "9cf261dafa96f7605c3051319040db15be8c4edd3b5ea4cf5066ac39a46cfd95"
+    },
+    {
+      "path": "apps/web/src/lib/dns-import.test.ts",
+      "sha256": "489777ff98278993e3a0b7993e60411c03a9d64fd04ec045171a0e90b1dc09f8"
+    },
+    {
+      "path": "apps/web/src/lib/dns-import.ts",
+      "sha256": "9365c78ca5c13b198a75efbdad4dc01288fc86e453344cd6e4b725ad464e778c"
     },
     {
       "path": "apps/web/src/lib/email-preview.test.ts",
@@ -1165,7 +1193,7 @@
     },
     {
       "path": "apps/web/tests/browser/release.spec.ts",
-      "sha256": "03408d6f25e45043623b068d7dd36362cbebe0a4fc829b00198447935beedd53"
+      "sha256": "dfa8465751b59e3a12dd9566eff50c699b7433cc9f2d77913ca31f353ad03283"
     },
     {
       "path": "apps/web/tsconfig.json",
@@ -1400,6 +1428,10 @@
       "sha256": "d4a79475d14323bc504c3a95022594497a9c50aeda7b44047206bd8812fd659e"
     },
     {
+      "path": "docs/architecture/provider-send-incidents.md",
+      "sha256": "5ba70e603df1f3c2d7c57dce4e65fc67e7f84f52625625d96d9876cec5f02ed0"
+    },
+    {
       "path": "docs/architecture/quota.md",
       "sha256": "440a56b17920dabe29cc1d730eac604713b2baff774ea198985b84388fddcc64"
     },
@@ -1441,7 +1473,7 @@
     },
     {
       "path": "docs/runbooks/deploy.md",
-      "sha256": "8553140de4da0191bc97694dd34e0b589ea63ea09af5b4311209146de7037979"
+      "sha256": "69c97fe597f50cad5b598e6bb64b9ab9aa78f0139f8f43b39f0e3297c113accd"
     },
     {
       "path": "docs/runbooks/dlq-replay.md",
@@ -1517,11 +1549,11 @@
     },
     {
       "path": "infra/terraform/modules/hedvi/environment.tf",
-      "sha256": "7746e76883376eefb088e61b9fb904a24c261d405848763987930c331b775069"
+      "sha256": "daa4f8d10030ff985a35106690cbcf1a22a8667d564dd06d6b648a6bf8f628bf"
     },
     {
       "path": "infra/terraform/modules/hedvi/main.tf",
-      "sha256": "95c57b76cb1bf25ced5e2dade441e44104a904df3934b0f106fcba2186c4b111"
+      "sha256": "8eecc32df57c179033520a5e985409330288f9e58766374c32d14d5bb4f5b2a4"
     },
     {
       "path": "infra/terraform/modules/hedvi/outputs.tf",
@@ -1529,11 +1561,11 @@
     },
     {
       "path": "infra/terraform/modules/hedvi/tests/auth_mail.tftest.hcl",
-      "sha256": "3d4028c16b8133d88ad881262cfd2e199bc628d43c99ac6ebfe795fa80cb294d"
+      "sha256": "5935a726449da3c8b7271f4675b928e49fa3f9c3d8fadff54e6730c5d167ffa7"
     },
     {
       "path": "infra/terraform/modules/hedvi/tests/environment.tftest.hcl",
-      "sha256": "9678b36df94212ac8cefc415eceffeb901b2372650c8b62d5370c5f5ac3294ab"
+      "sha256": "39e823fa3d44b985971a1643dfd0d2adb06123495388db3d2375f4c57e55413e"
     },
     {
       "path": "infra/terraform/modules/hedvi/variables.tf",

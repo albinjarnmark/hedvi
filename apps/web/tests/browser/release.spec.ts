@@ -162,3 +162,24 @@ test("domain onboarding has no live sending application",async({page})=>{
   await expect(page.getByRole("button",{name:"Request live sending"})).toHaveCount(0);
   await fits(page);
 });
+
+test("Cloudflare quick setup downloads scoped DNS records and fits mobile", async ({ page }, info) => {
+  await fixture(page);
+  const domain = "mail.example.com";
+  await page.route(`**/console-api/projects/${pid}/domains/domain`, route => route.fulfill({ json: {
+    id:"domain", name:domain, status:"pending", records:[
+      {record:"Ownership",type:"TXT",name:"_hedvi-verification",fqdn:`_hedvi-verification.${domain}`,value:"hedvi-domain=00000000-0000-4000-8000-000000000001",status:"verified",purpose:"Ownership"},
+      {record:"DKIM",type:"CNAME",name:"selector._domainkey",fqdn:`selector._domainkey.${domain}`,value:"selector.dkim.amazonses.com",status:"pending",purpose:"Email signing"},
+    ], hedvi:{analysis:{ns_provider:"Cloudflare",findings:[]},last_checked_at:null,next_check_at:null,mail_from_domain:`send.${domain}`}
+  }}));
+  await page.goto(`/app/${pid}/domains/domain`);
+  await page.getByRole("button",{name:"Quick setup with Cloudflare"}).click();
+  await expect(page.getByRole("link",{name:"Open Cloudflare DNS"})).toHaveAttribute("href","https://dash.cloudflare.com/?to=/:account/:zone/dns/records");
+  const downloading=page.waitForEvent("download");
+  await page.getByRole("button",{name:"Download DNS records"}).click();
+  const download=await downloading;
+  expect(download.suggestedFilename()).toBe("hedvi-mail.example.com-dns.txt");
+  await download.saveAs(info.outputPath(download.suggestedFilename()));
+  await fits(page);
+  await page.screenshot({path:info.outputPath("cloudflare-quick-setup.png"),fullPage:true});
+});

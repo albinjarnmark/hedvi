@@ -343,6 +343,9 @@ func (s *Service) Delete(ctx context.Context, orgID, projectID, id uuid.UUID) er
 		if db.IsNoRows(err) {
 			return apierr.ErrNotFound
 		}
+		if err == nil && done {
+			return resolveProviderAlert(ctx, tx, id)
+		}
 		return err
 	})
 	if err != nil || done {
@@ -364,7 +367,10 @@ func (s *Service) Delete(ctx context.Context, orgID, projectID, id uuid.UUID) er
 		}
 		return db.InOrg(ctx, conn, orgID, func(tx pgx.Tx) error {
 			_, err := tx.Exec(ctx, `UPDATE domains SET deleted_at=now() WHERE id=$1 AND provider_state='deleting' AND deleted_at IS NULL`, id)
-			return err
+			if err != nil {
+				return err
+			}
+			return resolveProviderAlert(ctx, tx, id)
 		})
 	})
 }
@@ -484,7 +490,16 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 		if !ready {
 			return d, nil
 		}
-		err = withProviderLock(ctx, pool, d.ID, func(conn *pgxpool.Conn) error {
+		err = withProviderLock(ctx, pool, d.ID, func(conn *pgxpool.Conn) (operationErr error) {
+			var attempt *Domain
+			// Record failures before releasing the provider lock, and only if
+			// the same provisioning generation still owns this attempt.
+			defer func() {
+				var known *apierr.Error
+				if operationErr != nil && attempt != nil && !errors.As(operationErr, &known) {
+					s.provisioningAlert(ctx, conn, attempt, operationErr)
+				}
+			}()
 			var tenant string
 			err := db.InOrg(ctx, conn, d.OrgID, func(tx pgx.Tx) error {
 				allowed, err := s.projectApproved(ctx, tx, d.ProjectID)
@@ -493,6 +508,10 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 				}
 				if !allowed {
 					return approvalRequired()
+				}
+				attempt, err = ScanDomain(tx.QueryRow(ctx, selectDomain+` WHERE id=$1 AND project_id=$2 AND provider_state='provisioning' AND deleted_at IS NULL`, d.ID, d.ProjectID))
+				if err != nil {
+					return err
 				}
 				return tx.QueryRow(ctx, `SELECT p.ses_tenant_name FROM projects p JOIN domains d ON d.project_id=p.id WHERE d.id=$1 AND d.provider_state='provisioning' AND d.deleted_at IS NULL`, d.ID).Scan(&tenant)
 			})
@@ -540,10 +559,6 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 			})
 		})
 		if err != nil {
-			var known *apierr.Error
-			if !errors.As(err, &known) {
-				s.providerAlert(ctx, pool, d, err)
-			}
 			return nil, err
 		}
 	} else if manual && d.LastCheckedAt != nil && time.Since(*d.LastCheckedAt) < 10*time.Second {
@@ -563,7 +578,9 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 	lastErr := ""
 	status := "temporary_failure"
 	if providerErr != nil {
-		s.providerAlert(ctx, pool, d, providerErr)
+		if s.Log != nil {
+			s.Log.Error("domain provider unavailable", "domain_id", d.ID, "err", providerErr)
+		}
 		lastErr = "Could not confirm the provider identity. Sending is disabled until it can be verified."
 		if errors.Is(providerErr, provider.ErrIdentityOwnership) {
 			lastErr = "Provider identity ownership needs operator review."
@@ -597,11 +614,6 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 	analysisJSON, _ := json.Marshal(analysis)
 	var out *Domain
 	err = db.InOrg(ctx, pool, d.OrgID, func(tx pgx.Tx) error {
-		if providerErr == nil {
-			if _, err := tx.Exec(ctx, `UPDATE alerts SET resolved_at=now() WHERE dedupe_key=$1 AND resolved_at IS NULL`, "domain-provider:"+d.ID.String()); err != nil {
-				return err
-			}
-		}
 		if status == "verified" {
 			if !manual && providerErr == nil && (st.FollowDNS || st.MailFromStatus == "SUCCESS") {
 				if err := s.activateVerified(ctx, tx, d); err != nil {
@@ -638,6 +650,15 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 		if err != nil {
 			return err
 		}
+		// A stale provider response must not open or resolve an incident.
+		// The domain CAS above holds its row lock until this alert commits.
+		if providerErr != nil {
+			if err := raiseProviderAlert(ctx, tx, out); err != nil {
+				return err
+			}
+		} else if err := resolveProviderAlert(ctx, tx, d.ID); err != nil {
+			return err
+		}
 		if previous != status {
 			return webhooks.Emit(ctx, tx, webhooks.Event{OrgID: d.OrgID, ProjectID: d.ProjectID, Type: webhooks.DomainUpdated, Data: map[string]any{
 				"id": d.ID.String(), "name": d.Name, "status": status, "previous_status": previous, "created_at": d.CreatedAt.UTC().Format(time.RFC3339), "region": d.Region}})
@@ -652,22 +673,42 @@ func (s *Service) reservedAuth(name string) bool {
 	return s.ReservedDomain != "" && (name == s.ReservedDomain || strings.HasSuffix(name, "."+s.ReservedDomain) || strings.HasSuffix(s.ReservedDomain, "."+name))
 }
 
-// Provider failures need an independent operations notification, not only a
-// customer-facing error. Keep raw AWS details in private logs and deduplicate
-// the customer-safe alert until a later successful provider check resolves it.
-func (s *Service) providerAlert(ctx context.Context, pool *pgxpool.Pool, d *Domain, cause error) {
+// Provisioning has no final domain CAS on failure. Its caller holds the
+// provider advisory lock; also lock and check the current domain generation so
+// a concurrent delete or newer DNS result cannot leave a stale incident.
+func (s *Service) provisioningAlert(ctx context.Context, conn *pgxpool.Conn, d *Domain, cause error) {
 	if s.Log != nil {
 		s.Log.Error("domain provider unavailable", "domain_id", d.ID, "err", cause)
 	}
 	ctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 2*time.Second)
 	defer cancel()
-	err := db.InOrg(ctx, pool, d.OrgID, func(tx pgx.Tx) error {
-		_, err := tx.Exec(ctx, `INSERT INTO alerts(org_id,project_id,kind,severity,dedupe_key,message,data)
-			VALUES($1,$2,'domain_provider_unavailable','critical',$3,'Domain setup could not reach the email provider. Check runtime permissions and provider health.',$4)
-			ON CONFLICT DO NOTHING`, d.OrgID, d.ProjectID, "domain-provider:"+d.ID.String(), map[string]string{"domain_id": d.ID.String()})
-		return err
+	err := db.InOrg(ctx, conn, d.OrgID, func(tx pgx.Tx) error {
+		var id uuid.UUID
+		err := tx.QueryRow(ctx, `SELECT id FROM domains WHERE id=$1 AND project_id=$2
+			AND provider_state='provisioning' AND deleted_at IS NULL
+			AND last_checked_at IS NOT DISTINCT FROM $3 AND name=$4 AND mail_from_subdomain=$5 AND dkim_tokens=$6
+			FOR UPDATE`, d.ID, d.ProjectID, d.LastCheckedAt, d.Name, d.MailFrom, d.DKIMTokens).Scan(&id)
+		if db.IsNoRows(err) {
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		return raiseProviderAlert(ctx, tx, d)
 	})
 	if err != nil && s.Log != nil {
 		s.Log.Error("persist domain provider alert", "domain_id", d.ID, "err", err)
 	}
+}
+
+func raiseProviderAlert(ctx context.Context, tx pgx.Tx, d *Domain) error {
+	_, err := tx.Exec(ctx, `INSERT INTO alerts(org_id,project_id,kind,severity,dedupe_key,message,data)
+		VALUES($1,$2,'domain_provider_unavailable','critical',$3,'Domain setup could not reach the email provider. Check runtime permissions and provider health.',$4)
+		ON CONFLICT DO NOTHING`, d.OrgID, d.ProjectID, "domain-provider:"+d.ID.String(), map[string]string{"domain_id": d.ID.String()})
+	return err
+}
+
+func resolveProviderAlert(ctx context.Context, tx pgx.Tx, id uuid.UUID) error {
+	_, err := tx.Exec(ctx, `UPDATE alerts SET resolved_at=now() WHERE dedupe_key=$1 AND resolved_at IS NULL`, "domain-provider:"+id.String())
+	return err
 }

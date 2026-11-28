@@ -88,10 +88,33 @@ run "auth_is_operator_owned" {
     error_message = "Auth send must bind exact mailbox, tenant and identity/configuration resources."
   }
   assert {
-    condition     = length([for s in data.aws_iam_policy_document.worker.statement : s if s.sid == "Send" && length([for c in s.condition : c if c.test == "StringNotEqualsIgnoreCase" && c.variable == "ses:FromAddress" && toset(c.values) == toset(["accounts@auth.example.com"])]) == 1]) == 1
-    error_message = "Customer send must exclude the auth mailbox even with a verified parent identity or uppercase From."
+    condition = one([
+      for s in data.aws_iam_policy_document.worker.statement : (
+        length(s.condition) == 3 && toset(s.actions) == toset(["ses:SendRawEmail"]) &&
+        length([for c in s.condition : c if c.test == "StringLike" && c.variable == "ses:TenantName" && toset(c.values) == toset(["hedvi-${join("", [for i in range(32) : "?"])}"])]) == 1 &&
+        length([for c in s.condition : c if c.test == "StringNotEqualsIgnoreCase" && c.variable == "ses:FromAddress" && toset(c.values) == toset(["accounts@auth.example.com"])]) == 1 &&
+        length([for c in s.condition : c if c.test == "StringNotLike" && c.variable == "ses:FromAddress" && toset(c.values) == toset(["*@auth.example.com", "*@*.auth.example.com"])]) == 1
+      ) if s.sid == "SendCustomerRaw"
+    ])
+    error_message = "Customer RAW must exclude the operator mailbox, its domain and subdomains even if SES authorizes a parent identity."
   }
-
+  assert {
+    condition = toset([
+      for s in jsondecode(data.aws_iam_policy_document.worker.json).Statement : s.Sid
+      if s.Effect == "Allow" && (can(s.NotAction) || anytrue([for a in flatten([try(s.Action, [])]) : can(regex("^(ses:send|ses:\\*|\\*)", lower(a)))]))
+    ]) == toset(["SendCustomerRaw", "SendOperatorAuthMail"])
+    error_message = "A third grant must not enable Simple, templated or unscoped sending."
+  }
+  assert {
+    condition = one([
+      for s in jsondecode(data.aws_iam_policy_document.worker.json).Statement : (
+        s.Effect == "Deny" && s.Resource == "*" && toset(s.Action) == toset(["ses:SendEmail", "ses:SendRawEmail"]) &&
+        s.Condition.StringEqualsIgnoreCase["ses:FromAddress"] == "accounts@auth.example.com" &&
+        s.Condition.StringNotEquals["ses:TenantName"] == "operator-hedvi-staging-auth"
+      ) if s.Sid == "DenyAuthMailboxOutsideOperatorTenant"
+    ])
+    error_message = "The dedicated auth mailbox must remain denied outside its exact operator tenant even with other grants."
+  }
 }
 run "reject_bare_domain" {
   command = plan

@@ -5,7 +5,10 @@ package worker
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"time"
 
@@ -72,6 +75,54 @@ func raiseAlert(ctx context.Context, tx pgx.Tx, orgID *uuid.UUID, projectID *uui
 	_, err := tx.Exec(ctx, `INSERT INTO alerts (org_id, project_id, kind, severity, dedupe_key, message, data)
 		VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT DO NOTHING`, orgID, projectID, kind, severity, key, msg, data)
 	return err
+}
+
+// bindProviderSendRoute runs in the attempt-start transaction. Recording the
+// actual immutable claim, tenant and configuration before AWS I/O also makes
+// deployment/configuration changes unable to resolve a different send path.
+func bindProviderSendRoute(ctx context.Context, tx pgx.Tx, c claimed, configurationSet string) (string, error) {
+	parts, _ := json.Marshal([]string{c.projectID.String(), c.domainID.String(), c.fromDomain, c.tenant, configurationSet})
+	sum := sha256.Sum256(parts)
+	id := hex.EncodeToString(sum[:])
+	_, err := tx.Exec(ctx, `INSERT INTO provider_send_routes(id,org_id,project_id,domain_id,from_domain,tenant_name,configuration_set)
+		VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`, id, c.orgID, c.projectID, c.domainID, c.fromDomain, c.tenant, configurationSet)
+	return id, err
+}
+
+// recordProviderSendResult advances only the newest attempt's observation for
+// one path. The database start time and UUID tie-breaker order attempts, not the
+// arrival time of their responses. Its row lock serializes concurrent results
+// and the alert transition in the enclosing email-settlement transaction.
+func recordProviderSendResult(ctx context.Context, tx pgx.Tx, emailID, attemptID uuid.UUID, code string, accepted bool) error {
+	state, outcome := "retryable", "failure"
+	if accepted {
+		state, outcome = "accepted", "accepted"
+	}
+	var routeID string
+	var org, project, domain uuid.UUID
+	err := tx.QueryRow(ctx, `UPDATE provider_send_routes r SET last_attempt_started_at=a.started_at,
+		last_attempt_id=a.id,last_outcome=$4,updated_at=now()
+		FROM send_attempts a JOIN emails e ON e.id=a.email_id
+		WHERE a.id=$1 AND a.email_id=$2 AND a.state=$3 AND a.provider_route_id=r.id
+		AND r.org_id=e.org_id AND r.project_id=e.project_id AND r.domain_id=e.domain_id AND r.from_domain=e.from_domain
+		AND (r.last_attempt_started_at IS NULL OR (r.last_attempt_started_at,r.last_attempt_id)<(a.started_at,a.id))
+		RETURNING r.id,r.org_id,r.project_id,r.domain_id`, attemptID, emailID, state, outcome).Scan(&routeID, &org, &project, &domain)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil // stale/duplicate response, legacy attempt, or retired claim
+	}
+	if err != nil {
+		return err
+	}
+	key := "provider-send:" + routeID
+	if accepted {
+		_, err := tx.Exec(ctx, `UPDATE alerts SET resolved_at=now(),data=data||$2::jsonb
+			WHERE dedupe_key=$1 AND resolved_at IS NULL`, key,
+			map[string]any{"recovered_by_attempt_id": attemptID, "recovery": "provider_accepted"})
+		return err
+	}
+	return raiseAlert(ctx, tx, &org, &project, "provider_sending_paused", "critical", key,
+		"SES refused this project's sending path. Queued emails retry automatically until their queue deadline. Check this domain's provider permissions, tenant and configuration set.",
+		map[string]any{"domain_id": domain, "email_id": emailID, "attempt_id": attemptID, "code": truncate(code, 100)})
 }
 
 func audit(ctx context.Context, tx pgx.Tx, orgID *uuid.UUID, action, targetType, targetID string, meta map[string]any) error {

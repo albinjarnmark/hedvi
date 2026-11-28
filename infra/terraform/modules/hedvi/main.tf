@@ -474,23 +474,30 @@ data "aws_iam_policy_document" "worker" {
     resources = [for q in aws_sqs_queue.main : q.arn]
   }
   statement {
-    sid     = "Send"
-    actions = ["ses:SendEmail", "ses:SendRawEmail"]
-    # SES authorizes configuration sets as resources. There is no
-    # ses:ConfigurationSetName IAM condition key (it would deny every send).
-    resources = [
-      "arn:aws:ses:${data.aws_region.current.region}:${local.account_id}:identity/*",
-      "arn:aws:ses:${data.aws_region.current.region}:${local.account_id}:configuration-set/${local.prefix}",
-    ]
+    # Send authorization is evaluated against the identity and configuration
+    # set ARNs, so a deny on the foreign tenant ARN alone cannot protect it.
+    sid       = "DenyForeignSendTenant"
+    effect    = "Deny"
+    actions   = ["ses:SendEmail", "ses:SendRawEmail"]
+    resources = ["*"]
     condition {
       test     = "StringLike"
       variable = "ses:TenantName"
-      values   = ["${local.customer_tenant_prefix}*"]
+      values   = [local.foreign_customer_send_pattern, "operator-hedvi-${local.foreign_environment}-auth"]
     }
+  }
+  statement {
+    # The worker uses SES v2 SendEmail with Content.Raw. Its IAM action is
+    # SendRawEmail. ResourceTag/environment is not reliably supplied for RAW.
+    # SES verifies the identity and configuration set belong to the requested
+    # tenant. Their association still requires strict environment tags.
+    sid       = "SendCustomerRaw"
+    actions   = ["ses:SendRawEmail"]
+    resources = [local.identity_arn, local.configuration_set_arn]
     condition {
-      test     = "StringEquals"
-      variable = "aws:ResourceTag/environment"
-      values   = [var.env]
+      test     = "StringLike"
+      variable = "ses:TenantName"
+      values   = [local.customer_send_tenant_pattern]
     }
     dynamic "condition" {
       for_each = local.auth_enabled ? [1] : []

@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/mail"
 	"sort"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -192,6 +193,7 @@ func (s *SES) CreateIdentity(ctx context.Context, domain, mailFromDomain, tenant
 	if err := s.checkTenant(ctx, tenant); err != nil {
 		return Identity{}, err
 	}
+	var retryUntil time.Time
 	got, err := s.ownedIdentity(ctx, domain, claimID)
 	if errors.Is(err, ErrIdentityNotFound) {
 		_, err = s.Client.CreateEmailIdentity(ctx, &sesv2.CreateEmailIdentityInput{
@@ -203,6 +205,9 @@ func (s *SES) CreateIdentity(ctx context.Context, domain, mailFromDomain, tenant
 		if err != nil && !errors.As(err, &exists) {
 			return Identity{}, fmt.Errorf("create SES identity: %w", err)
 		}
+		if err == nil {
+			retryUntil = time.Now().Add(8 * time.Second)
+		}
 		got, err = s.ownedIdentity(ctx, domain, claimID)
 	}
 	if err != nil {
@@ -211,16 +216,59 @@ func (s *SES) CreateIdentity(ctx context.Context, domain, mailFromDomain, tenant
 	if got.DkimAttributes == nil || len(got.DkimAttributes.Tokens) == 0 {
 		return Identity{}, errors.New("SES identity does not yet have Easy DKIM tokens")
 	}
-	if _, err := s.Client.PutEmailIdentityMailFromAttributes(ctx, &sesv2.PutEmailIdentityMailFromAttributesInput{
+	mailFrom := &sesv2.PutEmailIdentityMailFromAttributesInput{
 		EmailIdentity: aws.String(domain), MailFromDomain: aws.String(mailFromDomain),
 		BehaviorOnMxFailure: sestypes.BehaviorOnMxFailureUseDefaultValue,
+	}
+	if err := s.writeOwnedIdentity(ctx, domain, claimID, retryUntil, func(ctx context.Context) error {
+		_, err := s.Client.PutEmailIdentityMailFromAttributes(ctx, mailFrom)
+		return err
 	}); err != nil {
 		return Identity{}, fmt.Errorf("set MAIL FROM: %w", err)
 	}
-	if err := s.associate(ctx, tenant, fmt.Sprintf("arn:aws:ses:%s:%s:identity/%s", s.Region, s.AccountID, domain)); err != nil {
+	arn := fmt.Sprintf("arn:aws:ses:%s:%s:identity/%s", s.Region, s.AccountID, domain)
+	if err := s.writeOwnedIdentity(ctx, domain, claimID, retryUntil, func(ctx context.Context) error {
+		return s.associate(ctx, tenant, arn)
+	}); err != nil {
 		return Identity{}, err
 	}
 	return Identity{DKIMTokens: got.DkimAttributes.Tokens}, nil
+}
+
+// SES can return the new identity's tags before IAM applies them to writes.
+// Only a successful create in this call opens the shared propagation window.
+func (s *SES) writeOwnedIdentity(ctx context.Context, domain string, claimID uuid.UUID, retryUntil time.Time, write func(context.Context) error) error {
+	err := write(ctx)
+	if !identityWriteDenied(err) || !time.Now().Before(retryUntil) {
+		return err
+	}
+	retryCtx, cancel := context.WithDeadline(ctx, retryUntil)
+	defer cancel()
+	for _, delay := range [...]time.Duration{time.Second, 2 * time.Second, 4 * time.Second} {
+		if !time.Now().Add(delay).Before(retryUntil) {
+			return err
+		}
+		select {
+		case <-retryCtx.Done():
+			return errors.Join(err, retryCtx.Err())
+		case <-time.After(delay):
+		}
+		if _, checkErr := s.ownedIdentity(retryCtx, domain, claimID); checkErr != nil {
+			return fmt.Errorf("recheck SES identity before retry: %w", checkErr)
+		}
+		err = write(retryCtx)
+		if !identityWriteDenied(err) {
+			return err
+		}
+	}
+	return err
+}
+
+func identityWriteDenied(err error) bool {
+	var apiErr smithy.APIError
+	var resp *smithyhttp.ResponseError
+	return errors.As(err, &apiErr) && (apiErr.ErrorCode() == "AccessDenied" || apiErr.ErrorCode() == "AccessDeniedException") &&
+		errors.As(err, &resp) && resp.HTTPStatusCode() == 403
 }
 
 func (s *SES) ownedIdentity(ctx context.Context, domain string, claimID uuid.UUID) (*sesv2.GetEmailIdentityOutput, error) {

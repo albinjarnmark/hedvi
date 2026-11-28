@@ -27,7 +27,10 @@ export async function api<T = Record<string, unknown>>(path: string, init: { met
     data = { message: text };
   }
   if (!res.ok) {
-    throw new ApiError(res.status, String(data.name ?? "error"), String(data.message ?? res.statusText), data);
+    const reference = res.headers.get("X-Request-Id");
+    const message = String(data.message ?? res.statusText);
+    const diagnostic = res.status >= 500 && reference && /^[A-Za-z0-9._-]{1,64}$/.test(reference) ? ` Reference: ${reference}` : "";
+    throw new ApiError(res.status, String(data.name ?? "error"), message + diagnostic, data);
   }
   return data as T;
 }
