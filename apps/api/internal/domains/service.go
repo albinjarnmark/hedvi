@@ -17,6 +17,7 @@ import (
 	"hedvi.dev/api/internal/apierr"
 	"hedvi.dev/api/internal/config"
 	"hedvi.dev/api/internal/db"
+	"hedvi.dev/api/internal/legal"
 	"hedvi.dev/api/internal/plans"
 	"hedvi.dev/api/internal/provider"
 	"hedvi.dev/api/internal/webhooks"
@@ -143,18 +144,88 @@ func (s *Service) Create(ctx context.Context, orgID, projectID uuid.UUID, rawNam
 }
 
 func approvalRequired() error {
-	return apierr.New(409, "validation_error", "Live access approval is required to provision this domain. Check its status in Settings.")
+	return apierr.New(409, "validation_error", "Accept the current terms to continue domain setup. Contact support if sending has been paused.")
+}
+
+func (s *Service) liveConsent(ctx context.Context, tx pgx.Tx, org uuid.UUID) (bool, error) {
+	m := legal.Current()
+	if (s.TenantEnv == config.EnvStaging || s.TenantEnv == config.EnvProduction) && !m.Adopted {
+		return false, nil
+	}
+	var ok bool
+	err := tx.QueryRow(ctx, `SELECT hedvi_org_has_live_consent($1,$2,$3,$4)`, org, m.Version, m.Documents, m.Adopted).Scan(&ok)
+	return ok, err
 }
 
 func (s *Service) projectApproved(ctx context.Context, tx pgx.Tx, project uuid.UUID) (bool, error) {
-	var approved bool
-	var tenant string
-	err := tx.QueryRow(ctx, `SELECT p.ses_tenant_name,p.sending_status='approved' AND o.risk_status NOT IN ('paused','blocked') FROM projects p
-        JOIN organizations o ON o.id=p.org_id WHERE p.id=$1 FOR SHARE OF o,p`, project).Scan(&tenant, &approved)
+	var tenant, state, risk string
+	var org uuid.UUID
+	err := tx.QueryRow(ctx, `SELECT p.ses_tenant_name,p.sending_status,o.risk_status,o.id FROM projects p
+        JOIN organizations o ON o.id=p.org_id WHERE p.id=$1 FOR SHARE OF o,p`, project).Scan(&tenant, &state, &risk, &org)
 	if err != nil {
 		return false, err
 	}
-	return approved, s.TenantEnv.CheckProjectTenant(project, tenant)
+	if err := s.TenantEnv.CheckProjectTenant(project, tenant); err != nil {
+		return false, err
+	}
+	if risk != "new" && risk != "approved" {
+		return false, nil
+	}
+	if state == "approved" {
+		return true, nil
+	}
+	if state != "test_only" && state != "pending_review" {
+		return false, nil
+	}
+	var restricted bool
+	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM projects WHERE org_id=$1 AND sending_status='paused')`, org).Scan(&restricted); err != nil {
+		return false, err
+	}
+	if restricted {
+		return false, nil
+	}
+	return s.liveConsent(ctx, tx, org)
+}
+
+// Only a worker can commit live access, after its own fresh DNS and SES reads.
+// Keep the org -> project lock order used by operator decisions and never
+// reset a pause, a reviewed limit, or the risk observation window.
+func (s *Service) activateVerified(ctx context.Context, tx pgx.Tx, d *Domain) error {
+	var risk, state, tenant string
+	if err := tx.QueryRow(ctx, `SELECT risk_status FROM organizations WHERE id=$1 FOR UPDATE`, d.OrgID).Scan(&risk); err != nil {
+		return err
+	}
+	if err := tx.QueryRow(ctx, `SELECT sending_status,ses_tenant_name FROM projects WHERE id=$1 AND org_id=$2 FOR UPDATE`, d.ProjectID, d.OrgID).Scan(&state, &tenant); err != nil {
+		return err
+	}
+	if risk != "new" && risk != "approved" || state != "test_only" && state != "pending_review" {
+		return nil
+	}
+	if err := s.TenantEnv.CheckProjectTenant(d.ProjectID, tenant); err != nil {
+		return err
+	}
+	var restricted, worker bool
+	if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM projects WHERE org_id=$1 AND sending_status='paused'),pg_has_role(current_user,'hedvi_worker','USAGE')`, d.OrgID).Scan(&restricted, &worker); err != nil {
+		return err
+	}
+	if restricted || !worker {
+		return nil
+	}
+	ok, err := s.liveConsent(ctx, tx, d.OrgID)
+	if err != nil || !ok {
+		return err
+	}
+	if _, err = tx.Exec(ctx, `UPDATE projects SET sending_status='approved',status_reason='Domain verified; live sending enabled automatically',status_changed_at=now(),hourly_limit=LEAST(hourly_limit,25),daily_limit=LEAST(daily_limit,100) WHERE id=$1`, d.ProjectID); err != nil {
+		return err
+	}
+	if _, err = tx.Exec(ctx, `UPDATE organizations SET risk_status='approved' WHERE id=$1 AND risk_status='new'`, d.OrgID); err != nil {
+		return err
+	}
+	if _, err = tx.Exec(ctx, `UPDATE alerts SET resolved_at=now() WHERE dedupe_key=$1 AND resolved_at IS NULL`, "review:"+d.ProjectID.String()); err != nil {
+		return err
+	}
+	_, err = tx.Exec(ctx, `INSERT INTO audit_log(org_id,actor_kind,action,target_type,target_id,metadata) VALUES($1,'system','project.live_auto_activated','project',$2,$3)`, d.OrgID, d.ProjectID.String(), map[string]any{"domain_id": d.ID.String(), "legal_version": legal.Current().Version, "hourly": 25, "daily": 100})
+	return err
 }
 
 func claimConflict() error {
@@ -379,7 +450,7 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 			if !proof || !approved {
 				analysis := Analysis{CheckedAt: time.Now().UTC(), Findings: []Finding{}}
 				if proof && !approved {
-					analysis.Findings = append(analysis.Findings, Finding{"info", "live_access_required", "DNS ownership confirmed. Request live access under Settings, then check this domain again after approval to get its sending records."})
+					analysis.Findings = append(analysis.Findings, Finding{"info", "live_access_required", "DNS ownership confirmed. An organization owner or admin must accept the current terms. If sending is paused, contact support."})
 				}
 				state := d.ProviderState
 				d, err = ScanDomain(tx.QueryRow(ctx, `UPDATE domains SET records=$2,analysis=$3,status='pending',last_checked_at=now()
@@ -390,7 +461,7 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 				return err
 			}
 			// Commit exclusive custody before the first write to SES. A new
-			// project cannot consume a global reservation without live approval.
+			// project cannot consume a global reservation without ownership and consent.
 			if d.ProviderState == "awaiting_dns" {
 				tag, err := tx.Exec(ctx, `UPDATE domains SET provider_state='provisioning',next_check_at=NULL
                     WHERE id=$1 AND deleted_at IS NULL AND provider_state='awaiting_dns' AND created_at>now()-interval '72 hours'`, d.ID)
@@ -416,7 +487,14 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 		err = withProviderLock(ctx, pool, d.ID, func(conn *pgxpool.Conn) error {
 			var tenant string
 			err := db.InOrg(ctx, conn, d.OrgID, func(tx pgx.Tx) error {
-				return tx.QueryRow(ctx, `SELECT p.ses_tenant_name FROM projects p JOIN domains d ON d.project_id=p.id WHERE d.id=$1 AND d.provider_state='provisioning' AND d.deleted_at IS NULL AND p.sending_status='approved' AND EXISTS(SELECT 1 FROM organizations o WHERE o.id=p.org_id AND o.risk_status NOT IN ('paused','blocked'))`, d.ID).Scan(&tenant)
+				allowed, err := s.projectApproved(ctx, tx, d.ProjectID)
+				if err != nil {
+					return err
+				}
+				if !allowed {
+					return approvalRequired()
+				}
+				return tx.QueryRow(ctx, `SELECT p.ses_tenant_name FROM projects p JOIN domains d ON d.project_id=p.id WHERE d.id=$1 AND d.provider_state='provisioning' AND d.deleted_at IS NULL`, d.ID).Scan(&tenant)
 			})
 			if db.IsNoRows(err) {
 				return claimConflict()
@@ -514,10 +592,36 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 	analysisJSON, _ := json.Marshal(analysis)
 	var out *Domain
 	err = db.InOrg(ctx, pool, d.OrgID, func(tx pgx.Tx) error {
+		if status == "verified" {
+			if !manual && providerErr == nil && (st.FollowDNS || st.MailFromStatus == "SUCCESS") {
+				if err := s.activateVerified(ctx, tx, d); err != nil {
+					return err
+				}
+			}
+			var candidate bool
+			if err := tx.QueryRow(ctx, `SELECT sending_status IN ('test_only','pending_review') FROM projects WHERE id=$1`, d.ProjectID).Scan(&candidate); err != nil {
+				return err
+			}
+			if candidate {
+				eligible, err := s.projectApproved(ctx, tx, d.ProjectID)
+				if err != nil {
+					return err
+				}
+				if eligible {
+					if manual {
+						soon := now
+						nextPtr = &soon
+					} else if soon, ok := NextCheck(d.CheckStarted, d.CheckAttempts, now); ok {
+						nextPtr = &soon
+					}
+				}
+			}
+		}
 		out, err = ScanDomain(tx.QueryRow(ctx, `UPDATE domains SET status=$2,records=$3,analysis=$4,ns_provider=$5,
    check_attempts=$6,check_started_at=$7,last_checked_at=$8,next_check_at=$9,verified_at=CASE WHEN $2='verified' THEN coalesce(verified_at,$8) ELSE NULL END,
    provider_state=$10,dkim_tokens=$11,provider_identity=name,last_error=$12
-   WHERE id=$1 AND provider_state=$13 AND deleted_at IS NULL AND last_checked_at IS NOT DISTINCT FROM $14 RETURNING `+DomainColumns, d.ID, status, recordsJSON, analysisJSON, analysis.NSProvider, d.CheckAttempts+1, d.CheckStarted, now, nextPtr, d.ProviderState, d.DKIMTokens, lastErr, originalState, d.LastCheckedAt))
+   WHERE id=$1 AND provider_state=$13 AND deleted_at IS NULL AND last_checked_at IS NOT DISTINCT FROM $14
+   AND org_id=$15 AND project_id=$16 AND name=$17 AND mail_from_subdomain=$18 AND dkim_tokens=$11 RETURNING `+DomainColumns, d.ID, status, recordsJSON, analysisJSON, analysis.NSProvider, d.CheckAttempts+1, d.CheckStarted, now, nextPtr, d.ProviderState, d.DKIMTokens, lastErr, originalState, d.LastCheckedAt, d.OrgID, d.ProjectID, d.Name, d.MailFrom))
 		if db.IsNoRows(err) {
 			return apierr.New(409, "validation_error", "Domain changed during verification. Refresh its status.")
 		}

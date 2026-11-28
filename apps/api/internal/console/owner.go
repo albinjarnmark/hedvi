@@ -122,7 +122,7 @@ func (s *Server) requireBoundOwner(r *http.Request, tx pgx.Tx, a *session, unloc
 	}
 	var sid uuid.UUID
 	err = tx.QueryRow(ctx, `SELECT id FROM sessions WHERE id=$1 AND user_id=$2 AND token_hash=$3 AND mfa_verified_at IS NOT NULL AND revoked_at IS NULL
- AND expires_at>clock_timestamp() AND last_seen_at>clock_timestamp()-$4*interval '1 second' FOR SHARE`, a.ID, a.UserID, s.Hasher.Sum(sessionPurpose, ordinary.Value), sessionIdle.Seconds()).Scan(&sid)
+ AND expires_at>clock_timestamp() AND last_seen_at>clock_timestamp()-(CASE WHEN remembered THEN $5::float8 ELSE $4::float8 END)*interval '1 second' FOR SHARE`, a.ID, a.UserID, s.Hasher.Sum(sessionPurpose, ordinary.Value), sessionIdle.Seconds(), rememberedTTL.Seconds()).Scan(&sid)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return b, apierr.ErrNotFound
 	}

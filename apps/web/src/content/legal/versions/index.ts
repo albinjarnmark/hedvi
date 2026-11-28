@@ -12,7 +12,14 @@ import v1Doc2 from "./2026-11-28.3/dpa.json";
 import v1Doc3 from "./2026-11-28.3/privacy.json";
 import v1Doc4 from "./2026-11-28.3/subprocessors.json";
 import v1Doc5 from "./2026-11-28.3/cookies.json";
+import v2Doc0 from "./2026-11-28.4/terms.json";
+import v2Doc1 from "./2026-11-28.4/acceptable-use.json";
+import v2Doc2 from "./2026-11-28.4/dpa.json";
+import v2Doc3 from "./2026-11-28.4/privacy.json";
+import v2Doc4 from "./2026-11-28.4/subprocessors.json";
+import v2Doc5 from "./2026-11-28.4/cookies.json";
 export const legalVersions: Record<string, Record<string, LegalContent>> = {
   "2026-11-28.2": {"terms": v0Doc0, "acceptable-use": v0Doc1, "dpa": v0Doc2, "privacy": v0Doc3, "subprocessors": v0Doc4, "cookies": v0Doc5},
-  "2026-11-28.3": {"terms": v1Doc0, "acceptable-use": v1Doc1, "dpa": v1Doc2, "privacy": v1Doc3, "subprocessors": v1Doc4, "cookies": v1Doc5}
+  "2026-11-28.3": {"terms": v1Doc0, "acceptable-use": v1Doc1, "dpa": v1Doc2, "privacy": v1Doc3, "subprocessors": v1Doc4, "cookies": v1Doc5},
+  "2026-11-28.4": {"terms": v2Doc0, "acceptable-use": v2Doc1, "dpa": v2Doc2, "privacy": v2Doc3, "subprocessors": v2Doc4, "cookies": v2Doc5}
 };

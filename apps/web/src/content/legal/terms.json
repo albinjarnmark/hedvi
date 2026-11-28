@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "publishedAt": "28 November 2026",
   "id": "terms",
   "title": "Terms of Service",
@@ -15,8 +15,8 @@
     {
       "heading": "2. Accounts, access and permitted use",
       "paragraphs": [
-        "Use a unique password, protect authentication devices and API keys, and grant only necessary access. You are responsible for activity authorised through your account and must tell us promptly about suspected compromise. Do not share personal sign-ins. We may require additional verification before restoring access, approving sending or changing sensitive details.",
-        "Follow the Acceptable Use Policy. Send only lawful, expected transactional email from domains you control. Domain verification, a paid plan or an API acceptance response does not constitute sending approval. We may review the business, recipient source, message types and anticipated volume. Rate limits and operational safeguards apply in addition to your commercial allowance."
+        "Use a unique password, protect authentication devices and API keys, and grant only necessary access. You are responsible for activity authorised through your account and must tell us promptly about suspected compromise. Do not share personal sign-ins. We may require additional verification before restoring access, resolving sending restrictions or changing sensitive details.",
+        "Follow the Acceptable Use Policy. Send only lawful, expected transactional email from domains you control. For unrestricted accounts, sending activates automatically after domain ownership, DNS and provider checks pass and an organisation owner or administrator has accepted the current service documents. No separate application or manual approval is normally required. We may investigate suspected misuse or provider restrictions and request information needed to resolve them. Rate limits and operational safeguards apply in addition to your commercial allowance."
       ]
     },
     {
@@ -30,7 +30,7 @@
     {
       "heading": "4. Free, Flex and Pro",
       "paragraphs": [
-        "Free provides up to 5,000 recipients and 100 MiB of attachment data per UTC calendar month, subject to sending approval and operational limits. Free allowances do not roll over. We may change the Free offering with reasonable notice.",
+        "Free provides up to 5,000 recipients and 100 MiB of attachment data per UTC calendar month, subject to verified domain setup and operational limits. Free allowances do not roll over. We may change the Free offering with reasonable notice.",
         "Flex is a one-time pack of 10,000 recipients and 250 MiB of attachment data for 39 SEK or 4 USD before tax. A pack expires 365 days after confirmed payment. It is not a recurring subscription, money, a deposit or transferable credit. Expired unused units do not roll over. A message validly reserved before expiry may settle against that reservation afterwards.",
         "Pro 50k provides 50,000 recipients and 1 GiB per paid monthly billing period for 129 SEK or 13 USD before tax. Pro 100k provides 100,000 recipients and 2 GiB for 249 SEK or 25 USD. The confirmed order identifies your currency, tier and renewal date. Pro periods follow the paid subscription invoice, not the first day of the calendar month. Unused units do not roll over.",
         "The first Flex purchase changes a Free account to the Flex baseline; there is no simultaneous recurring Free allowance while that baseline applies. Buying a pack during Pro does not replace the subscription. Using Flex units after exhausting Pro requires the account's explicit prepaid-credit setting. There is no automatic paid overage or automatic top-up. When eligible units or data run out, new live requests stop. Contact support to return to Free; doing so does not reset a previously used monthly allowance."

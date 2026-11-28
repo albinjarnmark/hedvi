@@ -53,6 +53,7 @@ type Server struct {
 const (
 	sessionTTL     = 14 * 24 * time.Hour
 	sessionIdle    = 3 * 24 * time.Hour
+	rememberedTTL  = 30 * 24 * time.Hour
 	csrfHeader     = "X-Hedvi-Console"
 	sessionPurpose = "session"
 )
@@ -194,8 +195,9 @@ func (s *Server) loadSession(r *http.Request) (*session, error) {
 	var lastSeen time.Time
 	err = s.Pool.QueryRow(r.Context(), `SELECT s.id, s.user_id, u.email, u.name, u.is_staff, u.totp_enabled_at, s.mfa_verified_at, s.last_seen_at
 		FROM sessions s JOIN users u ON u.id = s.user_id
-		WHERE u.email_verified_at IS NOT NULL AND s.token_hash = $1 AND s.revoked_at IS NULL AND s.expires_at > now() AND s.last_seen_at > now() - $2 * interval '1 second'`,
-		s.Hasher.Sum(sessionPurpose, c.Value), sessionIdle.Seconds()).Scan(
+		WHERE u.email_verified_at IS NOT NULL AND s.token_hash = $1 AND s.revoked_at IS NULL AND s.expires_at > now()
+        AND s.last_seen_at > now() - (CASE WHEN s.remembered THEN $3::float8 ELSE $2::float8 END) * interval '1 second'`,
+		s.Hasher.Sum(sessionPurpose, c.Value), sessionIdle.Seconds(), rememberedTTL.Seconds()).Scan(
 		&sess.ID, &sess.UserID, &sess.Email, &sess.Name, &sess.IsStaff, &totpAt, &mfaAt, &lastSeen)
 	if err != nil {
 		if db.IsNoRows(err) {

@@ -1,0 +1,53 @@
+{
+  "version": "1.1",
+  "publishedAt": "28 November 2026",
+  "id": "acceptable-use",
+  "title": "Acceptable Use Policy",
+  "introduction": "This policy applies to the hosted Hedvi service operated by StackX AB, registration number 559598-7313, Tybblegatan 94 C, 702 19 Örebro, Sweden. It covers pilot accounts as well as approved live sending. It does not restrict rights granted under the separate open-source software license.",
+  "sections": [
+    {
+      "heading": "Permitted use",
+      "paragraphs": [
+        "Use Hedvi for lawful transactional email that recipients reasonably expect, such as requested account access, receipts, order updates and service notifications. You must control your sender domain, identify your business accurately, keep your account secure and have a lawful basis for processing each recipient's data. Sending normally activates automatically after the required domain checks and acceptance of the service documents. Payment and verification do not override an abuse restriction."
+      ]
+    },
+    {
+      "heading": "Prohibited use",
+      "paragraphs": [],
+      "items": [
+        "Unsolicited bulk email, cold outreach, promotional campaigns or purchased, rented, scraped or harvested recipient lists.",
+        "Phishing, malware, fraud, impersonation, deceptive subjects or sender identities, harassment, threats or unlawful content.",
+        "Sending after a recipient has complained, opted out or otherwise objected, except where a specific legally required or requested transactional message is appropriate and separately approved.",
+        "Bypassing suppressions, sending reviews, account suspensions, identity verification or resource limits through another key, project, organization or account.",
+        "Accessing another customer's data, testing systems without authorization, sharing credentials, deliberately exhausting resources or using the service as unrelated file storage.",
+        "Putting passwords, payment-card security codes, government identity documents, health records or other highly sensitive information in email bodies, attachments, subjects or webhook diagnostics. Use an authenticated application and a limited-lived link instead."
+      ]
+    },
+    {
+      "heading": "Your operational duties",
+      "paragraphs": [
+        "Maintain evidence of how recipients requested messages. Keep accurate contact details, handle complaints promptly, monitor bounces and preserve suppression lists when changing providers. Review your templates and recipients before using a live key. Protect webhook endpoints and signing secrets. Stop sending and contact us if credentials are compromised or your application behaves unexpectedly."
+      ]
+    },
+    {
+      "heading": "Review and enforcement",
+      "paragraphs": [
+        "We may ask for information about your business, use case, recipient sources and corrective actions. We may reject a sending request, lower limits, pause a project or suspend access when necessary to investigate suspected abuse, protect other users, comply with law or meet our infrastructure providers' requirements. Queued messages may be held and can expire; a pause does not guarantee that they will later be sent. Serious or repeated violations may result in account termination under the applicable service agreement.",
+        "We will explain the action and provide a way to respond where lawful and practicable. To request a review, email us with your organization/project ID, the affected messages and the action you have taken. Do not create a replacement account to evade the review."
+      ]
+    },
+    {
+      "heading": "Reports and contact",
+      "paragraphs": [
+        "Send abuse reports and appeals to hej@stackx.se. Include the original message headers, relevant message ID and a short explanation. For vulnerabilities, use the subject Hedvi security and request a secure channel before providing sensitive evidence. Do not send passwords or API keys."
+      ]
+    },
+    {
+      "heading": "Policy changes",
+      "paragraphs": [
+        "We publish changes with a new version and date. Material changes will be communicated to affected accounts before taking effect where practicable; urgent legal or security measures may apply immediately. The applicable service agreement governs notice, termination and other contractual rights."
+      ]
+    }
+  ],
+  "sources": []
+}

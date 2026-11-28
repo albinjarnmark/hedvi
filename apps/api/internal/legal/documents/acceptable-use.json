@@ -8,7 +8,7 @@
     {
       "heading": "Permitted use",
       "paragraphs": [
-        "Use Hedvi for lawful transactional email that recipients reasonably expect, such as requested account access, receipts, order updates and service notifications. You must control your sender domain, identify your business accurately, keep your account secure and have a lawful basis for processing each recipient's data. Verification and payment do not replace sending approval."
+        "Use Hedvi for lawful transactional email that recipients reasonably expect, such as requested account access, receipts, order updates and service notifications. You must control your sender domain, identify your business accurately, keep your account secure and have a lawful basis for processing each recipient's data. Sending normally activates automatically after the required domain checks and acceptance of the service documents. Payment and verification do not override an abuse restriction."
       ]
     },
     {

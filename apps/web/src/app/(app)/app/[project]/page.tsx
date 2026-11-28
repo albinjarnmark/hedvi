@@ -19,7 +19,7 @@ const steps: Record<string, { label: string; href: string }> = {
   test_email: { label: "Send a test email", href: "/test-inbox" },
   domain_added: { label: "Add your domain", href: "/domains" },
   domain_verified: { label: "Verify DNS records", href: "/domains" },
-  live_access: { label: "Request live sending (manual review)", href: "/settings" },
+  live_access: { label: "Automatic sending activation", href: "/domains" },
   live_key: { label: "Create a live key", href: "/developers" },
   first_live_email: { label: "Send your first live email", href: "/emails" },
   webhook: { label: "Add a webhook (optional)", href: "/developers" },
@@ -61,7 +61,7 @@ export default function OverviewPage() {
               <li key={c.id} className={c.done ? "done" : ""}>
                 <span className="box" aria-hidden="true">{c.done ? "✓" : ""}</span>
                 <Link href={`/app/${pid}${steps[c.id]?.href ?? ""}`}>{steps[c.id]?.label ?? c.id}</Link>
-                <span className="tiny muted">{c.done ? "Done" : c.id === "live_access" && c.state === "pending_review" ? "In review" : ""}</span>
+                <span className="tiny muted">{c.done ? "Done" : c.id === "live_access" && c.state === "pending_review" ? "Verifying domain" : ""}</span>
               </li>
             ))}
           </ul>

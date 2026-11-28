@@ -102,9 +102,11 @@ schema migration and controls service counts.
    verification. Migration 0005 resets prior verification. Before resuming the
    sender, confirm that domains used by queued messages are verified under the
    new code. For a **new** domain, publish the claim-specific TXT within the
-   72-hour challenge window, complete project review, then click Verify to
-   provision SES. Publish the displayed DKIM and MAIL FROM records and refresh
-   until verified. Keep the ownership TXT published.
+   72-hour challenge window, have an organization owner/admin accept the current
+   documents, then click Verify to provision SES. Publish the displayed DKIM and MAIL FROM records and refresh
+   until verified. The worker performs its own DNS/provider check and activates
+   unrestricted new projects automatically at 25/hour and 100/day per project.
+   Paused projects and restricted organizations never auto-reactivate. Keep the ownership TXT published.
 5. Restore the intended worker count. Use the isolated worker task role and
    database credential for operator commands. For example, a one-off worker
    task can run `admin approve-project -project <id> -note "<review basis>"`.

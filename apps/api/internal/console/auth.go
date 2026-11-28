@@ -22,7 +22,7 @@ import (
 	"hedvi.dev/api/internal/secure"
 )
 
-func (s *Server) insertSession(ctx context.Context, q db.Querier, r *http.Request, userID uuid.UUID, mfa bool) (string, error) {
+func (s *Server) insertSession(ctx context.Context, q db.Querier, r *http.Request, userID uuid.UUID, mfa, remembered bool) (string, error) {
 	token := secure.RandomToken(32)
 	var mfaAt *time.Time
 	if mfa {
@@ -34,16 +34,25 @@ func (s *Server) insertSession(ctx context.Context, q db.Querier, r *http.Reques
 		ip = a.String()
 	}
 	ua := boundedAgent(r.UserAgent())
-	_, err := q.Exec(ctx, `INSERT INTO sessions (user_id, token_hash, mfa_verified_at, ip, user_agent, expires_at) VALUES ($1,$2,$3,$4,$5,$6)`, userID, s.Hasher.Sum(sessionPurpose, token), mfaAt, ip, ua, time.Now().Add(sessionTTL))
+	ttl := sessionTTL
+	if remembered {
+		ttl = rememberedTTL
+	}
+	_, err := q.Exec(ctx, `INSERT INTO sessions (user_id, token_hash, mfa_verified_at, ip, user_agent, expires_at, remembered) VALUES ($1,$2,$3,$4,$5,$6,$7)`, userID, s.Hasher.Sum(sessionPurpose, token), mfaAt, ip, ua, time.Now().Add(ttl), remembered)
 	return token, err
 }
-func (s *Server) sessionCookie(w http.ResponseWriter, token string) {
-	http.SetCookie(w, &http.Cookie{Name: s.cookieName(), Value: token, Path: "/", HttpOnly: true, Secure: s.Cfg.CookieSecure, SameSite: http.SameSiteLaxMode, MaxAge: int(sessionTTL.Seconds())})
+func (s *Server) sessionCookie(w http.ResponseWriter, token string, remembered bool) {
+	cookie := &http.Cookie{Name: s.cookieName(), Value: token, Path: "/", HttpOnly: true, Secure: s.Cfg.CookieSecure, SameSite: http.SameSiteLaxMode}
+	if remembered {
+		cookie.MaxAge = int(rememberedTTL.Seconds())
+		cookie.Expires = time.Now().Add(rememberedTTL)
+	}
+	http.SetCookie(w, cookie)
 }
 func (s *Server) setSession(ctx context.Context, w http.ResponseWriter, r *http.Request, userID uuid.UUID, mfa bool) error {
-	token, err := s.insertSession(ctx, s.Pool, r, userID, mfa)
+	token, err := s.insertSession(ctx, s.Pool, r, userID, mfa, false)
 	if err == nil {
-		s.sessionCookie(w, token)
+		s.sessionCookie(w, token, false)
 	}
 	return err
 }
@@ -202,7 +211,7 @@ func (s *Server) signupComplete(w http.ResponseWriter, r *http.Request) {
 		if err := legal.Record(r.Context(), tx, userID, req.Consent, s.Cfg.IsDeployed(), s.legalIP(r), r.UserAgent(), s.Cfg.LegalURLOrigin()); err != nil {
 			return err
 		}
-		sessionToken, err = s.insertSession(r.Context(), tx, r, userID, false)
+		sessionToken, err = s.insertSession(r.Context(), tx, r, userID, false, false)
 		return err
 	})
 	if db.IsUniqueViolation(err, "users_email_key") {
@@ -213,7 +222,7 @@ func (s *Server) signupComplete(w http.ResponseWriter, r *http.Request) {
 		s.fail(w, r, accountError(err))
 		return
 	}
-	s.sessionCookie(w, sessionToken)
+	s.sessionCookie(w, sessionToken, false)
 	writeJSON(w, 201, map[string]any{
 		"user":         map[string]any{"id": userID, "email": addr.Normalized, "name": req.Name},
 		"organization": map[string]any{"id": orgID, "name": orgName},
@@ -233,6 +242,7 @@ type loginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	TOTPCode string `json:"totp_code"`
+	Remember bool   `json:"remember_me"`
 }
 
 func passwordError(err error) error {
@@ -362,7 +372,7 @@ func (s *Server) login(w http.ResponseWriter, r *http.Request) {
 			return err
 		}
 		var err error
-		token, err = s.insertSession(r.Context(), tx, r, userID, mfa)
+		token, err = s.insertSession(r.Context(), tx, r, userID, mfa, req.Remember)
 		return err
 	})
 	if err == nil {
@@ -377,7 +387,7 @@ func (s *Server) login(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	s.sessionCookie(w, token)
+	s.sessionCookie(w, token, req.Remember)
 	writeJSON(w, 200, map[string]any{"ok": true})
 }
 
@@ -385,7 +395,10 @@ func totpAAD(userID uuid.UUID) []byte { return []byte("totp:" + userID.String())
 
 func (s *Server) logout(w http.ResponseWriter, r *http.Request) {
 	if c, err := r.Cookie(s.cookieName()); err == nil {
-		_, _ = s.Pool.Exec(r.Context(), `UPDATE sessions SET revoked_at = now() WHERE token_hash = $1`, s.Hasher.Sum(sessionPurpose, c.Value))
+		if _, err := s.Pool.Exec(r.Context(), `UPDATE sessions SET revoked_at = now() WHERE token_hash = $1`, s.Hasher.Sum(sessionPurpose, c.Value)); err != nil {
+			s.fail(w, r, err)
+			return
+		}
 	}
 	http.SetCookie(w, &http.Cookie{Name: s.cookieName(), Value: "", Path: "/", HttpOnly: true, Secure: s.Cfg.CookieSecure,
 		SameSite: http.SameSiteLaxMode, MaxAge: -1})

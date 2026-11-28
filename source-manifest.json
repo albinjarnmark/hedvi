@@ -225,7 +225,7 @@
     },
     {
       "path": "apps/api/internal/console/auth.go",
-      "sha256": "9bf6f71cdf08441f2ce5cd60edd9660a3f8cbcfc67286108a7461c930eb0f871"
+      "sha256": "04d2ec19727f1532464db8f2ab732f9573573df66bae02050fb7c26f803642b0"
     },
     {
       "path": "apps/api/internal/console/billing.go",
@@ -233,15 +233,15 @@
     },
     {
       "path": "apps/api/internal/console/owner.go",
-      "sha256": "963f8514ba5c7ef67edfdec3e3de80ab50a67da34d83b577d1a2a3952a41cc60"
+      "sha256": "476a3b32f43351b794adf7481ae8e619cdf304757c382094c523207b0f34db74"
     },
     {
       "path": "apps/api/internal/console/owner_actions.go",
-      "sha256": "822f34f8a1176109669f9b5c472fb81539d8c93e2ebdd3dd637c0b3f37d3ff4e"
+      "sha256": "df28f7ccafe7dfa58f56f76e048ac6d7841614eaa0af9afb5ea464cf77f87f8a"
     },
     {
       "path": "apps/api/internal/console/project.go",
-      "sha256": "56f4d5efd5e5f61732a96c209133c19028128252d82ac085ff28e9d77cf5adbc"
+      "sha256": "21e5f67a819e38162df25586318c5dfe7a7bc8cbbffa51df1a50bb8673eee919"
     },
     {
       "path": "apps/api/internal/console/recovery.go",
@@ -249,7 +249,7 @@
     },
     {
       "path": "apps/api/internal/console/server.go",
-      "sha256": "9217e209c1aa54a5623b4732d449635ae0f3d16ecb4f9c68962ed524ab158f32"
+      "sha256": "8ca92322955806cfb82b7446e6089080f51c9182e284e062ec255662f3d12650"
     },
     {
       "path": "apps/api/internal/console/staff.go",
@@ -312,6 +312,14 @@
       "sha256": "b0bb2444733d5d2939392ac3a7d31d3dbdcb31be8f62994df5dfc79df833990f"
     },
     {
+      "path": "apps/api/internal/db/migrations/0013_remember_me.sql",
+      "sha256": "a882afd3c3b9acbf5e6a6d0da1af4db7e4b1651ab034ef205a1275f00fba5116"
+    },
+    {
+      "path": "apps/api/internal/db/migrations/0014_self_service_sending.sql",
+      "sha256": "d23375b51d7175734a50f93057242e6208eb2430f4f72db4a095743a44dae72d"
+    },
+    {
       "path": "apps/api/internal/domains/ownership_test.go",
       "sha256": "294721e47859e43de07b324e321c06a6466e4da9115c2be7c6d82611c4816cdb"
     },
@@ -325,7 +333,7 @@
     },
     {
       "path": "apps/api/internal/domains/service.go",
-      "sha256": "d6bf9550eb1d311a9b08a9676aa730b9aec54bd4365a3b06c4ae8ffe03db2e34"
+      "sha256": "051b94c235f3840680db8175e96b05cc2f4f99b23266b5540471df1a129167c9"
     },
     {
       "path": "apps/api/internal/e2e/acceptance_test.go",
@@ -392,12 +400,20 @@
       "sha256": "6999aa5d61c826dac7b5000d842a44b57d66e6b723137466204b8ef2e5dddeb0"
     },
     {
+      "path": "apps/api/internal/e2e/remember_me_test.go",
+      "sha256": "b30366ffe9bdf95da35fef7d2dd2008c10d89e1fc0cf6970a6e620312ff5db0f"
+    },
+    {
       "path": "apps/api/internal/e2e/resource_limits_test.go",
       "sha256": "fb6a0fa519700040cfe69ed8fff0e873bddeed3c031ca9fd6f873fac30275b6a"
     },
     {
       "path": "apps/api/internal/e2e/security_test.go",
       "sha256": "012e5f76bbc7bc7c8208da898c2543a7d1b9a45d86f6f501c69bcea74bfeeaab"
+    },
+    {
+      "path": "apps/api/internal/e2e/self_service_sending_test.go",
+      "sha256": "eab87e0b56b46a67f3228eea4726b0b3632a7cc9172f71be9f783f1860452732"
     },
     {
       "path": "apps/api/internal/e2e/tenant_environment_test.go",
@@ -429,11 +445,11 @@
     },
     {
       "path": "apps/api/internal/legal/documents/acceptable-use.json",
-      "sha256": "bd61053d18418562a021348e9503e55f6e2fc71e7a1ddb382ca1de31c6e7a0a7"
+      "sha256": "728ce1a6b78646f982341fbc12afbf0191e3cfbbdda07ed91147d286b8d44560"
     },
     {
       "path": "apps/api/internal/legal/documents/cookies.json",
-      "sha256": "cdea7744fff5ebf47541219b223073384262a59f7d23ad92ce4a224cde63e2f3"
+      "sha256": "cbd887411d5119081e994eef1f5a3ddf0abc8f92a27c17471cb906a36a5cc19b"
     },
     {
       "path": "apps/api/internal/legal/documents/dpa.json",
@@ -441,7 +457,7 @@
     },
     {
       "path": "apps/api/internal/legal/documents/privacy.json",
-      "sha256": "c4c62e851c6b38e788a99456b85c66039e25b2820b7b4c960dec85c8e41b7548"
+      "sha256": "84d8cc12cb7bf42beccd1ff1a8ace425e3115468ff110e95ad513184713cc2c1"
     },
     {
       "path": "apps/api/internal/legal/documents/subprocessors.json",
@@ -449,7 +465,7 @@
     },
     {
       "path": "apps/api/internal/legal/documents/terms.json",
-      "sha256": "9072edecaf4534db424f57ce7e422901c0ba2c1d352e11d33208b3e4cb31eb9a"
+      "sha256": "6f266d43e6b20c13162a0d31af0649b5d7f6ab20643b434f935b5598bcc2e754"
     },
     {
       "path": "apps/api/internal/legal/legal.go",
@@ -461,7 +477,7 @@
     },
     {
       "path": "apps/api/internal/legal/manifest.json",
-      "sha256": "35706f2ee0c6e17eb9435883aeea8a42904ba94c2cba58afa387a54d7cfc23e9"
+      "sha256": "3a550c7b8b1de3f7d254c1686aedcecdcd0a6f9832a4593ff19e4874d68fdc96"
     },
     {
       "path": "apps/api/internal/message/message_test.go",
@@ -605,7 +621,7 @@
     },
     {
       "path": "apps/api/internal/worker/maintenance.go",
-      "sha256": "565dec360427c66000df36c82675fc5281ec82f62131cc472e3c4b0e911bbef9"
+      "sha256": "c0b979c81acb168afb744f8f9fb788e20a9f6a104910f1ffb8557efde63de867"
     },
     {
       "path": "apps/api/internal/worker/run.go",
@@ -673,7 +689,7 @@
     },
     {
       "path": "apps/web/public/docs/domain-setup.svg",
-      "sha256": "1d1973f54f4e7a274213201fba501b5bc0e2affdaebb2c19fc83e42b1e7be47e"
+      "sha256": "c3977ae497422441c8b1fd86814c7690385db99dd4ab364ebe15807b126bbaaf"
     },
     {
       "path": "apps/web/public/docs/email-lifecycle.svg",
@@ -745,7 +761,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/domains/[id]/page.tsx",
-      "sha256": "b084fa7a037a2b7428fcac3ce53160cc3d09e15850e230ee6af88979b2db5aae"
+      "sha256": "77d5641e9cfc0cd90b462b470971064ed33ead93300a426b06520689e19b0269"
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/domains/page.tsx",
@@ -761,7 +777,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/page.tsx",
-      "sha256": "efeb62babe164fe83f61ab70faacbb98fdf6d979fcdbe7c6e509116ef7d7b112"
+      "sha256": "1e8b077271d3b541ae350027fca2ff8b05397de46b66c3f3338e5899eac61735"
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/settings/billing-return/page.tsx",
@@ -769,7 +785,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/settings/page.tsx",
-      "sha256": "cfd8e54f0ce11899837301ee5f574875382ced0707cdfe9cbf5066d970ce84de"
+      "sha256": "fb30929e5bd7a8682026855e20a4ae59064be9adb8f2b9913d5b893b856d3776"
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/test-inbox/page.tsx",
@@ -777,7 +793,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/admin/page.tsx",
-      "sha256": "def244bf7c4a2361cd1c4ecd6c56c2bc3753e3086a9daae6f3e47100b6b23620"
+      "sha256": "2ccf683815a42f21f39cad31554a31ae7a76c4fa716133dd1c7134123a810976"
     },
     {
       "path": "apps/web/src/app/(app)/app/layout.tsx",
@@ -793,11 +809,11 @@
     },
     {
       "path": "apps/web/src/app/(site)/docs/content.tsx",
-      "sha256": "c977a4269ea07d0393c5d99c688460758dfeee5907b0277fdfcb17ac43953a5d"
+      "sha256": "cec2f5ff8b5cd8e0635ab7ac7e283ffccab4028e6a697a61d92df1ca31fef46c"
     },
     {
       "path": "apps/web/src/app/(site)/docs/guides.tsx",
-      "sha256": "f3004453e6629fd3e9f19d2b2bc10ce5d0d43e829580135baa262aa41c9589f8"
+      "sha256": "0958815c7456eae3ac02a0ae169a0d0e9d0e9e95f93b0874e6d9568dc6c43cd6"
     },
     {
       "path": "apps/web/src/app/(site)/docs/layout.tsx",
@@ -885,7 +901,7 @@
     },
     {
       "path": "apps/web/src/app/globals.css",
-      "sha256": "e25c499a3e6b98b8c8c1cc456beebf369f1ae29c999d263a905893851bebb5bc"
+      "sha256": "c4f2dc5149eabb2d20d261f2e8331ad92e9ced63ffde9b17c21ac9f0684d10d9"
     },
     {
       "path": "apps/web/src/components/AccountRecovery.tsx",
@@ -901,7 +917,7 @@
     },
     {
       "path": "apps/web/src/components/AuthForms.tsx",
-      "sha256": "916f4a8fa349ee20452c25fca0e931adfee1ff8bf90f5869f11073b84c38a3d0"
+      "sha256": "0c4dcee28895424a1f2cd42db4654234d7993e323af04cb9a83abb9fd9d2fd29"
     },
     {
       "path": "apps/web/src/components/BillingSettings.tsx",
@@ -965,11 +981,11 @@
     },
     {
       "path": "apps/web/src/content/legal/acceptable-use.json",
-      "sha256": "bd61053d18418562a021348e9503e55f6e2fc71e7a1ddb382ca1de31c6e7a0a7"
+      "sha256": "728ce1a6b78646f982341fbc12afbf0191e3cfbbdda07ed91147d286b8d44560"
     },
     {
       "path": "apps/web/src/content/legal/cookies.json",
-      "sha256": "cdea7744fff5ebf47541219b223073384262a59f7d23ad92ce4a224cde63e2f3"
+      "sha256": "cbd887411d5119081e994eef1f5a3ddf0abc8f92a27c17471cb906a36a5cc19b"
     },
     {
       "path": "apps/web/src/content/legal/dpa.json",
@@ -977,7 +993,7 @@
     },
     {
       "path": "apps/web/src/content/legal/privacy.json",
-      "sha256": "c4c62e851c6b38e788a99456b85c66039e25b2820b7b4c960dec85c8e41b7548"
+      "sha256": "84d8cc12cb7bf42beccd1ff1a8ace425e3115468ff110e95ad513184713cc2c1"
     },
     {
       "path": "apps/web/src/content/legal/subprocessors.json",
@@ -985,7 +1001,7 @@
     },
     {
       "path": "apps/web/src/content/legal/terms.json",
-      "sha256": "9072edecaf4534db424f57ce7e422901c0ba2c1d352e11d33208b3e4cb31eb9a"
+      "sha256": "6f266d43e6b20c13162a0d31af0649b5d7f6ab20643b434f935b5598bcc2e754"
     },
     {
       "path": "apps/web/src/content/legal/versions/2026-11-28.2/acceptable-use.json",
@@ -1036,8 +1052,32 @@
       "sha256": "9072edecaf4534db424f57ce7e422901c0ba2c1d352e11d33208b3e4cb31eb9a"
     },
     {
+      "path": "apps/web/src/content/legal/versions/2026-11-28.4/acceptable-use.json",
+      "sha256": "728ce1a6b78646f982341fbc12afbf0191e3cfbbdda07ed91147d286b8d44560"
+    },
+    {
+      "path": "apps/web/src/content/legal/versions/2026-11-28.4/cookies.json",
+      "sha256": "cbd887411d5119081e994eef1f5a3ddf0abc8f92a27c17471cb906a36a5cc19b"
+    },
+    {
+      "path": "apps/web/src/content/legal/versions/2026-11-28.4/dpa.json",
+      "sha256": "3daf83eb7a0d229b8095a0cb6e8621312b204769f9f066c40cb32652ad3f3bb7"
+    },
+    {
+      "path": "apps/web/src/content/legal/versions/2026-11-28.4/privacy.json",
+      "sha256": "84d8cc12cb7bf42beccd1ff1a8ace425e3115468ff110e95ad513184713cc2c1"
+    },
+    {
+      "path": "apps/web/src/content/legal/versions/2026-11-28.4/subprocessors.json",
+      "sha256": "bdfdd5dbc990f60270177fe48f19b34bafae2cd52ec091adf45a249a9031473a"
+    },
+    {
+      "path": "apps/web/src/content/legal/versions/2026-11-28.4/terms.json",
+      "sha256": "6f266d43e6b20c13162a0d31af0649b5d7f6ab20643b434f935b5598bcc2e754"
+    },
+    {
       "path": "apps/web/src/content/legal/versions/index.ts",
-      "sha256": "dfebb04f476ba20393bf2766c492ed9d4382f7e6f6b684a6ba609bb3c56d0ec9"
+      "sha256": "3bfb138eea01a8b32a7b38c91192544cb4040532f890722b4ba5a26791d96bcf"
     },
     {
       "path": "apps/web/src/lib/account-proof.test.ts",
@@ -1049,7 +1089,7 @@
     },
     {
       "path": "apps/web/src/lib/agent-setup.ts",
-      "sha256": "586027c29d31b84e9b082183fc819cd89f369c67070076f1897051eb9906d690"
+      "sha256": "2dc23bc2f58a1c65b106535a54ce34540d397e3c8325b61081a97957db42f24f"
     },
     {
       "path": "apps/web/src/lib/api.test.ts",
@@ -1057,7 +1097,7 @@
     },
     {
       "path": "apps/web/src/lib/api.ts",
-      "sha256": "cd632ef2729ae66d6a666096075866f591e043bf06445cc5508e105b9be14a92"
+      "sha256": "1d2e1c43c113912bd865de1819a337fd4689524e98fb85150444673ea5475142"
     },
     {
       "path": "apps/web/src/lib/billing-profile.test.ts",
@@ -1117,7 +1157,7 @@
     },
     {
       "path": "apps/web/tests/browser/release.spec.ts",
-      "sha256": "63325deec5f07e604682c3dde0e7e7c9f17f84ce5e3921ea19d5a7ed8a99b4b9"
+      "sha256": "0728285018b624b56fee0734df26cac90bae11cafd990f90ddfdedbb86a3642e"
     },
     {
       "path": "apps/web/tsconfig.json",
@@ -1393,7 +1433,7 @@
     },
     {
       "path": "docs/runbooks/deploy.md",
-      "sha256": "66da04aec260d5cde354b72b1c3da56bc23ad3deee4e6252abe1b302b7ec89a4"
+      "sha256": "89e3aaccd13bb972c3c688e6b3bb8e1e480fb3c033ebc9790c2f93b015000e3c"
     },
     {
       "path": "docs/runbooks/dlq-replay.md",
@@ -1401,7 +1441,7 @@
     },
     {
       "path": "docs/runbooks/hosted-owner.md",
-      "sha256": "a9da38538bf8cf40d17b74019b420ab089356188586240303bb594d184db304b"
+      "sha256": "507f71411e6e00eb8f635ce0aa146953b8b1250cca7f1096b0ca834d2c2e1858"
     },
     {
       "path": "docs/runbooks/incident.md",
@@ -1421,7 +1461,7 @@
     },
     {
       "path": "docs/status.md",
-      "sha256": "b3a12517442e61512b03278df46f24768b07b3cfb488aac2dd2d8bed1fefa6f2"
+      "sha256": "414a5c66aae31f3412d339dd94f897a9329cbbb1a869925a8abf14b7941bd90d"
     },
     {
       "path": "infra/terraform/AUTH-MAIL.md",

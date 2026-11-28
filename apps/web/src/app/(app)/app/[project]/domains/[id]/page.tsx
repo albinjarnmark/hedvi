@@ -46,7 +46,7 @@ export default function DomainPage() {
         {(a.provider_tips ?? []).map((tip) => <p key={tip} className="small">• {tip}</p>)}
       </div>
       <h2 style={{ marginTop: 24 }}>Records to publish</h2>
-      <p className="small muted">First publish the ownership TXT record and choose Check now. New claims expire after 72 hours. After your project has live-sending approval, another check generates the DKIM and MAIL FROM records. Publish those and check again. Keep the ownership record in DNS.</p>
+      <p className="small muted">First publish the ownership TXT record and choose Check now. New claims expire after 72 hours. The check generates your DKIM and MAIL FROM records. Publish those and check again. Sending activates automatically when all checks pass. Keep the ownership record in DNS.</p>
       <ScrollTable>
         <thead><tr><th>Type</th><th>Name (host)</th><th>Value</th><th>Status</th></tr></thead>
         <tbody>

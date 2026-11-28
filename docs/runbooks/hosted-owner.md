@@ -1,11 +1,11 @@
 # Instance owner console
 
-The instance owner can review recent signups and operational incidents, issue complimentary memberships, and decide live-sending requests. Each installation has one owner. The owner opens **Owner console** at `/app/admin` on the authenticated app host.
+The instance owner can review recent signups and operational incidents, issue complimentary memberships, and resolve sending restrictions. Each installation has one owner. The owner opens **Owner console** at `/app/admin` on the authenticated app host.
 
 ## Release and private networking
 
 1. Check the number of existing staff accounts with the operator connection using `SELECT count(*) FROM users WHERE is_staff`. Migration 0012 enforces a maximum of one. If several accounts are flagged, identify the installation owner through an established independent channel and resolve obsolete staff assignments under an audited change before retrying the migration. A pre-existing flag still requires a fresh bootstrap.
-2. Apply migrations through 0012 with the migrator role before starting the new API or worker. Schedule an appropriate write window for indexes on users, projects, alerts and delivery history. Retain the migration log and backup reference.
+2. Apply migrations through 0014 with the migrator role before starting the new API or worker. Schedule an appropriate write window for indexes on users, projects, alerts and delivery history. Retain the migration log and backup reference.
 3. On the worker set `HEDVI_ADMIN_ADDR=[::]:8791` for a private IPv6-capable service network, or bind the equivalent private interface. Leave the variable empty to keep the listener off. Configure private network access from the web service, with public ingress to the worker disabled. For an ECS deployment allow the web security group to reach the worker security group on TCP 8791 only.
 4. On the web service set server-side `HEDVI_ADMIN_INTERNAL_URL=http://<private-worker-host>:8791`. Keep `HEDVI_API_INTERNAL_URL` pointed at the ordinary API. Set `HEDVI_APP_HOST` to the canonical app host. Both Go services need the existing environment's app URL, allowed console origins, `HEDVI_COOKIE_SECURE=true`, matching data key and pepper. Keep the worker database URL on the worker. The public API checks its restricted role at startup.
 5. Verify that the app-host unlock endpoint requires authentication, the public API returns 404 for hosted owner routes, and the worker has only private ingress. Use synthetic accounts in staging to check that an ordinary account cannot open the console. Inspect the actual app-host response headers after an authorized unlock to confirm Secure, HttpOnly, SameSite=Strict and a 30-minute lifetime on the owner cookie.
@@ -61,3 +61,16 @@ An organization may have one active gift. Grants are capped at four per organiza
 A Pro gift uses a distinct usage period. A subsequently confirmed paid Pro cycle supersedes an overlapping Pro gift at its start. Refunding or holding that paid cycle cannot restore the superseded allowance. A Flex gift has its own credit lot. During a later paid Pro cycle, purchased or gifted Flex credits can be used as fallback only under the organization's existing prepaid-credit preference. The existing baseline resumes outside active allowances.
 
 To withdraw a grant, identify the organization and active grant, enter a reason, and select **Revoke remaining allowance**. Revocation prevents further reservations against that gift. A send that already reserved allowance settles against its original source. Grant, revocation and supersession entries retain their source IDs, and the original reservation history stays available for reconciliation. Write reasons that can be shown in the customer's audit log.
+
+## Using the console
+
+- **Overview** shows recent registrations and links to accounts, sending and errors.
+- **Accounts** searches by email or organization. Open an account for its Membership, Sending projects and Purchases tabs.
+- **Membership** grants a fixed Flex or Pro gift without a charge. The internal audit note is prefilled; ending a gift removes its unused allowance. Paid purchases remain separate.
+- **Sending** shows project status and limits. Normal domain onboarding is automatic. Open Manage only for a limit adjustment or a pause/resume decision.
+- **Billing** shows recent purchases and gift history. It does not expose payment credentials.
+- **Errors** filters sanitized operational events by severity. Keep event references for incident follow-up.
+
+Ordinary remembered login lasts at most 30 days when explicitly selected at sign-in.
+It never extends the separate 30-minute owner unlock. Lock console ends privileged
+access while leaving the ordinary account session signed in.

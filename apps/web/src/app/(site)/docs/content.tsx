@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 }`;
 
 export const docs: Doc[] = [
-  { slug: "agent-setup", title: "Set up with your agent", body: <><p>Use your coding agent to get started with Hedvi in an existing application. Copy the prompt below into its chat and let it inspect your project.</p><AgentSetup /><h2>What you do yourself</h2><p>Complete account verification, choose your password and review the service terms. Enter API keys directly into your secret manager. Your agent can prepare the integration while you finish these steps.</p><h2>Start in the test inbox</h2><p>A test key lets you validate the integration before adding a domain or changing your existing email provider. Go live only after domain verification and sender approval.</p></> },
+  { slug: "agent-setup", title: "Set up with your agent", body: <><p>Use your coding agent to get started with Hedvi in an existing application. Copy the prompt below into its chat and let it inspect your project.</p><AgentSetup /><h2>What you do yourself</h2><p>Complete account verification, choose your password and review the service terms. Enter API keys directly into your secret manager. Your agent can prepare the integration while you finish these steps.</p><h2>Start in the test inbox</h2><p>A test key lets you validate the integration before adding a domain or changing your existing email provider. Go live only after domain verification and automatic sending activation.</p></> },
   {
     slug: "quickstart",
     title: "Quickstart",
@@ -55,7 +55,7 @@ export const docs: Doc[] = [
         <h2>Go live</h2>
         <ol>
           <li>Add your domain under <strong>Domains</strong>, publish the ownership TXT record, and choose <strong>Check now</strong>.</li>
-          <li>Request live sending under <strong>Settings</strong>. A person reviews new senders before external mail is sent. After approval, check your domain again to generate its DKIM and MAIL FROM records; publish them and check again.</li>
+          <li>Publish the DKIM and MAIL FROM records that appear after the ownership check, then choose <strong>Check now</strong> again. Sending activates automatically once DNS and Amazon SES confirm your domain. No separate application or manual approval is needed.</li>
           <li>Create a live key under <strong>Developers</strong> and send from your verified domain.</li>
         </ol>
       </>

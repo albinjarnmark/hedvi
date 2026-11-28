@@ -57,7 +57,7 @@ export const statusLabel: Record<string, string> = {
   test_captured: "Captured (test)", queued: "Queued", sent: "Accepted by provider", delivered: "Delivered to server",
   delivery_delayed: "Delayed", delivery_unknown: "Outcome unknown", bounced: "Bounced", complained: "Complaint",
   failed: "Failed", suppressed: "Suppressed", verified: "Verified", pending: "Pending", partially_verified: "Partly verified",
-  temporary_failure: "DNS lookup failed", not_started: "Not started", test_only: "Test only", pending_review: "In review",
+  temporary_failure: "DNS lookup failed", not_started: "Not started", test_only: "Test only", pending_review: "Awaiting domain",
   approved: "Live sending on", paused: "Paused", succeeded: "Succeeded", retry_wait: "Retrying", held: "Held (paused)",
 };
 

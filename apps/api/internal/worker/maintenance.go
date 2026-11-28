@@ -407,7 +407,7 @@ func (r *Risk) RunOnce(ctx context.Context) error {
 			FROM recipients r JOIN emails e ON e.id = r.email_id
 			JOIN projects p ON p.id = e.project_id AND p.sending_status = 'approved'
 			WHERE e.mode = 'live' AND e.created_at >= greatest(now() - interval '30 days',p.status_changed_at)
-			GROUP BY 1, 2, 3`)
+			GROUP BY 1, 2, 3 ORDER BY 1, 2`)
 		if err != nil {
 			return err
 		}
@@ -449,6 +449,9 @@ func (r *Risk) RunOnce(ctx context.Context) error {
 }
 
 func pauseProject(ctx context.Context, tx pgx.Tx, orgID, projectID uuid.UUID, reviewedAt time.Time, reason string) error {
+	if _, err := tx.Exec(ctx, `SELECT id FROM organizations WHERE id=$1 FOR UPDATE`, orgID); err != nil {
+		return err
+	}
 	tag, err := tx.Exec(ctx, `UPDATE projects SET sending_status = 'paused', status_reason = $2, status_changed_at = now()
 		WHERE id = $1 AND sending_status = 'approved' AND status_changed_at=$3`, projectID, reason, reviewedAt)
 	if err != nil || tag.RowsAffected() == 0 {

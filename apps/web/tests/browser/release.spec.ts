@@ -104,3 +104,61 @@ test("public pages have no build warning and fit both narrow and desktop screens
   await page.goto("/docs/agent-setup");
   await page.screenshot({ path: info.outputPath("agent-setup.png"), fullPage: true });
 });
+
+test("remember me is optional and carried through authenticator sign-in", async ({ page }) => {
+  const calls = await fixture(page);
+  await page.route("**/console-api/auth/login", async route => {
+    const body = route.request().postDataJSON();
+    calls.push({ path: "/auth/login", body });
+    await route.fulfill(body.totp_code ? { json: { ok: true } } : { status: 401, json: { mfa_required: true, message: "Code required" } });
+  });
+  await page.goto("/login");
+  const remember = page.getByRole("checkbox", { name: "Remember me" });
+  await expect(remember).not.toBeChecked();
+  await page.getByLabel("Email", { exact: true }).fill("owner@example.com");
+  await page.getByLabel("Password", { exact: true }).fill(password);
+  await remember.check();
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await page.getByLabel("Authentication code").fill("123456");
+  await expect(remember).toBeChecked();
+  await fits(page);
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect.poll(() => calls.filter(c => c.path === "/auth/login").length).toBe(2);
+  expect(calls.filter(c => c.path === "/auth/login").map(c => c.body.remember_me)).toEqual([true, true]);
+});
+
+test("owner sections separate accounts, gifts, sending and errors", async ({ page }, info) => {
+  await fixture(page);
+  const org={id:"org",name:"Example AB",owner_email:"owner@example.com"};
+  await page.route("**/console-api/me",route=>route.fulfill({json:{user:{id:"owner",email:org.owner_email,is_staff:true,mfa_enabled:true,session_mfa:true,legal_accepted:true},organizations:[{...org,role:"owner",projects:[{id:pid,name:"Default",sending_status:"test_only"}]}],environment:{aws_mode:"mock",env:"test"}}}));
+  await page.route("**/console-api/admin/summary**",route=>route.fulfill({json:{users:[{id:"owner",email:org.owner_email,verified:true,created_at:"2026-11-28T10:00:00Z",organizations:[org]}],grants:[],reviews:[{id:pid,name:"Default",org_id:org.id,organization:org.name,state:"test_only",verified_domains:0,hourly_limit:25,daily_limit:100}],purchases:[],errors:[]}}));
+  await page.goto("/app/admin");
+  await expect(page.getByRole("heading",{name:"Latest registrations"})).toBeVisible();
+  await expect(page.getByRole("button",{name:"Give membership",exact:true})).toHaveCount(0);
+  await fits(page);
+  await page.screenshot({path:info.outputPath("owner-overview.png"),fullPage:true});
+  await page.getByRole("button",{name:"Open Example AB",exact:true}).click();
+  await page.getByRole("button",{name:"Give membership",exact:true}).click();
+  await expect(page.getByLabel("Internal note")).toHaveValue("Complimentary access from Hedvi owner");
+  await fits(page);
+  await page.screenshot({path:info.outputPath("owner-account.png"),fullPage:true});
+  await page.getByRole("button",{name:"Cancel",exact:true}).click();
+  await page.getByRole("navigation",{name:"Owner sections"}).getByRole("button",{name:"Sending",exact:true}).click();
+  await expect(page.getByText("Awaiting domain",{exact:true})).toBeVisible();
+  await expect(page.getByLabel("Internal note")).toHaveCount(0);
+  await page.getByRole("button",{name:"Manage",exact:true}).click();
+  await expect(page.getByRole("button",{name:"Approve live sending"})).toHaveCount(0);
+  await page.getByRole("navigation",{name:"Owner sections"}).getByRole("button",{name:"Errors",exact:true}).click();
+  await expect(page.getByRole("heading",{name:"No matching events"})).toBeVisible();
+  await expect(page.getByRole("button",{name:"Pause sending"})).toHaveCount(0);
+  await fits(page);
+});
+
+test("domain onboarding has no live sending application",async({page})=>{
+  await fixture(page);
+  await page.goto(`/app/${pid}/settings`);
+  await expect(page.getByRole("link",{name:"Set up sending domain"})).toBeVisible();
+  await expect(page.getByLabel("What will you send?")).toHaveCount(0);
+  await expect(page.getByRole("button",{name:"Request live sending"})).toHaveCount(0);
+  await fits(page);
+});

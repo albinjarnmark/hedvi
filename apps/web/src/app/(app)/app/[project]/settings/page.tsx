@@ -6,7 +6,6 @@ import { MFASettings } from "@/components/MFASettings";
 import { Suppressions } from "@/components/Suppressions";
 import { useProjectId } from "@/components/AppShell";
 import { Status } from "@/components/Status";
-import type { LegalManifest } from "@/lib/account-proof";
 import { api, bytes, formatDate } from "@/lib/api";
 import { useAction, useLoad } from "@/lib/hooks";
 
@@ -24,33 +23,14 @@ type Usage = {
   credits: { id: string; granted: number; remaining: number; expires_at: string; expired_at: string | null }[];
 };
 
-function LiveAccess({ pid, status, reload }: { pid: string; status: string; reload: () => Promise<void> }) {
-  const { pending, error, run } = useAction();
-  const legal = useLoad<LegalManifest>(status === "test_only" ? "/auth/legal" : null);
-  const aup = legal.data?.documents.find(document => document.id === "aup");
-  if (status !== "test_only") {
-    return <p>Live sending: <Status value={status} /> {status === "pending_review" && <span className="small muted">A person reviews new senders, usually within one business day during the beta.</span>}</p>;
-  }
-  return (
-    <form className="stack" onSubmit={(e) => {
-      e.preventDefault();
-      const f = new FormData(e.currentTarget);
-      void run(async () => {
-        await api(`/projects/${pid}/live-access`, { method: "POST", body: { website: f.get("website"), use_case: f.get("use_case"),
-          monthly_volume: Number(f.get("volume") || 0), recipient_consent: f.get("consent"), accept_aup: f.get("aup") === "on" } });
-        await reload();
-      });
-    }}>
-      <p className="small muted">Before external sending, we check who you are and what you send. Domain verification alone does not prove legitimate traffic.</p>
-      <div className="field"><label htmlFor="website">Website</label><input id="website" name="website" required placeholder="https://example.com" /></div>
-      <div className="field"><label htmlFor="use_case">What will you send?</label><textarea id="use_case" name="use_case" rows={3} required minLength={20} placeholder="Password resets, receipts and invitations for our SaaS app." /></div>
-      <div className="field"><label htmlFor="consent">How do recipients ask for your email?</label><input id="consent" name="consent" required placeholder="They create an account or buy something." /></div>
-      <div className="field"><label htmlFor="volume">Expected recipients per month</label><input id="volume" name="volume" type="number" min={0} /></div>
-      <label className="row" style={{ fontWeight: 400 }}><input type="checkbox" name="aup" required /> I will not send spam, purchased or scraped lists, phishing or mail with false senders ({aup ? <Link href={aup.url} target="_blank" rel="noreferrer">Acceptable Use Policy</Link> : "Loading Acceptable Use Policy…"}).</label>
-      {(error || legal.error) && <p className="error" role="alert">{error ?? legal.error?.message}</p>}
-      <button className="btn btn-primary" disabled={pending || !aup}>Request live sending</button>
-    </form>
-  );
+function LiveAccess({ pid, status }: { pid: string; status: string }) {
+  if (status === "approved") return <div className="stack"><Status value={status} /><p className="small muted">You can send from every verified domain in this project.</p></div>;
+  if (status === "paused") return <p className="notice notice-warn">Sending is paused. <a href="mailto:hej@stackx.se">Contact support</a> to resolve the restriction.</p>;
+  return <div className="stack">
+    <p>Verify your domain and start sending. Activation is automatic once your DNS records are confirmed.</p>
+    <p className="small muted">Your account’s accepted terms already apply. No application form or manual approval is needed.</p>
+    <Link className="btn btn-primary" href={`/app/${pid}/domains`}>Set up sending domain</Link>
+  </div>;
 }
 
 export default function SettingsPage() {
@@ -70,9 +50,9 @@ export default function SettingsPage() {
       <div className="split">
         <section className="card stack">
           <h2>Live sending</h2>
-          <LiveAccess pid={pid} status={s.data.project.sending_status} reload={s.reload} />
-          {s.data.project.status_reason && <p className="small">Note: {s.data.project.status_reason}</p>}
-          <p className="small muted">Current limits: {s.data.project.hourly_limit}/hour, {s.data.project.daily_limit}/day.</p>
+          <LiveAccess pid={pid} status={s.data.project.sending_status} />
+          {s.data.project.sending_status === "paused" && s.data.project.status_reason && <p className="small">Note: {s.data.project.status_reason}</p>}
+          <p className="small muted">Sending limits per project: {s.data.project.hourly_limit}/hour, {s.data.project.daily_limit}/day.</p>
         </section>
         <section className="card stack">
           <h2>Usage and cost control</h2>

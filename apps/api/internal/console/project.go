@@ -961,6 +961,8 @@ func (s *Server) updateOrgSettings(w http.ResponseWriter, r *http.Request, a *ac
 	s.getSettings(w, r, a)
 }
 
+// Kept for existing clients. Current onboarding activates through verified DNS;
+// this endpoint cannot approve, unpause, or change a delivery limit.
 func (s *Server) requestLiveAccess(w http.ResponseWriter, r *http.Request, a *access) {
 	var req struct {
 		Website       string `json:"website"`
@@ -973,38 +975,19 @@ func (s *Server) requestLiveAccess(w http.ResponseWriter, r *http.Request, a *ac
 		s.fail(w, r, err)
 		return
 	}
-	if !req.AcceptAUP {
-		s.fail(w, r, apierr.New(422, "validation_error", "You must accept the Acceptable Use Policy."))
-		return
-	}
-	if len(strings.TrimSpace(req.UseCase)) < 20 || strings.TrimSpace(req.Website) == "" || strings.TrimSpace(req.Consent) == "" {
-		s.fail(w, r, apierr.New(422, "validation_error", "Describe your website, what you send (at least 20 characters) and how recipients ask for your email."))
-		return
-	}
-	review, _ := json.Marshal(map[string]any{"website": truncate(req.Website, 200), "use_case": truncate(req.UseCase, 2000),
-		"monthly_volume": req.MonthlyVolume, "recipient_consent": truncate(req.Consent, 1000), "requested_by": a.Email,
-		"requested_at": time.Now().UTC().Format(time.RFC3339)})
+	var state string
 	err := s.tx(r.Context(), a, func(tx pgx.Tx) error {
-		tag, err := tx.Exec(r.Context(), `UPDATE projects SET sending_status = 'pending_review', review_request = $2, status_changed_at = now(),
-			status_reason = 'Waiting for manual review' WHERE id = $1 AND sending_status = 'test_only'`, a.ProjectID, review)
-		if err != nil {
+		if err := tx.QueryRow(r.Context(), `SELECT sending_status FROM projects WHERE id=$1`, a.ProjectID).Scan(&state); err != nil {
 			return err
 		}
-		if tag.RowsAffected() == 0 {
-			return apierr.New(409, "validation_error", "Live access has already been requested or decided for this project.")
-		}
-		if _, err := tx.Exec(r.Context(), `INSERT INTO alerts (org_id, project_id, kind, severity, dedupe_key, message)
-			VALUES ($1, $2, 'review_requested', 'info', $3, 'Live sending requested; waiting for Hedvi review.') ON CONFLICT DO NOTHING`,
-			a.OrgID, a.ProjectID, "review:"+a.ProjectID.String()); err != nil {
-			return err
-		}
-		return s.audit(r.Context(), tx, a, "project.live_access_requested", "project", a.ProjectID.String(), nil, r)
+		_, err := tx.Exec(r.Context(), `UPDATE domains SET next_check_at=now() WHERE project_id=$1 AND deleted_at IS NULL AND provider_state='active'`, a.ProjectID)
+		return err
 	})
 	if err != nil {
 		s.fail(w, r, err)
 		return
 	}
-	writeJSON(w, 200, map[string]any{"sending_status": "pending_review"})
+	writeJSON(w, 200, map[string]any{"sending_status": state, "automatic": true, "message": "Verify your domain. Live sending activates automatically; no manual application is needed."})
 }
 
 func (s *Server) usage(w http.ResponseWriter, r *http.Request, a *access) {

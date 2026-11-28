@@ -40,11 +40,13 @@ func (s *Server) ownerSummary(ctx context.Context, tx pgx.Tx, r *http.Request, a
   (SELECT count(*) FROM domains d WHERE d.project_id=p.id AND d.status='verified' AND d.deleted_at IS NULL) verified_domains,
   left(p.review_request->>'website',200) website,left(p.review_request->>'use_case',2000) use_case,
   left(p.review_request->>'recipient_consent',1000) consent,left(p.review_request->>'monthly_volume',20) volume
-  FROM projects p JOIN organizations o ON o.id=p.org_id WHERE ($1::uuid IS NULL OR p.id=$1) AND ($2::uuid IS NULL OR p.org_id=$2) AND p.sending_status IN('pending_review','paused','approved')
+  FROM projects p JOIN organizations o ON o.id=p.org_id WHERE ($1::uuid IS NULL OR p.id=$1) AND ($2::uuid IS NULL OR p.org_id=$2)
   ORDER BY (p.sending_status='pending_review') DESC,p.status_changed_at DESC,p.id LIMIT 50`},
 		{"grants", `SELECT g.id,g.org_id,o.name organization,g.plan,g.starts_at,g.ends_at,g.revoked_at,
   CASE WHEN g.revoked_at IS NOT NULL THEN 'revoked' WHEN g.ends_at<=now() THEN 'expired' ELSE 'active' END AS state,
   g.reason,g.revoke_reason FROM complimentary_memberships g JOIN organizations o ON o.id=g.org_id WHERE ($1::uuid IS NULL OR g.org_id=$1) ORDER BY g.starts_at DESC,g.id LIMIT 50`},
+		{"purchases", `SELECT b.id,b.org_id,o.name organization,b.sku,b.state,b.amount,b.currency,b.created_at
+  FROM billing_orders b JOIN organizations o ON o.id=b.org_id WHERE ($1::uuid IS NULL OR b.org_id=$1) ORDER BY b.created_at DESC,b.id LIMIT 50`},
 		{"errors", `SELECT * FROM (
   (SELECT id,org_id,created_at,
     CASE kind WHEN 'review_requested' THEN 'Sender review requested' WHEN 'delivery_unknown' THEN 'Unknown send outcome'
@@ -65,7 +67,7 @@ func (s *Server) ownerSummary(ctx context.Context, tx pgx.Tx, r *http.Request, a
 		switch q.key {
 		case "reviews":
 			args = []any{projectFilter, orgFilter}
-		case "grants":
+		case "grants", "purchases":
 			args = []any{orgFilter}
 		}
 		if err := tx.QueryRow(ctx, "SELECT COALESCE(jsonb_agg(to_jsonb(item)),'[]'::jsonb) FROM ("+q.query+") item", args...).Scan(&b); err != nil {
@@ -296,7 +298,7 @@ func (s *Server) ownerDecide(ctx context.Context, tx pgx.Tx, r *http.Request, a 
 	if err != nil {
 		return nil, ownerNotFound(err)
 	}
-	if state != "paused" && state != "pending_review" && state != "approved" {
+	if state != "paused" && state != "pending_review" && state != "approved" && !(state == "test_only" && req.Action == "pause") {
 		return nil, ownerConflict("The customer must first submit a live-access request.")
 	}
 	if req.Action == "approve" {

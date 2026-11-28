@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "publishedAt": "28 November 2026",
   "id": "cookies",
   "title": "Cookies and browser storage",
@@ -9,7 +9,13 @@
       "heading": "Essential sign-in cookie",
       "paragraphs": [
         "The first-party __Host-hedvi_session cookie keeps you signed in and links your browser to a server-side session. It contains a random credential, not your password. It is HttpOnly, Secure and SameSite=Lax in the hosted service, and is restricted to the issuing host and root path.",
-        "Its maximum browser lifetime is 14 days. Server-side access also expires after three days of inactivity and can end sooner on logout, password reset or another security action. Revocation ends access even if another browser still holds an old cookie. In local development the equivalent cookie is named hedvi_session."
+        "By default, sign-in uses a session cookie without a persistent browser expiry. Browser session restoration can preserve it. The server limits this session to 14 days and three days of inactivity. Selecting Remember me requests a persistent cookie and server session lasting at most 30 days from sign-in. Activity never extends that deadline. Logout, password reset or another security action can revoke either kind immediately. In local development the cookie is named hedvi_session."
+      ]
+    },
+    {
+      "heading": "Owner console access",
+      "paragraphs": [
+        "The operator console requires a separate authentication factor and an additional HttpOnly, Secure, SameSite=Strict cookie. Owner access expires after 30 minutes. Remember me does not extend this access."
       ]
     },
     {
