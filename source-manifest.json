@@ -1309,7 +1309,7 @@
     },
     {
       "path": "apps/web/tests/browser/seo.spec.ts",
-      "sha256": "c080ceccff18aa03c3b35c41a0f52ab5b9440d3b6206c45a7fbab7e9846c6f72"
+      "sha256": "2e01cd9ba1f292560e2e01699a0e1f977319f4a1548ff09b4fc9c462709d3c66"
     },
     {
       "path": "apps/web/tests/browser/status.spec.ts",

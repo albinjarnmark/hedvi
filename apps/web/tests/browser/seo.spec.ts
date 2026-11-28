@@ -13,7 +13,7 @@ test("the sitemap lists canonical pages with distinct descriptions", async ({ re
   expect(await robots.text()).toContain("Sitemap: https://hedvi.dev/sitemap.xml");
   const sitemap = await request.get("/sitemap.xml");
   expect(sitemap.status()).toBe(200);
-  const locations = [...(await sitemap.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
+  const locations = [...(await sitemap.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]!);
   expect(new Set(locations).size).toBe(locations.length);
   expect(locations).toContain("https://hedvi.dev/docs/switch-from-resend");
   const descriptions = new Set<string>();
@@ -26,7 +26,7 @@ test("the sitemap lists canonical pages with distinct descriptions", async ({ re
     const meta = await page.evaluate(html => {
       const head = new DOMParser().parseFromString(html, "text/html").head;
       return {
-        links: Array.from(head.querySelectorAll('link[rel="canonical"]'), link => link.getAttribute("href")),
+        links: Array.from(head.querySelectorAll('link[rel="canonical"]'), link => new URL(link.getAttribute("href")!).href),
         description: head.querySelector('meta[name="description"]')?.getAttribute("content") ?? "",
       };
     }, await response.text());
