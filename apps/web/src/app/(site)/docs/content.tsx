@@ -202,6 +202,7 @@ export const docs: Doc[] = [
             <tr><td>409</td><td><code>invalid_idempotent_request</code></td><td>Idempotency key reused with another body.</td></tr>
             <tr><td>422</td><td><code>validation_error</code> · <code>missing_required_field</code> · <code>invalid_attachment</code></td><td>Invalid or unsupported request.</td></tr>
             <tr><td>429</td><td><code>rate_limit_exceeded</code></td><td>Too many requests (10/s shared by organization keys), a warm-up limit or an operational resource limit.</td></tr>
+            <tr><td>429</td><td><code>suppression_rate_exceeded</code></td><td>Too many events for blocked addresses. Remove suppressed recipients from your application; new live requests resume at 00:00 UTC. Existing accepted mail remains queued.</td></tr>
             <tr><td>429</td><td><code>daily_quota_exceeded</code> · <code>monthly_quota_exceeded</code></td><td>Daily limit or quota reached. Hard stop: nothing was sent or charged.</td></tr>
           </tbody>
         </ScrollTable>

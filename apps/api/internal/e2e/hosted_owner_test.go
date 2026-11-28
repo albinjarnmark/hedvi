@@ -206,7 +206,7 @@ func TestOwnerGrantConcurrencyRevokeAndLiveReview(t *testing.T) {
 	if e.Count(`SELECT count(*) FROM billing_orders`) != 0 {
 		t.Fatal("complimentary membership wrote Stripe order")
 	}
-	if e.Count(`SELECT count(*) FROM hedvi_live_limits($1,now()) WHERE hourly=100 AND daily=1000 AND NOT manual`, tn.ProjectID) != 1 {
+	if e.Count(`SELECT count(*) FROM hedvi_live_limits_v2($1,now()) WHERE hourly=0 AND daily=0 AND NOT manual`, tn.ProjectID) != 1 {
 		t.Fatal("active complimentary Flex did not enable Flex throughput")
 	}
 	send, err := e.Accept.Send(e.Ctx, tn.Live, "gifted", liveBody(tn, "gift-recipient@example.test"))
@@ -223,7 +223,7 @@ func TestOwnerGrantConcurrencyRevokeAndLiveReview(t *testing.T) {
 	if e.Count(`SELECT count(*) FROM audit_log WHERE action='membership.revoked' AND target_id=$1`, gid.String()) != 1 {
 		t.Fatal("duplicate revocation")
 	}
-	if e.Count(`SELECT count(*) FROM hedvi_live_limits($1,now()) WHERE hourly=50 AND daily=200 AND NOT manual`, tn.ProjectID) != 1 {
+	if e.Count(`SELECT count(*) FROM hedvi_live_limits_v2($1,now()) WHERE hourly=50 AND daily=200 AND NOT manual`, tn.ProjectID) != 1 {
 		t.Fatal("revoked complimentary Flex retained paid throughput")
 	}
 	e.Drain()
@@ -254,7 +254,7 @@ func TestOwnerGrantConcurrencyRevokeAndLiveReview(t *testing.T) {
 	}
 	e.Exec(`UPDATE projects SET status_changed_at=now()-interval '5 days' WHERE id=$1`, tn.ProjectID)
 	s.do(t, 200, "POST", decision, map[string]any{"action": "approve", "use_plan_limits": true, "reason": "Restore current plan limits without resetting risk history"})
-	if e.Count(`SELECT count(*) FROM projects p CROSS JOIN LATERAL hedvi_live_limits(p.id,now()) l WHERE p.id=$1 AND NOT l.manual AND l.hourly=50 AND l.daily=200 AND p.status_changed_at<now()-interval '4 days'`, tn.ProjectID) != 1 {
+	if e.Count(`SELECT count(*) FROM projects p CROSS JOIN LATERAL hedvi_live_limits_v2(p.id,now()) l WHERE p.id=$1 AND NOT l.manual AND l.hourly=50 AND l.daily=200 AND p.status_changed_at<now()-interval '4 days'`, tn.ProjectID) != 1 {
 		t.Fatal("owner could not restore automatic limits while retaining risk history")
 	}
 	s.do(t, 200, "POST", decision, map[string]string{"action": "pause", "reason": "Paused pending external confirmation"})

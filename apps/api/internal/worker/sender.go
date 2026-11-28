@@ -192,6 +192,9 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 			recipients = append(recipients, a)
 		}
 		if len(suppressedIDs) > 0 {
+			if err := quota.RecordSuppressionWork(ctx, tx, c.orgID, len(suppressedIDs), time.Now(), false); err != nil {
+				return err
+			}
 			if _, err := tx.Exec(ctx, `UPDATE recipients SET status = 'suppressed', status_at = now() WHERE id = ANY($1)`, suppressedIDs); err != nil {
 				return err
 			}
@@ -211,6 +214,15 @@ func (s *Sender) handle(ctx context.Context, emailID uuid.UUID) error {
 	}
 	if c.payloadRef == nil {
 		return s.fail(ctx, emailID, "content_missing", "The email content was deleted before it could be sent.")
+	}
+	if s.ProviderRecipientsPerSecond > 0 {
+		waiting, err := s.deferBeforePayload(ctx, emailID)
+		if err != nil {
+			return s.releaseLease(ctx, emailID, err)
+		}
+		if waiting {
+			return nil
+		}
 	}
 	raw, err := s.Blobs.Get(ctx, *c.payloadRef)
 	if errors.Is(err, blob.ErrNotFound) {

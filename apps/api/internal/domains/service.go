@@ -228,7 +228,7 @@ func (s *Service) activateVerified(ctx context.Context, tx pgx.Tx, d *Domain) er
 	_, err = tx.Exec(ctx, `INSERT INTO audit_log(org_id,actor_kind,action,target_type,target_id,metadata)
 		SELECT $1,'system','project.live_auto_activated','project',$2::uuid::text,
 		jsonb_build_object('domain_id',$3::uuid,'legal_version',$4::text,'hourly',l.hourly,'daily',l.daily)
-		FROM hedvi_live_limits($2::uuid,now()) l`, d.OrgID, d.ProjectID, d.ID, legal.Current().Version)
+		FROM hedvi_live_limits_v2($2::uuid,now()) l`, d.OrgID, d.ProjectID, d.ID, legal.Current().Version)
 	return err
 }
 

@@ -336,6 +336,7 @@ func (r *Retention) RunOnce(ctx context.Context) error {
 		`DELETE FROM outbox WHERE published_at < now() - interval '7 days'`,
 		`DELETE FROM sessions WHERE expires_at < now() - interval '1 day' OR revoked_at < now() - interval '1 day'`,
 		`DELETE FROM send_counters WHERE window_start < now() - interval '2 days'`,
+		`DELETE FROM suppression_work_counters WHERE window_start < now() - interval '2 days'`,
 		`DELETE FROM alerts WHERE resolved_at < now() - interval '90 days'`,
 		`DELETE FROM audit_log WHERE created_at < now() - interval '400 days'`,
 		`DELETE FROM webhook_events ev USING organizations o WHERE o.id = ev.org_id AND ev.created_at < now() - make_interval(days =>

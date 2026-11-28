@@ -109,7 +109,7 @@
     },
     {
       "path": "apps/api/internal/accept/accept.go",
-      "sha256": "458aeec7e3498dbdb099debf48c0964232ac07d21c8e4134024f735221d7e88c"
+      "sha256": "65dcdcbce46f697747b743e5822e761a69f32e9029b71a12f214eb7aba1c2155"
     },
     {
       "path": "apps/api/internal/address/address.go",
@@ -349,7 +349,7 @@
     },
     {
       "path": "apps/api/internal/db/migrations/0018_paid_sending_capacity.sql",
-      "sha256": "1a331e1ad9cd579d3f1901e9c74ebe6c5acf996930b6af6a1bf57edcf7b1e5f4"
+      "sha256": "a34d926218ac9073a4c2818cdec6fa0a909d5ba30dc91122e07ca2a269fd8ad2"
     },
     {
       "path": "apps/api/internal/domains/mail_from.go",
@@ -369,7 +369,7 @@
     },
     {
       "path": "apps/api/internal/domains/service.go",
-      "sha256": "6d642865d1a3791e35718b9b9a7990dec024ed63bd3a57ddc73756202e007cb0"
+      "sha256": "3a4cafe4df10dacc85058756c89533a13904c52b866f3bc4c67ce9c8ecbcd078"
     },
     {
       "path": "apps/api/internal/e2e/acceptance_test.go",
@@ -421,7 +421,7 @@
     },
     {
       "path": "apps/api/internal/e2e/hosted_owner_test.go",
-      "sha256": "8b91240fe33691ba2e565f178dc6be16ce5de17d9487e2b8699deae1e4543ec7"
+      "sha256": "1452cf2c26c5b576d3536904e0a5c6b07d1e63fa650ab27b2642c3e4e6f35c1a"
     },
     {
       "path": "apps/api/internal/e2e/http_test.go",
@@ -445,7 +445,7 @@
     },
     {
       "path": "apps/api/internal/e2e/paid_capacity_test.go",
-      "sha256": "f042bec3ee901404a326516a0a2a0744d844aba6159be6ff28135eb72ba94897"
+      "sha256": "99106d408166eb199055973c6e452a4a52124407d703a5cf2240448a1fa440d8"
     },
     {
       "path": "apps/api/internal/e2e/pipeline_test.go",
@@ -453,7 +453,7 @@
     },
     {
       "path": "apps/api/internal/e2e/plan_sending_limits_test.go",
-      "sha256": "e1e152ec5860ee26a382b0cbe7e4f44e4a9121710816e69b9e2ce66ad1ed92dd"
+      "sha256": "161ceb2be6af9f5a85fb1327f364ec2a37ff6ad7ac2aefac4282e76f45fe04ab"
     },
     {
       "path": "apps/api/internal/e2e/provider_send_incidents_test.go",
@@ -608,6 +608,10 @@
       "sha256": "2633faac2f096a190bb33cb91ee097a609a248e6f28d3713baa3541b0ceddd63"
     },
     {
+      "path": "apps/api/internal/quota/suppression_work.go",
+      "sha256": "82b27fe8f7bc20815beff4fa9769f0c0a74f7dc4064407c75b58efa7e2310c07"
+    },
+    {
       "path": "apps/api/internal/ratelimit/memory_test.go",
       "sha256": "10d23556261707223d743827a1e49feaf6215542ce26e2fd18d893c34e7ae990"
     },
@@ -681,11 +685,11 @@
     },
     {
       "path": "apps/api/internal/worker/maintenance.go",
-      "sha256": "9faa00c58402b26065140a6c5a71b4f3742b201dd12609b8f1e716c23721a736"
+      "sha256": "e51a533800c17a2fcc4f76fa726b3372d9702cb4acd828da60970d4ff7b626b8"
     },
     {
       "path": "apps/api/internal/worker/pacing.go",
-      "sha256": "5fab9e8b46a29f43c2ea74a61f87f3e6ada62a5abf32d21936b830f5857cc249"
+      "sha256": "39f268ff68defd5d4724079a7e5d304cc9844df366a98162be7c0775318442c3"
     },
     {
       "path": "apps/api/internal/worker/run.go",
@@ -693,7 +697,7 @@
     },
     {
       "path": "apps/api/internal/worker/sender.go",
-      "sha256": "609ec9368b49148fa1f0f34f51340e12e4723ea71632d4dd44a8a734c09acba7"
+      "sha256": "163e797f9f52e9b60f1339918edfd893d7bdcc88b865b689a2dbd50a2fe5ab0b"
     },
     {
       "path": "apps/status/incident.json",
@@ -877,7 +881,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/admin/page.tsx",
-      "sha256": "83cf7607da7ec68d13108c8b431f95a6cdc99d8b8dd6bc6df13ec748f87a99f5"
+      "sha256": "4a09121fdeeaa9c980be604ca18359ed69ea6b0cbc81715f4de8986d53e57975"
     },
     {
       "path": "apps/web/src/app/(app)/app/layout.tsx",
@@ -893,11 +897,11 @@
     },
     {
       "path": "apps/web/src/app/(site)/docs/content.tsx",
-      "sha256": "d2525d450a87ed7d439f4f1d4a3c80a289f757bee7fe15f0c0b9a72f637e9f3f"
+      "sha256": "d3eabc8649aa27383364d859687e648316a764b74506b4d092000df2faf8654a"
     },
     {
       "path": "apps/web/src/app/(site)/docs/guides.tsx",
-      "sha256": "8fff09211f93ed996a840a0c555392076cdee31783e031675fb6182329487c61"
+      "sha256": "1495c34cf8dfa440264aeab009267182115751d8660f425fabea6a793e7d2b2c"
     },
     {
       "path": "apps/web/src/app/(site)/docs/layout.tsx",
@@ -1057,7 +1061,7 @@
     },
     {
       "path": "apps/web/src/components/SendingLimits.tsx",
-      "sha256": "afe6950d257c4e462ff649e821e3458639328dcc3ea668711ced831dbe260de0"
+      "sha256": "f7b0fc72b14aa679ca473095ca2b05eab3b8e48808c0a29865a091ec23117ffc"
     },
     {
       "path": "apps/web/src/components/Site.tsx",
@@ -1501,7 +1505,7 @@
     },
     {
       "path": "docs/architecture/quota.md",
-      "sha256": "d7d00e415a0f739170dc13665a87ddae0c6c96d0ca3e72c8d9f9145f30a69760"
+      "sha256": "8ca3e0e1b8c61215c8448affe2984369c330a1186870165b49e5623c439acd90"
     },
     {
       "path": "docs/architecture/suppression.md",
@@ -1533,7 +1537,7 @@
     },
     {
       "path": "docs/runbooks/billing.md",
-      "sha256": "a1d51e166df81dfbcf0207691f1ca051c74bdb1529b771f55e784a210aa82196"
+      "sha256": "57dbc8ed9ab5afd4101edc458195fd833718875e3d5d7f2c931bc1a06042c33f"
     },
     {
       "path": "docs/runbooks/database-bootstrap.md",

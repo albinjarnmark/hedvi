@@ -6,6 +6,7 @@ export type SendingLimitsData = {
 };
 
 export function sendingWindowLabel(hourly: number, daily: number) {
+  if (hourly < 0 || daily < 0) return "Sending stopped by an operator restriction";
   if (hourly === 0 && daily === 0) return "No hourly or daily plan limit";
   return [hourly > 0 ? `${hourly.toLocaleString()} recipients/hour` : null, daily > 0 ? `${daily.toLocaleString()}/day` : null].filter(Boolean).join(" · ");
 }

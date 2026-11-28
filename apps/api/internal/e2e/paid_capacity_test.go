@@ -1,15 +1,133 @@
 package e2e
 
 import (
+	"context"
 	"fmt"
+	"sync/atomic"
 	"testing"
 	"time"
 
 	"github.com/jackc/pgx/v5"
 
+	"hedvi.dev/api/internal/blob"
 	"hedvi.dev/api/internal/db"
 	"hedvi.dev/api/internal/testenv"
 )
+
+type countedPayloadReads struct {
+	blob.Store
+	gets atomic.Int32
+}
+
+func (s *countedPayloadReads) Get(ctx context.Context, key string) ([]byte, error) {
+	s.gets.Add(1)
+	return s.Store.Get(ctx, key)
+}
+
+func TestPaidWindowsRespectFreeBaselineAndManualZeroStops(t *testing.T) {
+	e := testenv.New(t)
+	tn := e.NewTenant("flex")
+	e.Exec(`UPDATE projects SET sending_limits_manual=false WHERE id=$1`, tn.ProjectID)
+	e.Exec(`INSERT INTO credit_lots(org_id,source,granted,expires_at) VALUES($1,'grant',10000,now()+interval '1 day')`, tn.OrgID)
+	e.Exec(`UPDATE organizations SET plan='free' WHERE id=$1`, tn.OrgID)
+	if e.Count(`SELECT count(*) FROM hedvi_live_limits_v2($1,now()) WHERE hourly=50 AND daily=200`, tn.ProjectID) != 1 {
+		t.Fatal("unused Flex credit bypassed chosen Free limits")
+	}
+	e.Exec(`UPDATE organizations SET plan='flex' WHERE id=$1`, tn.OrgID)
+	for i, pair := range [][2]int{{0, 0}, {0, 100}, {50, 0}} {
+		e.Exec(`UPDATE projects SET sending_limits_manual=true,hourly_limit=$2,daily_limit=$3 WHERE id=$1`, tn.ProjectID, pair[0], pair[1])
+		if _, err := e.Accept.Send(e.Ctx, tn.Live, fmt.Sprintf("zero-%d", i), liveBody(tn, "blocked@example.test")); err == nil || apiErr(t, err).Status != 403 {
+			t.Fatal("legacy manual zero stop was removed", err)
+		}
+	}
+	e.Exec(`UPDATE projects SET sending_limits_manual=false WHERE id=$1`, tn.ProjectID)
+	if _, err := e.Accept.Send(e.Ctx, tn.Live, "automatic", liveBody(tn, "paid@example.test")); err != nil {
+		t.Fatal("automatic zero was not unlimited", err)
+	}
+}
+
+func TestSuppressionWorkCannotReusePaidCreditsForUnlimitedEvents(t *testing.T) {
+	e := testenv.New(t)
+	tn := e.NewTenant("flex")
+	e.Exec(`UPDATE projects SET sending_limits_manual=false WHERE id=$1`, tn.ProjectID)
+	e.Exec(`INSERT INTO credit_lots(org_id,source,granted,expires_at) VALUES($1,'grant',10000,now()+interval '1 day')`, tn.OrgID)
+	late, err := e.Accept.Send(e.Ctx, tn.Live, "late", liveBody(tn, "late@example.test"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	e.Exec(`INSERT INTO suppressions(org_id,normalized,reason,source) VALUES($1,'blocked@example.test','manual','dashboard'),($1,'late@example.test','manual','dashboard')`, tn.OrgID)
+	e.Exec(`UPDATE suppression_work_counters SET count=9999 WHERE org_id=$1`, tn.OrgID)
+	// Two concurrent requests compete for the final suppression-event slot.
+	errs := make(chan error, 2)
+	for i := 0; i < 2; i++ {
+		go func(i int) {
+			_, err := e.Accept.Send(e.Ctx, tn.Live, fmt.Sprintf("suppressed-%d", i), liveBody(tn, "blocked@example.test"))
+			errs <- err
+		}(i)
+	}
+	accepted := 0
+	for range 2 {
+		err := <-errs
+		if err == nil {
+			accepted++
+		} else if apiErr(t, err).Name != "suppression_rate_exceeded" {
+			t.Fatal(err)
+		}
+	}
+	if accepted != 1 {
+		t.Fatal("suppression processing ceiling raced")
+	}
+	// A suppression added after admission must finish safely, release its credit
+	// and count the work even when the ceiling was reached in the meantime.
+	if err := e.Sender.Handle(e.Ctx, late.EmailID); err != nil {
+		t.Fatal(err)
+	}
+	if outbound(e) != 0 || e.Count(`SELECT count FROM suppression_work_counters WHERE org_id=$1`, tn.OrgID) != 10001 || e.Count(`SELECT released FROM quota_reservations WHERE email_id=$1`, late.EmailID) != 1 {
+		t.Fatal("late suppression sent, leaked credit or escaped work accounting")
+	}
+	if _, err := e.Accept.Send(e.Ctx, tn.Live, "no-reuse", liveBody(tn, "normal@example.test", "blocked@example.test")); err == nil || apiErr(t, err).Name != "suppression_rate_exceeded" {
+		t.Fatal("mixed request bypassed work guard", err)
+	}
+	if replay, err := e.Accept.Send(e.Ctx, tn.Live, "late", liveBody(tn, "late@example.test")); err != nil || !replay.Replayed {
+		t.Fatal("suppression work guard broke replay", err)
+	}
+	if err := db.InOrg(e.Ctx, e.APIPool, tn.OrgID, func(tx pgx.Tx) error {
+		_, err := tx.Exec(e.Ctx, `UPDATE suppression_work_counters SET count=0 WHERE org_id=$1`, tn.OrgID)
+		return err
+	}); err == nil {
+		t.Fatal("API reset processing budget")
+	}
+}
+
+func TestProviderPacingSerializesConcurrentReplicas(t *testing.T) {
+	e := testenv.New(t)
+	first, second := e.NewTenant("free"), e.NewTenant("free")
+	e.Sender.ProviderRecipientsPerSecond = 1
+	a, err := e.Accept.Send(e.Ctx, first.Live, "a", liveBody(first, "one@example.test", "two@example.test", "three@example.test", "four@example.test", "five@example.test", "six@example.test", "seven@example.test", "eight@example.test", "nine@example.test", "ten@example.test"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	b, err := e.Accept.Send(e.Ctx, second.Live, "b", liveBody(second, "one@example.test", "two@example.test", "three@example.test", "four@example.test", "five@example.test", "six@example.test", "seven@example.test", "eight@example.test", "nine@example.test", "ten@example.test"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	replica := *e.Sender
+	replica.WorkerID = "replica-two"
+	errs := make(chan error, 2)
+	go func() { errs <- e.Sender.Handle(e.Ctx, a.EmailID) }()
+	go func() { errs <- replica.Handle(e.Ctx, b.EmailID) }()
+	for range 2 {
+		if err := <-errs; err != nil {
+			t.Fatal(err)
+		}
+	}
+	if outbound(e) != 1 || e.Count(`SELECT count(*) FROM send_attempts`) != 1 || e.Count(`SELECT count(*) FROM emails WHERE send_state='retry_wait' AND attempt_count=0`) != 1 {
+		t.Fatal("concurrent replicas consumed the same provider slot")
+	}
+	if e.Count(`SELECT count(*) FROM provider_send_pacing WHERE next_at>now() AND next_at<=now()+interval '10 seconds'`) != 1 {
+		t.Fatal("provider spacing was not recipient weighted")
+	}
+}
 
 func TestPaidCapacityAcceptsBurstsButEnforcesCreditsAndRestrictions(t *testing.T) {
 	e := testenv.New(t)
@@ -87,11 +205,16 @@ func TestProviderPacingSharesCapacityWithoutCreatingAttempts(t *testing.T) {
 	e.Exec(`UPDATE provider_send_pacing SET next_at=now()+interval '10 seconds'`)
 	replica := *e.Sender
 	replica.WorkerID = "second-replica"
+	reads := &countedPayloadReads{Store: e.Blobs}
+	replica.Blobs = reads
 	if err = replica.Handle(e.Ctx, b.EmailID); err != nil {
 		t.Fatal(err)
 	}
 	if outbound(e) != 1 || e.Count(`SELECT count(*) FROM send_attempts WHERE email_id=$1`, b.EmailID) != 0 || e.Count(`SELECT attempt_count FROM emails WHERE id=$1`, b.EmailID) != 0 {
 		t.Fatal("capacity wait created a provider attempt")
+	}
+	if reads.gets.Load() != 0 {
+		t.Fatal("capacity wait fetched payload before a slot was available")
 	}
 	if e.Count(`SELECT count(*) FROM emails WHERE id=$1 AND send_state='retry_wait' AND lease_owner IS NULL`, b.EmailID) != 1 || e.Count(`SELECT count(*) FROM quota_reservations WHERE email_id=$1 AND consumed=0 AND released=0`, b.EmailID) != 1 {
 		t.Fatal("capacity wait lost the durable send or allowance")

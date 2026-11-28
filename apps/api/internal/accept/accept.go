@@ -95,16 +95,20 @@ type liveBudget struct {
 	orgHourLimit, orgDayLimit int
 	orgHourUsed, orgDayUsed   int64
 	storageRemaining          int64
+	suppressionWorkUsed       int64
 }
 
-func (b liveBudget) check(recipients int, payloadBytes int64) error {
+func (b liveBudget) check(recipients, suppressed int, payloadBytes int64) error {
+	if b.suppressionWorkUsed >= quota.SuppressionWorkLimit || int64(suppressed) > quota.SuppressionWorkLimit-b.suppressionWorkUsed {
+		return quotaError(quota.ErrSuppressionWork)
+	}
 	if payloadBytes > b.storageRemaining {
 		return apierr.New(429, "live_storage_limit_exceeded", "This project has reached its live email storage limit. Space becomes available when content retention removes payloads. Contact support for a reviewed limit increase.")
 	}
-	if b.hourlyLimit > 0 && recipients > b.hourlyLimit-b.hourUsed {
+	if b.hourlyLimit != 0 && recipients > b.hourlyLimit-b.hourUsed {
 		return liveWindowError("live_hour", b.hourlyLimit)
 	}
-	if b.dailyLimit > 0 && recipients > b.dailyLimit-b.dayUsed {
+	if b.dailyLimit != 0 && recipients > b.dailyLimit-b.dayUsed {
 		return liveWindowError("live_day", b.dailyLimit)
 	}
 	if b.orgHourLimit > 0 && int64(recipients) > int64(b.orgHourLimit)-b.orgHourUsed {
@@ -117,6 +121,9 @@ func (b liveBudget) check(recipients int, payloadBytes int64) error {
 }
 
 func liveWindowError(kind string, limit int) error {
+	if limit < 0 {
+		return apierr.New(403, "sending_restricted", "Sending is stopped by an explicit operator restriction.")
+	}
 	if kind == "live_hour" {
 		return apierr.New(429, "rate_limit_exceeded", "This project's hourly acceptance limit is %d unique recipients, including suppressed recipients.", limit)
 	}
@@ -151,11 +158,12 @@ func (s *Service) loadContext(ctx context.Context, tx pgx.Tx, p Principal, m *me
 				coalesce((SELECT count FROM send_counters WHERE project_id = p.id AND window_kind = 'live_hour' AND window_start = $2), 0),
 				coalesce((SELECT count FROM send_counters WHERE project_id = p.id AND window_kind = 'live_day' AND window_start = $3), 0),
                 coalesce((SELECT sum(count) FROM send_counters WHERE org_id=o.id AND window_kind='live_hour' AND window_start=$2),0),
-                coalesce((SELECT sum(count) FROM send_counters WHERE org_id=o.id AND window_kind='live_day' AND window_start=$3),0)
+                coalesce((SELECT sum(count) FROM send_counters WHERE org_id=o.id AND window_kind='live_day' AND window_start=$3),0),
+                coalesce((SELECT count FROM suppression_work_counters WHERE org_id=o.id AND window_start=$3),0)
 			FROM projects p JOIN organizations o ON o.id = p.org_id CROSS JOIN LATERAL hedvi_live_limits_v2(p.id,$4) lim WHERE p.id = $1`, p.ProjectID, now.UTC().Truncate(time.Hour), truncDay(now), now).Scan(
 		&oc.plan, &oc.riskStatus, &oc.metadataDays, &oc.contentDays, &oc.useCredits, &oc.overage, &oc.overageCap,
 		&oc.sendingStatus, &oc.liveBudget.hourlyLimit, &oc.liveBudget.dailyLimit, &oc.liveBudget.orgHourLimit, &oc.liveBudget.orgDayLimit, &oc.testDailyLimit, &oc.testStorageLimit, &oc.testDailyUsed,
-		&oc.liveBudget.storageRemaining, &oc.liveBudget.hourUsed, &oc.liveBudget.dayUsed, &oc.liveBudget.orgHourUsed, &oc.liveBudget.orgDayUsed)
+		&oc.liveBudget.storageRemaining, &oc.liveBudget.hourUsed, &oc.liveBudget.dayUsed, &oc.liveBudget.orgHourUsed, &oc.liveBudget.orgDayUsed, &oc.liveBudget.suppressionWorkUsed)
 	if err != nil {
 		return fmt.Errorf("load project: %w", err)
 	}
@@ -359,6 +367,8 @@ func testDayError(limit int) error {
 
 func quotaError(err error) error {
 	switch {
+	case errors.Is(err, quota.ErrSuppressionWork):
+		return apierr.New(429, "suppression_rate_exceeded", "Too many suppressed recipient events for this organization. Remove blocked addresses from your application. Live requests resume at 00:00 UTC; existing accepted mail remains queued.")
 	case errors.Is(err, quota.ErrDataExceeded):
 		return apierr.New(429, "monthly_quota_exceeded",
 			"The attachment data budget for this period is used up. Nothing was sent or charged. Send without attachments, add Flex credits or upgrade.")
@@ -449,7 +459,7 @@ func (s *Service) checkPolicy(p Principal, m *message.Message, oc *orgContext, p
 			"Possible mail loop: %s received too many emails from this organization in the last %s. Contact support if this is expected.",
 			oc.loopSuspects[0], s.LoopWindow)
 	}
-	return oc.liveBudget.check(len(m.Recipients), payloadBytes)
+	return oc.liveBudget.check(len(m.Recipients), len(oc.suppressed), payloadBytes)
 }
 
 func (s *Service) insert(ctx context.Context, tx pgx.Tx, p Principal, m *message.Message,
@@ -504,6 +514,9 @@ func (s *Service) insert(ctx context.Context, tx pgx.Tx, p Principal, m *message
 		}
 	} else {
 		budget := oc.liveBudget
+		if err := quota.RecordSuppressionWork(ctx, tx, p.OrgID, len(oc.suppressed), now, true); err != nil {
+			return quotaError(err)
+		}
 		n := len(m.Recipients)
 		if err := bumpCounter(ctx, tx, p, "live_hour", now.UTC().Truncate(time.Hour), n, budget.hourlyLimit); err != nil {
 			if errors.Is(err, errLimit) {
@@ -674,7 +687,7 @@ func (s *Service) quotaWarnings(ctx context.Context, tx pgx.Tx, orgID uuid.UUID,
 var errLimit = errors.New("limit reached")
 
 func bumpCounter(ctx context.Context, tx pgx.Tx, p Principal, kind string, window time.Time, n, limit int) error {
-	if limit > 0 && n > limit {
+	if limit != 0 && n > limit {
 		return errLimit
 	}
 	var count int
