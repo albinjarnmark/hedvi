@@ -136,25 +136,11 @@ func (s *Server) Routes(mux *http.ServeMux) {
 		pr("GET", "/dev/ses-outbox", dev, s.devOutbox)
 	}
 
-	// Hosted operator actions run through the authenticated infrastructure CLI,
-	// not through the Internet-facing API process with cross-tenant credentials.
-	if s.Cfg.IsDeployed() || s.StaffPool == nil {
-		return
+	// Hosted API has no cross-tenant routes. Local dev mounts the same bounded
+	// owner workflow as the dedicated private worker listener.
+	if !s.Cfg.IsDeployed() && s.StaffPool != nil {
+		s.OwnerRoutes(mux)
 	}
-	st := func(method, path string, h sessionHandler) {
-		hf := s.withSession(s.staffOnly(h))
-		if method != "GET" {
-			hf = s.guard(hf)
-		}
-		mux.HandleFunc(method+" "+p+"/admin"+path, hf)
-	}
-	st("GET", "/reviews", s.adminReviews)
-	st("POST", "/projects/{project}/approve", s.adminApprove)
-	st("POST", "/projects/{project}/pause", s.adminPause)
-	st("GET", "/alerts", s.adminAlerts)
-	st("POST", "/alerts/{id}/resolve", s.adminResolveAlert)
-	st("GET", "/unknown-attempts", s.adminUnknown)
-	st("POST", "/attempts/{id}/resolve", s.adminResolveAttempt)
 }
 
 // guard enforces CSRF protection for state-changing requests.

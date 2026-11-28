@@ -7,10 +7,10 @@ export type Locale = "en" | "sv";
 export const dict = {
   en: {
     nav: { docs: "Docs", pricing: "Pricing", switch: "Switch from Resend", signin: "Sign in", start: "Start testing", other: "Svenska", otherHref: "/sv" },
-    status: "Private build — not open for production traffic yet",
+    status: "Open source · Hosted in the EU",
     hero: {
       title: "Email, without the overhead.",
-      lead: "Building a simpler email API for transactional email: test safely, understand delivery and control cost. Made in Sweden, for developers everywhere.",
+      lead: "A simpler API for transactional email: test safely, understand delivery and control cost. Made in Sweden, for developers everywhere.",
       cta: "Send your first test email",
       secondary: "Read the quickstart",
     },
@@ -42,10 +42,10 @@ export const dict = {
   },
   sv: {
     nav: { docs: "Dokumentation", pricing: "Priser", switch: "Byt från Resend", signin: "Logga in", start: "Börja testa", other: "English", otherHref: "/" },
-    status: "Under uppbyggnad — tar ännu inte emot produktionstrafik",
+    status: "Öppen källkod · Drift inom EU",
     hero: {
       title: "Email, without the overhead.",
-      lead: "Vi bygger ett enklare API för transaktionell e-post: testa tryggt, förstå leveransen och kontrollera kostnaden. Byggt i Sverige, för utvecklare överallt.",
+      lead: "Ett enklare API för transaktionell e-post: testa tryggt, förstå leveransen och kontrollera kostnaden. Byggt i Sverige, för utvecklare överallt.",
       cta: "Skicka ditt första testmail",
       secondary: "Läs snabbstarten",
     },
@@ -64,7 +64,7 @@ export const dict = {
     ],
     codeTitle: "Fungerar med Resends SDK:er du redan använder",
     codeNote: "En dokumenterad delmängd av Resends API. Byt bas-URL och använd en Hedvi-nyckel. Se exakt vad som stöds.",
-    footer: { company: "Hedvi är tänkt att drivas av StackX AB, Sverige.", contact: supportEmail },
+    footer: { company: "Hedvi är en tjänst från StackX AB, Sverige.", contact: supportEmail },
     pricing: {
       title: "Tre enkla val",
       lead: "Priser före moms. När betalning är aktiverad visar Stripe Checkout valuta, skatt och totalsumma innan du betalar.",

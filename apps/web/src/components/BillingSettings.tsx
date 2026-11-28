@@ -17,6 +17,7 @@ export type BillingOrder = {
 
 type Billing = {
   enabled: boolean;
+  complimentary?: { plan: string; ends_at: string };
   baseline: string;
   has_credits: boolean;
   has_pro: boolean;
@@ -64,7 +65,9 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
     return <section className="card"><h2>Billing</h2><p role="alert">{load.error.message}</p></section>;
   }
   const data = load.data;
-  if (!data?.enabled) return null;
+  const grant = data?.complimentary;
+  const gift = grant && <p><strong>Complimentary {productName[grant.plan]} membership</strong> · Ends {formatDate(grant.ends_at)}. There is no charge or renewal. A paid Pro cycle takes precedence over a complimentary allowance.</p>;
+  if (!data?.enabled) return gift ? <section className="card"><h2>Membership</h2>{gift}</section> : null;
   const currency = data.currency || choice;
   const chooseBaseline = data.baseline === "flex" || (data.baseline === "free" && data.has_credits);
 
@@ -84,6 +87,7 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
   return (
     <section className="card stack">
       <h2>Billing</h2>
+      {gift}
       <p>Free includes 5,000 recipients per UTC calendar month. A Flex pack covers 10,000 recipients for 365 days. Pro renews its allowance each paid billing period.</p>
       <form className="stack" onSubmit={event => {
         event.preventDefault();
@@ -154,7 +158,7 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
 
       {chooseBaseline && (
         <div>
-          <p>Outside a paid Pro cycle, your organization uses {data.baseline === "flex" ? "Flex" : "Free"}.</p>
+          <p>Outside a paid or complimentary membership, your organization uses {data.baseline === "flex" ? "Flex" : "Free"}.</p>
           <button className="btn" disabled={pending} onClick={() => void run(async () => {
             await api(path + "/baseline", { method: "POST", body: { plan: data.baseline === "flex" ? "free" : "flex" } });
             await load.reload();

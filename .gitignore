@@ -55,3 +55,6 @@ backend.hcl
 
 # Isolated local release work and review artifacts
 /.release-work/
+
+**/test-results/
+**/playwright-report/

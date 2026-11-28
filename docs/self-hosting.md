@@ -107,8 +107,7 @@ unrestricted signup from the fact that the source can be built.
 
 Each deployed command accepts only its own database URL: API, worker/admin, or
 migrator. Do not give API a worker or owner credential. API startup checks that its
-actual database role cannot bypass tenant RLS. Staff HTTP routes are disabled in
-deployed environments; use the audited operator CLI through private access.
+actual database role cannot bypass tenant RLS. The public API excludes owner HTTP routes. To enable the separate private worker listener and appoint a verified owner with two authenticators, follow the [instance owner runbook](runbooks/hosted-owner.md).
 Domain operations require direct PostgreSQL connections or **session-mode**
 pooling. Transaction/statement-mode PgBouncer is unsupported because provider
 mutations use session advisory locks on the same connection.

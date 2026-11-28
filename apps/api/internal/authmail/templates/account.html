@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="{{.Locale}}">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"><title>{{.Subject}}</title></head>
+<body style="margin:0;padding:0;background-color:#08090a;color:#f2f3ef;font-family:Arial,Helvetica,sans-serif;-webkit-text-size-adjust:100%;">
+<div style="display:none;font-size:1px;color:#08090a;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;">{{.Preheader}}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#08090a" style="background-color:#08090a;"><tr><td align="center" style="padding:36px 16px;">
+<table role="presentation" width="560" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:560px;">
+<tr><td style="padding:0 8px 28px;"><img src="cid:hedvi-logo" width="142" height="44" alt="Hedvi" style="display:block;border:0;width:142px;height:44px;color:#f7f4ea;font-size:28px;font-weight:bold;"></td></tr>
+<tr><td bgcolor="#111413" style="background-color:#111413;border:1px solid #29302b;border-top:3px solid #d5f86b;border-radius:14px;padding:32px 28px;">
+<p style="margin:0 0 18px;font-size:11px;line-height:18px;font-weight:bold;letter-spacing:2px;color:#d5f86b;text-transform:uppercase;">{{.Eyebrow}}</p>
+<h1 style="margin:0 0 18px;font-size:30px;line-height:37px;letter-spacing:-1px;font-weight:600;color:#f2f3ef;">{{.Heading}}</h1>
+<p style="margin:0 0 28px;font-size:16px;line-height:26px;color:#b7beb9;">{{.Intro}}</p>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" bgcolor="#d5f86b" style="background-color:#d5f86b;border-radius:8px;mso-padding-alt:15px 24px;"><a href="{{.URL}}" style="display:inline-block;padding:15px 24px;border:1px solid #d5f86b;border-radius:8px;font-size:15px;line-height:20px;font-weight:bold;color:#102c28;text-decoration:none;text-align:center;">{{.Action}} &rarr;</a></td></tr></table>
+{{if .Expires}}<p style="margin:22px 0 0;font-size:13px;line-height:21px;color:#a6ada8;">{{.Expires}}</p>{{end}}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding-top:28px;border-bottom:1px solid #29302b;"></td></tr></table>
+<p style="margin:22px 0 8px;font-size:12px;line-height:20px;color:#a6ada8;">{{.Fallback}}</p>
+<p style="margin:0;font-size:12px;line-height:20px;word-break:break-all;overflow-wrap:anywhere;"><a href="{{.URL}}" style="color:#d5f86b;text-decoration:underline;word-break:break-all;">{{.URL}}</a></p>
+</td></tr>
+<tr><td style="padding:24px 8px 0;"><p style="margin:0 0 14px;font-size:12px;line-height:20px;color:#a6ada8;">{{.Ignore}}</p><p style="margin:0;font-size:12px;line-height:20px;color:#a6ada8;">Hedvi &middot; Email, without the overhead.</p></td></tr>
+</table></td></tr></table>
+</body></html>

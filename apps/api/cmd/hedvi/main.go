@@ -12,6 +12,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -152,9 +153,26 @@ func runWorker(ctx context.Context, cfg *config.Config, log *slog.Logger) error 
 		return err
 	}
 	defer a.Close()
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 	serveMetrics(ctx, cfg, log)
 	log.Info("workers started", "worker_id", cfg.WorkerID, "aws_mode", cfg.AWSMode)
+	if cfg.AdminAddr == "" {
+		startWorkers(ctx, a)
+		return nil
+	}
+	listener, err := net.Listen("tcp", cfg.AdminAddr)
+	if err != nil {
+		return err
+	}
+	srv := &http.Server{Handler: a.OwnerHandler(), ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 10 * time.Second, WriteTimeout: 12 * time.Second, IdleTimeout: 30 * time.Second, MaxHeaderBytes: 16 << 10, BaseContext: func(net.Listener) context.Context { return ctx }}
+	ended := make(chan error, 1)
+	go func() { err := srv.Serve(listener); ended <- err; cancel() }()
 	startWorkers(ctx, a)
+	_ = srv.Close()
+	if err = <-ended; err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
 	return nil
 }
 

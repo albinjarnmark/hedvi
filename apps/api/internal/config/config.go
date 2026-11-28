@@ -32,6 +32,7 @@ const (
 type Config struct {
 	Env Env
 
+	AdminAddr    string
 	APIAddr      string
 	MetricsAddr  string
 	PublicAPIURL string
@@ -92,6 +93,7 @@ const (
 func Load() (*Config, error) {
 	c := &Config{
 		Env:                         Env(get("HEDVI_ENV", "local")),
+		AdminAddr:                   get("HEDVI_ADMIN_ADDR", ""),
 		APIAddr:                     get("HEDVI_API_ADDR", "127.0.0.1:8780"),
 		MetricsAddr:                 get("HEDVI_METRICS_ADDR", ""),
 		PublicAPIURL:                get("HEDVI_PUBLIC_API_URL", "http://127.0.0.1:8780"),

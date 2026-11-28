@@ -186,6 +186,14 @@ func (a *App) Handler() http.Handler {
 	return httpapi.Common(a.Log, httpapi.MaxBody, mux)
 }
 
+// OwnerHandler runs only on an explicitly enabled private worker listener.
+func (a *App) OwnerHandler() http.Handler {
+	mux := http.NewServeMux()
+	con := &console.Server{Cfg: a.Cfg, Pool: a.WorkerPool, StaffPool: a.WorkerPool, Hasher: a.Hasher, Sealer: a.Sealer, Limiter: a.Limiter, Log: a.Log}
+	con.OwnerRoutes(mux)
+	return httpapi.Common(a.Log, 8<<10, mux)
+}
+
 // Workers returns the background components sharing the worker pool.
 type Workers struct {
 	AuthMail   *authmail.Worker

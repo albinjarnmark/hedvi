@@ -5,7 +5,7 @@
   "files": [
     {
       "path": ".dockerignore",
-      "sha256": "d3ecd5c35a0e1716d29936fb77a80b83171e64e58445c3dfac338140aff7a62d"
+      "sha256": "211e67dfba5f5ac3bc234ef2c036a2ad3292aaada306ebd5cf5a07b66424a0ec"
     },
     {
       "path": ".editorconfig",
@@ -17,7 +17,7 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "f6a1f849015a0467522fbeeb82557ff1b2990af183cece2657b354457058666b"
+      "sha256": "440e393ecfd0d688566b200344262fb945923e78b6ad24e061b32f45ab8a276e"
     },
     {
       "path": ".github/workflows/deploy.yml",
@@ -25,7 +25,7 @@
     },
     {
       "path": ".gitignore",
-      "sha256": "a097e64a18fef25d828ef7b6c97ac0b78c12d798efe32ebef082e2eb7153a65d"
+      "sha256": "201775e2a2bcfc24d7b2a9d1c530b4a0b21a1e6aee3735b95ed4511ab34ea88d"
     },
     {
       "path": ".gitleaks.toml",
@@ -61,7 +61,7 @@
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
-      "sha256": "e93af522e772db70dd6db47c9a774e0c82257425c52fbdb6fe6c8c2514354c17"
+      "sha256": "0cc55c8bc55e7f9b739e9e860c101ab70dc2d5072abb64ed83df09b9a5af42f6"
     },
     {
       "path": "TRADEMARKS.md",
@@ -77,15 +77,15 @@
     },
     {
       "path": "apps/api/cmd/hedvi/admin.go",
-      "sha256": "2ccdb60c87350f5addb5abcdd424d5e89dda1f2a8d78cfede7ed715aed48787d"
+      "sha256": "7ab0bcbb66b24dd044f6a63137c135de434a4104c147cdc107076a2f0b8f80b1"
     },
     {
       "path": "apps/api/cmd/hedvi/auth_link.go",
-      "sha256": "3f30c8a543e92e5ba08637fd0557d99e76c7b509b267fe880852986e2e3bb94c"
+      "sha256": "e49a940083dd48a1c7e570039c2ac6749691782de5afd5a83d4ec5e11ee8439b"
     },
     {
       "path": "apps/api/cmd/hedvi/main.go",
-      "sha256": "71cdb248d480b78bac5169b9864e7ba0ffca648cc935b217a0b12c3c34cf7b81"
+      "sha256": "c504e29072e0e358c266aed752dbcdb90b6452f649ee58604f1d85ca6704579e"
     },
     {
       "path": "apps/api/go.mod",
@@ -113,7 +113,7 @@
     },
     {
       "path": "apps/api/internal/app/app.go",
-      "sha256": "3bc1199925797e74bf2caf40edee17b12186b91b45c50f4bf3a877b08cc0ce49"
+      "sha256": "7ca5b5d86e303756c1ac93014df02f19cfeacdcbcca301f989798b33ed7bb578"
     },
     {
       "path": "apps/api/internal/app/env.go",
@@ -121,7 +121,7 @@
     },
     {
       "path": "apps/api/internal/app/role.go",
-      "sha256": "366e01e80b318c1f939edc7dd0d34e04e56e75a6dd6a98f8e1f58eedeb1b0303"
+      "sha256": "9a1a01abc4e54cca37b01453a0377ddb779990a43d5265bd000bdf0338312df5"
     },
     {
       "path": "apps/api/internal/auth/auth_test.go",
@@ -144,8 +144,28 @@
       "sha256": "ae03753e6a5410ffc800709ae35f1163fcd76d81431a2d60a80f32a030aae749"
     },
     {
+      "path": "apps/api/internal/authmail/read.go",
+      "sha256": "915eb738d2390d37ab6a7c2d392673912f042ea9ee9852855d5af71265c8885c"
+    },
+    {
+      "path": "apps/api/internal/authmail/render.go",
+      "sha256": "6d1bc9b98e2c82947d8e027cab856fe51a9464d4578034cc9b84bad174d12fd8"
+    },
+    {
+      "path": "apps/api/internal/authmail/render_test.go",
+      "sha256": "cfca03e7f701b3878a100a231bd8bc662564aa1df33ecd3ed131ac4d23012ca0"
+    },
+    {
+      "path": "apps/api/internal/authmail/templates/account.html",
+      "sha256": "eebb585c979787db4d1dfd417384a4ac46b28613c4d3c802a90385aa7cb1862f"
+    },
+    {
+      "path": "apps/api/internal/authmail/templates/hedvi-logo.png",
+      "sha256": "46abc1675ef39e5aced364cc15683a362f3cb9c838ad42c01ae65854a3d1b4d7"
+    },
+    {
       "path": "apps/api/internal/authmail/worker.go",
-      "sha256": "78f815f2a286b3bb0e27ba54a344db7a649cd06f713f6b934f1eca9cf5023789"
+      "sha256": "57a52738d933946c0f8acdd4f4458c70e1fe138118f5160020f96a16a542c8cd"
     },
     {
       "path": "apps/api/internal/billing/checkout.go",
@@ -185,7 +205,7 @@
     },
     {
       "path": "apps/api/internal/config/config.go",
-      "sha256": "eee5ac27e7fb34392fac9e23f063153cf461bb2ded9d841bf80579f031693940"
+      "sha256": "5ca36c1aa177d34ffb478dd09889dce183eca5c7b58b1af41335faacd6900ec7"
     },
     {
       "path": "apps/api/internal/config/config_test.go",
@@ -201,7 +221,7 @@
     },
     {
       "path": "apps/api/internal/console/admin.go",
-      "sha256": "d3f3b95be40262b6e5dba06bf7b834cfff46c9a9ac0e1ed83b3619b118a2e5f6"
+      "sha256": "0557add0943514d47b682044592d01816754acf5f774f66564ef8cb301440b3c"
     },
     {
       "path": "apps/api/internal/console/auth.go",
@@ -209,7 +229,15 @@
     },
     {
       "path": "apps/api/internal/console/billing.go",
-      "sha256": "951009386ba776f9ef195a41f75bbe09855c148e8364f62fc0cba25f3aa9671b"
+      "sha256": "8d43b00a9ae5fcc953d96b51fb21ff79ffd52173048b93e202c23c0d157cb44c"
+    },
+    {
+      "path": "apps/api/internal/console/owner.go",
+      "sha256": "963f8514ba5c7ef67edfdec3e3de80ab50a67da34d83b577d1a2a3952a41cc60"
+    },
+    {
+      "path": "apps/api/internal/console/owner_actions.go",
+      "sha256": "822f34f8a1176109669f9b5c472fb81539d8c93e2ebdd3dd637c0b3f37d3ff4e"
     },
     {
       "path": "apps/api/internal/console/project.go",
@@ -221,11 +249,11 @@
     },
     {
       "path": "apps/api/internal/console/server.go",
-      "sha256": "63d41164bdd2107c93b7d8b1dbdc81198e9febfdaf4830f683d32094fdda87c1"
+      "sha256": "9217e209c1aa54a5623b4732d449635ae0f3d16ecb4f9c68962ed524ab158f32"
     },
     {
       "path": "apps/api/internal/console/staff.go",
-      "sha256": "7262871af21f91fadd17213a99bd81eaae4e9f009437b606fabff87a82cc1b9f"
+      "sha256": "36d97a6edb8a6dfd8946add667b2ffa3e238ecca958456f2ed7f5334356cdb2d"
     },
     {
       "path": "apps/api/internal/console/webhooks.go",
@@ -280,6 +308,10 @@
       "sha256": "2273621838ccd2fb115e20ae990efb4e93e36918c8d0d0524caa595708d50338"
     },
     {
+      "path": "apps/api/internal/db/migrations/0012_hosted_owner.sql",
+      "sha256": "b0bb2444733d5d2939392ac3a7d31d3dbdcb31be8f62994df5dfc79df833990f"
+    },
+    {
       "path": "apps/api/internal/domains/ownership_test.go",
       "sha256": "294721e47859e43de07b324e321c06a6466e4da9115c2be7c6d82611c4816cdb"
     },
@@ -309,7 +341,7 @@
     },
     {
       "path": "apps/api/internal/e2e/account_ownership_test.go",
-      "sha256": "77e193b58770e057e6626273c32527a930a406d73bf53d7b964a433a08eedf89"
+      "sha256": "44de3a7955a90a728599f2520435f50c085a80cb08c2f63a817bcf515a30aaae"
     },
     {
       "path": "apps/api/internal/e2e/alerts_test.go",
@@ -317,7 +349,7 @@
     },
     {
       "path": "apps/api/internal/e2e/auth_boundaries_test.go",
-      "sha256": "b5c0cbe6b16eb8dc7ce82d3e46cdf6712f25e480050da40344e1f9842dcdfc52"
+      "sha256": "ecb013819d6b19d3c13313d01f5207585157afbbcb728e7ddbcf06762b239fc6"
     },
     {
       "path": "apps/api/internal/e2e/billing_address_test.go",
@@ -338,6 +370,10 @@
     {
       "path": "apps/api/internal/e2e/helpers_test.go",
       "sha256": "65930e21df9b6c47e3a8d4ed648dab6e0d63ecea1bac12e399e5688f1266dd0e"
+    },
+    {
+      "path": "apps/api/internal/e2e/hosted_owner_test.go",
+      "sha256": "2cf10b0d40eca98597e90f8de8359c99cc5a9b26dcc4c97dab205a829844c072"
     },
     {
       "path": "apps/api/internal/e2e/http_test.go",
@@ -361,7 +397,7 @@
     },
     {
       "path": "apps/api/internal/e2e/security_test.go",
-      "sha256": "42ac7b513ccff74893bb9c03d9adad9c25aa099473fa1246171f0f51c5bf1c2b"
+      "sha256": "012e5f76bbc7bc7c8208da898c2543a7d1b9a45d86f6f501c69bcea74bfeeaab"
     },
     {
       "path": "apps/api/internal/e2e/tenant_environment_test.go",
@@ -465,7 +501,7 @@
     },
     {
       "path": "apps/api/internal/provider/ses.go",
-      "sha256": "d3421add29e764049943f2ea6162f720a26f6663c4363b6a6a77b139b5c7e988"
+      "sha256": "a92608c88bbb02548a7d6c2e268f6172345c275dd1ded7a42c4e7a0b22b657cc"
     },
     {
       "path": "apps/api/internal/provider/ses_test.go",
@@ -493,7 +529,7 @@
     },
     {
       "path": "apps/api/internal/quota/quota.go",
-      "sha256": "dc207066e24dfa256dd46980df2f7a3dee1067bbd474604bd12754663101a105"
+      "sha256": "2633faac2f096a190bb33cb91ee097a609a248e6f28d3713baa3541b0ceddd63"
     },
     {
       "path": "apps/api/internal/ratelimit/memory_test.go",
@@ -521,7 +557,7 @@
     },
     {
       "path": "apps/api/internal/testenv/authmail.go",
-      "sha256": "dc95cae3ad6d41d020e2d9f5c171d377b47075e7844087830e3470122ce2e939"
+      "sha256": "1743be1df1fe0eb19a2bb49ffb340913fd6c9c61770c3219f51abb91632265ad"
     },
     {
       "path": "apps/api/internal/testenv/json.go",
@@ -597,7 +633,11 @@
     },
     {
       "path": "apps/web/package.json",
-      "sha256": "803b53cb6d2b4daaf2afbd5e32bec73c3ec0f39965928886ff87116e4937d449"
+      "sha256": "d360bce3f2cf62fd9d2c007c6b033185ac2d36b723e12144352351f50858b790"
+    },
+    {
+      "path": "apps/web/playwright.config.ts",
+      "sha256": "f3c749f629fa6b80fc5ca3cf1102a4925088677151a0827474ec539c95e43113"
     },
     {
       "path": "apps/web/public/docs/account-access.svg",
@@ -617,7 +657,7 @@
     },
     {
       "path": "apps/web/public/docs/authenticator.svg",
-      "sha256": "586b95119f61cf1eafda69e83c10c6fbe2017fabc048cb5af744bc3e1afdb6b0"
+      "sha256": "b1c6860a92ce453629cc8a795492bce0ae097844948260a209796936c18c2f28"
     },
     {
       "path": "apps/web/public/docs/billing-checkout.svg",
@@ -701,11 +741,11 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/developers/page.tsx",
-      "sha256": "b2d1a9a7f0e4149eeee3f906ddcb77ae53bc48d3fb71bceedf7464009cd41a2c"
+      "sha256": "52eb404e5a4249b0d24d858aab321818e6847e4521f22e5294e80193b9f7e6e6"
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/domains/[id]/page.tsx",
-      "sha256": "2dfdfba8a69ef8d3677c709b8c0804e1f0898c4bc88b7bfd95bf4c12ee641593"
+      "sha256": "b084fa7a037a2b7428fcac3ce53160cc3d09e15850e230ee6af88979b2db5aae"
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/domains/page.tsx",
@@ -713,7 +753,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/emails/[id]/page.tsx",
-      "sha256": "29a3e03941fab4974129a8669798df3b437c1ae51b169d443366ff158fb8ba15"
+      "sha256": "6b07ee3cb3ce42faf3671314d51d1a91761193decd28ffbf4f33d7380e70a32d"
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/emails/page.tsx",
@@ -729,7 +769,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/settings/page.tsx",
-      "sha256": "e0e8a297293a82749fadcc69011d3cead21e7dfe0d17520e96f54ccd062bd4c4"
+      "sha256": "13fd798f548458bbaae31235884527b76f1129cf51a2180d1d26f39192cc095e"
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/test-inbox/page.tsx",
@@ -737,7 +777,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/admin/page.tsx",
-      "sha256": "f14a9643af044bd78533d4cf2f2f78724c93c3731e83d295f6704c8412e1b375"
+      "sha256": "def244bf7c4a2361cd1c4ecd6c56c2bc3753e3086a9daae6f3e47100b6b23620"
     },
     {
       "path": "apps/web/src/app/(app)/app/layout.tsx",
@@ -753,15 +793,15 @@
     },
     {
       "path": "apps/web/src/app/(site)/docs/content.tsx",
-      "sha256": "058c9c73a28ab04cff4a9ef4c2a2a64cf30cffd6eb7131c572d71fb9b073213e"
+      "sha256": "c977a4269ea07d0393c5d99c688460758dfeee5907b0277fdfcb17ac43953a5d"
     },
     {
       "path": "apps/web/src/app/(site)/docs/guides.tsx",
-      "sha256": "db2823bfa6af85786431b09df8728e6745405babcbeb8d7915ed6dfab733c4e7"
+      "sha256": "b4587c15b435208dff97740b9ec68378cf6b1f74b83ee58b853aebe683f276d4"
     },
     {
       "path": "apps/web/src/app/(site)/docs/layout.tsx",
-      "sha256": "0ab1bed81e1ef34cc36d8b4a8a5a961b92a13d2d5ce43a9ee2aa48916c54ee74"
+      "sha256": "5009f3d2c6bbde6da82869433f8aede7a927310828ad310e541a576127b66524"
     },
     {
       "path": "apps/web/src/app/(site)/docs/page.tsx",
@@ -817,7 +857,7 @@
     },
     {
       "path": "apps/web/src/app/(site)/pricing/page.tsx",
-      "sha256": "ce72a6c9ec1cf6876004f375e8f0825b9212d9e9cb1e21a2a9f77821a9ad7419"
+      "sha256": "e83e81c7f4d8d0adfca7f9778da1e560b00a13ad392bf03a1cc29594d994991e"
     },
     {
       "path": "apps/web/src/app/(site)/reset-password/page.tsx",
@@ -841,19 +881,23 @@
     },
     {
       "path": "apps/web/src/app/(sv)/sv/priser/page.tsx",
-      "sha256": "b1cfa6c459bd01c90ca60196fab062576c3d357348a2dcb1afe66d67bdf44925"
+      "sha256": "a1f0d2ceae5b5ed4f8bf880d8a0c335f70b560a35ac72ed1ab1559711ea4e371"
     },
     {
       "path": "apps/web/src/app/globals.css",
-      "sha256": "090da5c3c345d2d6f8e0a60607cdf9f2cca90d6e600abd8106935029c36ae416"
+      "sha256": "e25c499a3e6b98b8c8c1cc456beebf369f1ae29c999d263a905893851bebb5bc"
     },
     {
       "path": "apps/web/src/components/AccountRecovery.tsx",
-      "sha256": "63cf9b12c419c246cec915cb352fdf779756e052e5a92bd2a1ec24c1b53d6c40"
+      "sha256": "5e31cb93c961897cb78f9fda6511b4a306a4493b07182530459bbfbebb2cf18b"
+    },
+    {
+      "path": "apps/web/src/components/AgentSetup.tsx",
+      "sha256": "194663a4d93d996b145e51a521070865d6177c24d159c79a8372a526764a3de1"
     },
     {
       "path": "apps/web/src/components/AppShell.tsx",
-      "sha256": "19764852f5d242d22b36d86e1cfd96432c1bd8e53607e83afd2976569b58873d"
+      "sha256": "6524dfaf01334f75ee58df94b5fbd144c343c15bbfc5b5399ab9e90904ad1348"
     },
     {
       "path": "apps/web/src/components/AuthForms.tsx",
@@ -861,7 +905,7 @@
     },
     {
       "path": "apps/web/src/components/BillingSettings.tsx",
-      "sha256": "e6afb71095f6d055dda49e7dc12721de300fde6ab7f51278b66aa2ec00b2ed75"
+      "sha256": "45462c1e472819263ae137a24b3cc390248fcc397fe3531cf2ed1b35fe9ab5b5"
     },
     {
       "path": "apps/web/src/components/CodeTabs.tsx",
@@ -869,7 +913,7 @@
     },
     {
       "path": "apps/web/src/components/CopyButton.tsx",
-      "sha256": "353003e4fd19f4f4b329218c435722a70aa7c06a94e79b97611a7df1672122dc"
+      "sha256": "3e0775ba65a2a0f6b2c39052d0d3e4c67895a0c95f23c1eb2c60a4e2408b86ab"
     },
     {
       "path": "apps/web/src/components/DocFigure.tsx",
@@ -877,7 +921,7 @@
     },
     {
       "path": "apps/web/src/components/EmailList.tsx",
-      "sha256": "4f7a2cc33713d0dbdb2a1a9b36cf7d2ddeaf2e921ef9c21b13ed0bc09886aedf"
+      "sha256": "de5faf1ce692e32796b09af3e7b87afb891d2c4e46859053bbef5a1077e053be"
     },
     {
       "path": "apps/web/src/components/EmailPreview.tsx",
@@ -893,19 +937,23 @@
     },
     {
       "path": "apps/web/src/components/MFASettings.tsx",
-      "sha256": "e3ab04d107bd30e45756fdf594da027affa11b80464caf4c2ac95ffbb552c689"
+      "sha256": "488d729452a1d02aae9498f5dd544466a53aba5380023f26e27071d9639e7a66"
     },
     {
       "path": "apps/web/src/components/Marketing.tsx",
-      "sha256": "99eb7231e7f23a05e9271744e327c99c33f4eea4179746afcf7e0b54098d7544"
+      "sha256": "5ce67570ee06d076c4118ae51c3695158f1dd70dabe4cf8b36372b3ece2c9145"
     },
     {
       "path": "apps/web/src/components/ResponsiveNav.tsx",
       "sha256": "05b42801252742d8a73d07a39625aa4c81e4f733d2b1a405a599ebd601618392"
     },
     {
+      "path": "apps/web/src/components/ScrollTable.tsx",
+      "sha256": "558a40e8953f50c8d9c1087cc199c199eb51c3c5fa29395ad6bc9f26be807359"
+    },
+    {
       "path": "apps/web/src/components/Site.tsx",
-      "sha256": "4ee658b4c33ab004be999a7969cc624a3d5894efa2329b09515e09db09b84569"
+      "sha256": "29d92a352e5f1cd5cf8bb080e9b8d06d58f0f5b811500c064f614ba1492fcdce"
     },
     {
       "path": "apps/web/src/components/Status.tsx",
@@ -913,7 +961,7 @@
     },
     {
       "path": "apps/web/src/components/Suppressions.tsx",
-      "sha256": "43ecf487f73e2b2f53f77434e39e44cb92f3fe699305364502889259ee772f8b"
+      "sha256": "b3b42d6cd118c2e5d42c0e1d8ccd0fda3b2885fe79be515451fbb937087dcdae"
     },
     {
       "path": "apps/web/src/content/legal/acceptable-use.json",
@@ -1000,6 +1048,10 @@
       "sha256": "5515f4ce38f8142575222f9821eef623402014d2123d8ccec19178ae4f58e214"
     },
     {
+      "path": "apps/web/src/lib/agent-setup.ts",
+      "sha256": "586027c29d31b84e9b082183fc819cd89f369c67070076f1897051eb9906d690"
+    },
+    {
       "path": "apps/web/src/lib/api.test.ts",
       "sha256": "1f7444377c1eb3c58876bb8c0e4079206d462f20c947fa1192b64a378068cd4e"
     },
@@ -1033,7 +1085,7 @@
     },
     {
       "path": "apps/web/src/lib/i18n.ts",
-      "sha256": "edcdd942b21363a33747d629cb275c935b6bb62027a57c83de851e9e9bf735cc"
+      "sha256": "1db165e83e14ec5fa072a1cd7652d9196c9e9c3966b98b7cbcd882974f88e7ea"
     },
     {
       "path": "apps/web/src/lib/navigation.test.ts",
@@ -1045,11 +1097,11 @@
     },
     {
       "path": "apps/web/src/lib/proxy-security.test.ts",
-      "sha256": "9c69b47d48e6a293e6494159865d7cacb686e7687a9a4773e6b5b84c4b4c6ac0"
+      "sha256": "c002764bbeba741bb646ae897d8d0a0f2bc0a72e9de4253207e15f7e8f795f59"
     },
     {
       "path": "apps/web/src/lib/proxy-security.ts",
-      "sha256": "a54bcb0ddec52449c6d68b3577480dd1e9ef947a602a8ba0c739d0cb4e38564c"
+      "sha256": "56594ad389d0324bf3673ede39d0938d561152cd8cf210811164b55e02546a44"
     },
     {
       "path": "apps/web/src/lib/public-site.ts",
@@ -1061,7 +1113,11 @@
     },
     {
       "path": "apps/web/src/proxy.ts",
-      "sha256": "eed40191ffe61faca9600b1bdec6d8cdcfc702198cfef815cd8ba7da14b08169"
+      "sha256": "515258cc99b5e4b9fb53f25f292082de3d3c21bd9d1976ab63722b54ae9bdd15"
+    },
+    {
+      "path": "apps/web/tests/browser/release.spec.ts",
+      "sha256": "63325deec5f07e604682c3dde0e7e7c9f17f84ce5e3921ea19d5a7ed8a99b4b9"
     },
     {
       "path": "apps/web/tsconfig.json",
@@ -1325,7 +1381,7 @@
     },
     {
       "path": "docs/runbooks/account-security.md",
-      "sha256": "340585deca3249d1e4fca501d69e5d1ff0c93871046ef49c63ccf1958ce70c54"
+      "sha256": "8800adc0bb124794cda8e518821281c5554dc247b048458f23a13f904d8a54b2"
     },
     {
       "path": "docs/runbooks/billing.md",
@@ -1337,11 +1393,15 @@
     },
     {
       "path": "docs/runbooks/deploy.md",
-      "sha256": "3031fadfc4480ffb78ded5e7515e841603c30f104cdfea7ee587150a041cebb2"
+      "sha256": "66da04aec260d5cde354b72b1c3da56bc23ad3deee4e6252abe1b302b7ec89a4"
     },
     {
       "path": "docs/runbooks/dlq-replay.md",
       "sha256": "64f0d584fb56ccc5b1723911b4bb978deba17a829d9584464add9de5ac7272b8"
+    },
+    {
+      "path": "docs/runbooks/hosted-owner.md",
+      "sha256": "a9da38538bf8cf40d17b74019b420ab089356188586240303bb594d184db304b"
     },
     {
       "path": "docs/runbooks/incident.md",
@@ -1357,7 +1417,7 @@
     },
     {
       "path": "docs/self-hosting.md",
-      "sha256": "51638c5c9579608269ab7caa3116917c261d9c8bc2497d8fad6d3e279400e169"
+      "sha256": "25cc69af63f15561b05314200f7a90e8103831134de9f68a18f5b0d131226000"
     },
     {
       "path": "docs/status.md",
@@ -1441,7 +1501,7 @@
     },
     {
       "path": "pnpm-lock.yaml",
-      "sha256": "68712f5c66a591a20f98cdc08448c2a7b99ab285513ff54e0c6e140533828004"
+      "sha256": "99fe796b02f362a498cbe8b7fd401010e44e3ff0fb022aefb3a14a55fe11de10"
     },
     {
       "path": "pnpm-workspace.yaml",
@@ -1456,6 +1516,10 @@
       "sha256": "8f77b2e767be9a058028bf8628ae8a359c409d40d46ad1338340f464f0f36a4f"
     },
     {
+      "path": "scripts/owner-factor.py",
+      "sha256": "a7f2b79263c5faf21fa1006cb33269a91aa3ca789bbc05fe768f142864bc494b"
+    },
+    {
       "path": "scripts/sync-legal.py",
       "sha256": "211f236cf05741763e9edc1c0796404d21c294d7d99bad206bb8ffb2b669b9e8"
     },
@@ -1464,8 +1528,12 @@
       "sha256": "005f65152c6949aff55e06dd5bd9762768e313b6ac08e62f7b3385dd98d4800a"
     },
     {
+      "path": "scripts/test_owner_factor.py",
+      "sha256": "ee958bfe522d48d93ef05ebd91abff6f168a2f04238fb99c3a38b24b0d732e23"
+    },
+    {
       "path": "third_party/dependencies.json",
-      "sha256": "8cfb0e18eaeb8004b1a12fcb9b7d37c8e6b273d2ca6af5be8f6f6ad5cde44692"
+      "sha256": "6bc1a1a71c0ddfaf06db80814450f3dcf8b2eb11ff147a59ca55cf3d49b5ef0a"
     },
     {
       "path": "third_party/licenses/00d402c2bbe7c67369bd01ce2c16b8ed46ccc949a1ee2d6bb8f9606afa8c7434.txt",
@@ -1544,6 +1612,10 @@
       "sha256": "166ffde0aa2773f509ba6edb3d0716602e076eb1cb1b21ae50b8262641af13b3"
     },
     {
+      "path": "third_party/licenses/176b07a18c0bb3836aaeb61088fd0bf11a38f66e6f15e3fbda85faa225250d6e.txt",
+      "sha256": "176b07a18c0bb3836aaeb61088fd0bf11a38f66e6f15e3fbda85faa225250d6e"
+    },
+    {
       "path": "third_party/licenses/1a3aeb1f1398bd697d57c3c585faadf59d825aca6e3162cd7eeb72ff76eb2466.txt",
       "sha256": "1a3aeb1f1398bd697d57c3c585faadf59d825aca6e3162cd7eeb72ff76eb2466"
     },
@@ -1562,6 +1634,10 @@
     {
       "path": "third_party/licenses/1fa6ee8bb95a81ae3d73a5bd074a3ac380ffec13697051063ca1a601921b91db.txt",
       "sha256": "1fa6ee8bb95a81ae3d73a5bd074a3ac380ffec13697051063ca1a601921b91db"
+    },
+    {
+      "path": "third_party/licenses/2034cce3b6fafcddd642c4175e01d3ddfc332a53b9f20fdc46b1466dc89ac469.txt",
+      "sha256": "2034cce3b6fafcddd642c4175e01d3ddfc332a53b9f20fdc46b1466dc89ac469"
     },
     {
       "path": "third_party/licenses/206c1adcf206dc0031b11232f5b054ec5f1662407ab1ca415247921cab2068ab.txt",
@@ -1640,6 +1716,10 @@
       "sha256": "2d50e98a4900b4d6457a38d39c1432fdc156fc2f7b365f2e33ec9344acbb0057"
     },
     {
+      "path": "third_party/licenses/2dc0465729366c3a7890dfa9e972a1ba7048a26c02116fb8b419a6a1ac110149.txt",
+      "sha256": "2dc0465729366c3a7890dfa9e972a1ba7048a26c02116fb8b419a6a1ac110149"
+    },
+    {
       "path": "third_party/licenses/2e97627cb278aa7556fb9e8817368302301a595b6c7582512b8d74c57b773652.txt",
       "sha256": "2e97627cb278aa7556fb9e8817368302301a595b6c7582512b8d74c57b773652"
     },
@@ -1652,8 +1732,16 @@
       "sha256": "2eef776efe4bae7fcd2d8162ecadf2b0873aae20afac343a936ddb0de3d79253"
     },
     {
+      "path": "third_party/licenses/2f1a503bfab84b3ba7393627308b3274501e459e3b5185bbb56bbf16cb1602d4.txt",
+      "sha256": "2f1a503bfab84b3ba7393627308b3274501e459e3b5185bbb56bbf16cb1602d4"
+    },
+    {
       "path": "third_party/licenses/35bdd8a44339719441900fb50fbefc5e2dca1ca662cbaed7a687de842c8b70f2.txt",
       "sha256": "35bdd8a44339719441900fb50fbefc5e2dca1ca662cbaed7a687de842c8b70f2"
+    },
+    {
+      "path": "third_party/licenses/365496ca1f56da40b23c9815fc40fa9005847b2f8f8fd1c1a4929ef25ec8cd1d.txt",
+      "sha256": "365496ca1f56da40b23c9815fc40fa9005847b2f8f8fd1c1a4929ef25ec8cd1d"
     },
     {
       "path": "third_party/licenses/36571397680e083211d7968a24f46e31cb75df18d4c03fe48896ee1367119fe8.txt",
@@ -1694,6 +1782,10 @@
     {
       "path": "third_party/licenses/435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b.txt",
       "sha256": "435a6722c786b0a56fbe7387028f1d9d3f3a2d0fb615bb8fee118727c3f59b7b"
+    },
+    {
+      "path": "third_party/licenses/45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb.txt",
+      "sha256": "45873d00a0dd243596deb4aa23b2493b3d1f0671921bf2538ea431d7380220eb"
     },
     {
       "path": "third_party/licenses/465e8da349d50d8512e4a0e9b26d2bee50392c394f17edaa3be6e0df7c2b27ad.txt",
@@ -1812,6 +1904,10 @@
       "sha256": "68f12f6e2c33688699249c01d8f9623c534da20aa71989c57b061b7bc1676d14"
     },
     {
+      "path": "third_party/licenses/693866fc419c6f61c8570438ec00659d156ec2b4d4a4d04091711f5f11a365d4.txt",
+      "sha256": "693866fc419c6f61c8570438ec00659d156ec2b4d4a4d04091711f5f11a365d4"
+    },
+    {
       "path": "third_party/licenses/69dee148a2cc470554dfa7142e830662062394d0fe67cddd379aba90dc60d6b3.txt",
       "sha256": "69dee148a2cc470554dfa7142e830662062394d0fe67cddd379aba90dc60d6b3"
     },
@@ -1838,6 +1934,10 @@
     {
       "path": "third_party/licenses/6d0917530cf3b3dca12c1ab7798e4d38ad0a6798ecc1bd27849a3048ba91d265.txt",
       "sha256": "6d0917530cf3b3dca12c1ab7798e4d38ad0a6798ecc1bd27849a3048ba91d265"
+    },
+    {
+      "path": "third_party/licenses/6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d.txt",
+      "sha256": "6d602191187b35b9b01d2cffa01c8469c2c8d9de8a96f1bf868e0f264f51c81d"
     },
     {
       "path": "third_party/licenses/6fb9754611c20f6649f68805e8c990e83261f29316e29de9e6cedae607b8634c.txt",
@@ -1892,6 +1992,10 @@
       "sha256": "831ad54932cb62a1fe0827ae7218a213875f1ddbd629c6432860928ba1c5234d"
     },
     {
+      "path": "third_party/licenses/852bf81203aa93aa89afc9f881ebb035322dc7334aaceff435c557634c94a815.txt",
+      "sha256": "852bf81203aa93aa89afc9f881ebb035322dc7334aaceff435c557634c94a815"
+    },
+    {
       "path": "third_party/licenses/8548bfb2bc1913396df38c548a6ec60b8dbcac3b0800485a40569c8bdd184471.txt",
       "sha256": "8548bfb2bc1913396df38c548a6ec60b8dbcac3b0800485a40569c8bdd184471"
     },
@@ -1922,6 +2026,14 @@
     {
       "path": "third_party/licenses/8c535800331e1e4439835555b3f9edc7fe9dee2fab0d8bbbd5a982e8b8343d4d.txt",
       "sha256": "8c535800331e1e4439835555b3f9edc7fe9dee2fab0d8bbbd5a982e8b8343d4d"
+    },
+    {
+      "path": "third_party/licenses/8df47c6ad9ac2c41eb9b2a72def9908959da0ede8dadd56c7b249c1bdb0c5ce6.txt",
+      "sha256": "8df47c6ad9ac2c41eb9b2a72def9908959da0ede8dadd56c7b249c1bdb0c5ce6"
+    },
+    {
+      "path": "third_party/licenses/902dbb4154679fb2b8d7c33878183f45b268d01eae5e5033dddaa8852d45f213.txt",
+      "sha256": "902dbb4154679fb2b8d7c33878183f45b268d01eae5e5033dddaa8852d45f213"
     },
     {
       "path": "third_party/licenses/911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad.txt",
@@ -2012,6 +2124,10 @@
       "sha256": "a833d366242c298cf1b10263516572fb8dcbe68eb5072cdcac2b4546e2b4eb36"
     },
     {
+      "path": "third_party/licenses/a92e52eb1fa7cd746e3827bf01d3a3589bbc8e1e51348b1da042aad165525ad1.txt",
+      "sha256": "a92e52eb1fa7cd746e3827bf01d3a3589bbc8e1e51348b1da042aad165525ad1"
+    },
+    {
       "path": "third_party/licenses/a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f.txt",
       "sha256": "a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f"
     },
@@ -2092,6 +2208,10 @@
       "sha256": "bfdefb3f2e265c9380c8b0e99ac6675b903e7e36f39b238be56283c00c1453fa"
     },
     {
+      "path": "third_party/licenses/c064f7a3e353bc1bc977f3c897941c75ef763f44f41677e0a15370ca0853d6e2.txt",
+      "sha256": "c064f7a3e353bc1bc977f3c897941c75ef763f44f41677e0a15370ca0853d6e2"
+    },
+    {
       "path": "third_party/licenses/c16d06f1808d8d8c6ec0f6b6fb7e951126c46730fbb67320863a81f8aa8ca033.txt",
       "sha256": "c16d06f1808d8d8c6ec0f6b6fb7e951126c46730fbb67320863a81f8aa8ca033"
     },
@@ -2102,6 +2222,10 @@
     {
       "path": "third_party/licenses/c3367f6d01a79d368fc4fbb41b3615fcd92f243d6597ab96742f6f976f9325af.txt",
       "sha256": "c3367f6d01a79d368fc4fbb41b3615fcd92f243d6597ab96742f6f976f9325af"
+    },
+    {
+      "path": "third_party/licenses/c46324e45a005413535a6fb7a97e9eacd3cc6bf30335b7d5c10b8ee3af9e60c2.txt",
+      "sha256": "c46324e45a005413535a6fb7a97e9eacd3cc6bf30335b7d5c10b8ee3af9e60c2"
     },
     {
       "path": "third_party/licenses/c61652db3d2808f667b48af0a358f0d85fd07ad4a0d0b1a50882dec3b764c522.txt",

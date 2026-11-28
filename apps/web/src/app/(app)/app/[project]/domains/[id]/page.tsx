@@ -1,4 +1,5 @@
 "use client";
+import { ScrollTable } from "@/components/ScrollTable";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useProjectId } from "@/components/AppShell";
@@ -46,7 +47,7 @@ export default function DomainPage() {
       </div>
       <h2 style={{ marginTop: 24 }}>Records to publish</h2>
       <p className="small muted">First publish the ownership TXT record and choose Check now. New claims expire after 72 hours. After your project has live-sending approval, another check generates the DKIM and MAIL FROM records. Publish those and check again. Keep the ownership record in DNS.</p>
-      <table className="table">
+      <ScrollTable>
         <thead><tr><th>Type</th><th>Name (host)</th><th>Value</th><th>Status</th></tr></thead>
         <tbody>
           {data.records.map((r) => (
@@ -61,7 +62,7 @@ export default function DomainPage() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </ScrollTable>
       <h2 style={{ marginTop: 24 }}>What we found in your DNS</h2>
       <div className="stack">
         {a.findings.map((f) => (

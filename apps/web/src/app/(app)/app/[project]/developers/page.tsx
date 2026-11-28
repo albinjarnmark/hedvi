@@ -1,4 +1,6 @@
 "use client";
+import { AgentSetup } from "@/components/AgentSetup";
+import { ScrollTable } from "@/components/ScrollTable";
 import { useState } from "react";
 import { useMe, useProjectId } from "@/components/AppShell";
 import { CodeTabs } from "@/components/CodeTabs";
@@ -26,7 +28,7 @@ function Deliveries({ pid, hook }: { pid: string; hook: Hook }) {
   const { data, reload } = useLoad<{ data: Delivery[] }>(`/projects/${pid}/webhooks/${hook.id}/deliveries`, 5000);
   const { run } = useAction();
   return (
-    <table className="table">
+    <ScrollTable>
       <thead><tr><th>Event</th><th>State</th><th>Last response</th><th></th></tr></thead>
       <tbody>
         {(data?.data ?? []).map((d) => (
@@ -38,7 +40,7 @@ function Deliveries({ pid, hook }: { pid: string; hook: Hook }) {
           </tr>
         ))}
       </tbody>
-    </table>
+    </ScrollTable>
   );
 }
 
@@ -56,7 +58,8 @@ export default function DevelopersPage() {
       <div className="page-head"><div><h1>Developers</h1><p className="muted small">API keys are scoped to this project and stored hashed.</p></div></div>
       {secret && <Secret value={secret} onClose={() => setSecret(null)} />}
       {error && <p className="error" role="alert">{error}</p>}
-      <section className="card stack">
+      <AgentSetup />
+      <section className="card stack" style={{ marginTop: 20 }}>
         <h2>API keys</h2>
         <form className="row" onSubmit={(e) => {
           e.preventDefault();
@@ -74,7 +77,7 @@ export default function DevelopersPage() {
           <div><label htmlFor="kdom">Domain</label><select id="kdom" name="domain"><option value="">Any verified</option>{(domains.data?.data ?? []).map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}</select></div>
           <button className="btn btn-primary" disabled={pending} style={{ alignSelf: "flex-end" }}>Create key</button>
         </form>
-        <table className="table">
+        <ScrollTable>
           <thead><tr><th>Name</th><th>Key</th><th>Mode</th><th>Last used</th><th></th></tr></thead>
           <tbody>
             {(keys.data?.data ?? []).map((k) => (
@@ -91,7 +94,7 @@ export default function DevelopersPage() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </ScrollTable>
       </section>
       <section className="card stack" style={{ marginTop: 20 }}>
         <h2>Send with your SDK</h2>

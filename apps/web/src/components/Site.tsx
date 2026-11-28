@@ -51,11 +51,3 @@ export function SiteFooter({ t }: { t: Dict }) {
     </footer>
   );
 }
-
-export function BuildStatus({ text }: { text: string }) {
-  return (
-    <div className="container" style={{ paddingTop: 16 }}>
-      <span className="badge badge-beta">Beta</span> <span className="small muted">{text}</span>
-    </div>
-  );
-}

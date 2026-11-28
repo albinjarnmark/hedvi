@@ -1,0 +1,12 @@
+// Public instructions only. Never interpolate a user's key, session or email.
+export const agentSetupPrompt = `Help me get started with Hedvi for transactional email in this existing project.
+
+1. Inspect the project's stack, existing email flows and environment configuration. Read https://hedvi.dev/docs/quickstart, https://hedvi.dev/docs/compatibility and https://hedvi.dev/docs/account-and-security. Use the documented Hedvi API at https://api.hedvi.dev; do not assume every Resend endpoint is supported.
+2. Help me get a Hedvi account at https://app.hedvi.dev/signup. Let me personally complete email verification, password setup, legal consent and any authenticator steps. If I already have an account, use its intended project. Free supports three domains per organization; a sending domain is not needed for test mode.
+3. Guide me to a test API key in Developers. Put HEDVI_API_KEY in the project's server-side secret store using a secure entry method. Never ask me to paste secrets into chat, print them, commit them, expose them to the browser or place them in URLs. Add placeholder names only to .env.example.
+4. Implement a small server-side email integration appropriate to this codebase. Use https://api.hedvi.dev/emails with Bearer authentication, or a documented compatible SDK configured with that base URL. Keep any existing provider intact until I approve switching. Do not dual-send. Use stable, unique idempotency keys for retries of the same email and handle validation errors, rate limits and uncertain outcomes safely.
+5. Send one harmless message with the test key and verify its ID and content in Hedvi's Test inbox. Test messages stay inside Hedvi and are not external deliveries. Add focused tests and clear setup instructions.
+6. When I choose to go live, guide me through adding an owned domain, publishing exactly the DNS records Hedvi supplies, requesting live-sending approval in Settings, and completing DKIM / MAIL FROM verification. Preserve unrelated DNS records. Create a separate, sending-only live key scoped to the verified domain. Ask before changing production secrets or sending any real email.
+7. If this project needs delivery webhooks, verify Standard Webhooks signatures against the untouched request body and deduplicate webhook-id before processing. Explain quota limits and what happens when sending stops.
+
+Finish by reporting what you changed, what you actually tested and any step that still requires me. Do not claim live delivery or production readiness based only on a successful test-inbox request.`;

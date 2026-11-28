@@ -1,3 +1,5 @@
+import { AgentSetup } from "@/components/AgentSetup";
+import { ScrollTable } from "@/components/ScrollTable";
 import { appLink } from "@/lib/navigation";
 import Link from "next/link";
 import { CodeBlock } from "@/components/CopyButton";
@@ -35,6 +37,7 @@ export async function POST(req: Request) {
 }`;
 
 export const docs: Doc[] = [
+  { slug: "agent-setup", title: "Set up with your agent", body: <><p>Use your coding agent to get started with Hedvi in an existing application. Copy the prompt below into its chat and let it inspect your project.</p><AgentSetup /><h2>What you do yourself</h2><p>Complete account verification, choose your password and review the service terms. Enter API keys directly into your secret manager. Your agent can prepare the integration while you finish these steps.</p><h2>Start in the test inbox</h2><p>A test key lets you validate the integration before adding a domain or changing your existing email provider. Go live only after domain verification and sender approval.</p></> },
   {
     slug: "quickstart",
     title: "Quickstart",
@@ -48,6 +51,7 @@ export const docs: Doc[] = [
         </ol>
         <CodeTabs snippets={sendSnippets(API, "hv_test_…", "Acme <onboarding@example.com>", "you@example.com")} />
         <p style={{ marginTop: 16 }}>The response is <code>{`{"id": "…"}`}</code>. The email appears in <strong>Test inbox</strong> with HTML preview, text, headers and attachments. It is a <em>test email</em>: nothing was delivered to an external mailbox.</p>
+        <p>Prefer help from your coding agent? <Link href="/docs/agent-setup">Copy the setup prompt</Link>.</p>
         <h2>Go live</h2>
         <ol>
           <li>Add your domain under <strong>Domains</strong>, publish the ownership TXT record, and choose <strong>Check now</strong>.</li>
@@ -64,7 +68,7 @@ export const docs: Doc[] = [
       <>
         <p><code>POST /emails</code> accepts a documented subset of Resend&apos;s request. Hedvi answers <code>200</code> only after the email, its recipients, its quota reservation and its send job are durably stored.</p>
     <DocFigure name="api-request" alt="Use a project key, submit the email and track its ID." caption="Inspect the recorded result after submitting a message." />
-        <table className="table">
+        <ScrollTable>
           <thead><tr><th>Field</th><th>Notes</th></tr></thead>
           <tbody>
             <tr><td><code>from</code></td><td><code>email@domain</code> or <code>Name &lt;email@domain&gt;</code>. Live keys require a verified domain in the key&apos;s project. Display names are limited to 128 UTF-8 bytes; quoted local-parts are unsupported.</td></tr>
@@ -76,7 +80,7 @@ export const docs: Doc[] = [
             <tr><td><code>tags</code></td><td>Up to 10 <code>{`{name, value}`}</code> pairs, ASCII letters, digits, <code>_</code> and <code>-</code>.</td></tr>
             <tr><td><code>attachments</code></td><td>Up to 10, as base64 <code>content</code> with <code>filename</code>, optional <code>content_type</code> and <code>content_id</code> for inline images. <code>path</code> (remote URL) is not supported. Executable types are refused.</td></tr>
           </tbody>
-        </table>
+        </ScrollTable>
         <p>The total of HTML, text and decoded attachments is limited to 10 MB. Unknown fields return <code>422</code> instead of being silently ignored.</p>
         <h2>Recipients and quota</h2>
         <p>Quota is counted per unique delivery recipient. If the same address appears in several fields it counts once, with priority To → Cc → Bcc. Suppressed addresses are accepted for visibility but neither sent nor charged.</p>
@@ -124,7 +128,7 @@ export const docs: Doc[] = [
       <>
         <p>Status is tracked per recipient. One email can be delivered to one address and bounce for another.</p>
     <DocFigure name="email-lifecycle" alt="Follow a recorded email from queue to provider and recipient mail server." caption="The email log distinguishes a queued send from provider and recipient-server acceptance." />
-        <table className="table">
+        <ScrollTable>
           <thead><tr><th>Status</th><th>Meaning</th></tr></thead>
           <tbody>
             <tr><td><code>queued</code></td><td>Durably accepted by Hedvi, waiting to be handed to the sending provider.</td></tr>
@@ -138,7 +142,7 @@ export const docs: Doc[] = [
             <tr><td><code>delivery_unknown</code></td><td>The provider&apos;s answer was ambiguous (for example a timeout after the request was sent). Hedvi does <strong>not</strong> retry automatically, because that could create a duplicate. It reconciles from provider events and alerts the operator.</td></tr>
             <tr><td><code>test_captured</code></td><td>Hedvi extension: a test email captured in the test inbox.</td></tr>
           </tbody>
-        </table>
+        </ScrollTable>
         <p>Late or duplicate events never overwrite a more significant status: a delayed <code>delivered</code> event cannot replace a known bounce.</p>
         <h3>Resending</h3>
         <p>Resending an email creates a new email, uses quota again and can produce a duplicate for the recipient. Resending a webhook re-delivers the same event with the same id.</p>
@@ -188,7 +192,7 @@ export const docs: Doc[] = [
       <>
         <p>Errors use Resend&apos;s shape: <code>{`{"statusCode": 422, "name": "validation_error", "message": "…"}`}</code>.</p>
     <DocFigure name="retry-request" alt="Inspect the error and reuse the original idempotency key for a safe retry." caption="Correct invalid requests and preserve the key for an uncertain accepted send." />
-        <table className="table">
+        <ScrollTable>
           <thead><tr><th>Status</th><th>Name</th><th>When</th></tr></thead>
           <tbody>
             <tr><td>401</td><td><code>missing_api_key</code></td><td>No <code>Authorization: Bearer</code> header.</td></tr>
@@ -200,7 +204,7 @@ export const docs: Doc[] = [
             <tr><td>429</td><td><code>rate_limit_exceeded</code></td><td>Too many requests (10/s shared by organization keys), a warm-up limit or an operational resource limit.</td></tr>
             <tr><td>429</td><td><code>daily_quota_exceeded</code> · <code>monthly_quota_exceeded</code></td><td>Daily limit or quota reached. Hard stop: nothing was sent or charged.</td></tr>
           </tbody>
-        </table>
+        </ScrollTable>
         <p>New live projects start at 25 recipients per hour and 100 per day. Limits are raised after review, not automatically.</p>
         <p>Operational hourly/daily limits count all unique requested recipients, including suppressed addresses. Suppressed recipients do not consume paid sending credits. A separate 1 GiB retained live-payload budget per project protects storage; it is released when content is deleted and is separate from plan attachment allowances.</p>
       </>
@@ -213,7 +217,7 @@ export const docs: Doc[] = [
       <>
         <p>Tested against <strong>resend-node 6.39.0</strong> and <strong>resend-python 2.54.0</strong>. Other SDKs and versions are not promised until tested.</p>
     <DocFigure name="api-request" alt="Set the Hedvi API base URL and project key, then inspect the response." caption="Use a test project to verify the features your integration needs." />
-        <table className="table">
+        <ScrollTable>
           <thead><tr><th>Endpoint / feature</th><th>Status</th></tr></thead>
           <tbody>
             <tr><td><code>POST /emails</code></td><td>Supported (fields above). <code>scheduled_at</code>, <code>template</code>, <code>topic_id</code> and attachment <code>path</code> return 422.</td></tr>
@@ -223,7 +227,7 @@ export const docs: Doc[] = [
             <tr><td>Webhook signatures</td><td>Compatible with <code>resend.webhooks.verify</code>.</td></tr>
             <tr><td>Batch, scheduling, cancel, API key API, audiences, contacts, broadcasts, templates, receiving, open/click tracking</td><td>Not supported yet — these return an explicit 404 or 422.</td></tr>
           </tbody>
-        </table>
+        </ScrollTable>
         <p>Hedvi extensions live under <code>/hedvi/v1</code>: <code>GET /hedvi/v1/emails/{"{id}"}</code> (recipients, events, attempts) and <code>GET /hedvi/v1/usage</code>.</p>
       </>
     ),
@@ -263,7 +267,7 @@ RESEND_API_KEY=hv_live_…`} />
       <>
     <DocFigure name="content-retention" alt="Content is retained for processing and expires according to its configured schedule." caption="Expiry removes email preview and resend access." />
         <p className="notice notice-warn">Read the <Link href="/legal/privacy">Privacy Notice</Link>, <Link href="/legal/dpa">DPA</Link> and <Link href="/legal/subprocessors">service provider list</Link> for the published service documents.</p>
-        <table className="table">
+        <ScrollTable>
           <thead><tr><th>Data</th><th>Default retention</th></tr></thead>
           <tbody>
             <tr><td>Email content (email-record subject, HTML, text, attachments)</td><td>7 days (shorter on request; 0 = deleted after processing). S3 payloads are encrypted. Subject copies in webhook events follow the separate metadata retention.</td></tr>
@@ -272,7 +276,7 @@ RESEND_API_KEY=hv_live_…`} />
             <tr><td>Idempotency records</td><td>24 hours.</td></tr>
             <tr><td>Webhook responses</td><td>First 1 KB, kept with metadata.</td></tr>
           </tbody>
-        </table>
+        </ScrollTable>
         <p>Content is kept while an email is queued or retrying, then deleted when it expires. Webhook events also contain the subject, sender and recipient addresses; these event copies remain for the organization’s metadata retention (14, 30 or 90 days), even when email-content retention is 0. Your webhook receiver has its own retention policy. After email-content deletion, resend and content search are impossible.</p>
         <p>Email payload storage and SES processing use AWS Stockholm (eu-north-1). The application, database and its backups use Railway in Amsterdam. Recipient mail servers operate where their providers host them. Provider administration and support may involve processing outside these regions; see the subprocessor list.</p>
       </>

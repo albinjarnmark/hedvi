@@ -1,4 +1,5 @@
 "use client";
+import { ScrollTable } from "@/components/ScrollTable";
 import { useState } from "react";
 import { api, formatDate } from "@/lib/api";
 import { useAction, useLoad } from "@/lib/hooks";
@@ -30,7 +31,7 @@ export function Suppressions({ pid, role }: { pid: string; role: string }) {
     {(error || loadError) && <p className="error" role="alert">{error || loadError?.message}</p>}
     {data && <>
       <p className="tiny muted">Showing up to 200 active suppressions. Narrow the search to find a specific address.</p>
-      {data.data.length ? <table className="table"><thead><tr><th>Recipient</th><th>Reason</th><th>Expires</th><th>Action</th></tr></thead><tbody>
+      {data.data.length ? <ScrollTable><thead><tr><th>Recipient</th><th>Reason</th><th>Expires</th><th>Action</th></tr></thead><tbody>
         {data.data.map((s) => <tr key={s.id}>
           <td className="break">{s.email}</td><td>{s.reason}{s.note && <div className="tiny muted">{s.note}</div>}</td><td className="small">{s.expires_at ? formatDate(s.expires_at) : "No expiry"}</td>
           <td>{s.reason === "complaint" ? <a className="small" href={`mailto:${supportEmail}`}>Contact support</a> : canRemove ? <button className="btn btn-small" disabled={pending} onClick={() => {
@@ -39,7 +40,7 @@ export function Suppressions({ pid, role }: { pid: string; role: string }) {
             void run(async () => { await api(`/projects/${pid}/suppressions/${s.id}`, { method: "DELETE", body: { note: note.trim().slice(0, 300) } }); await reload(); });
           }}>Remove block</button> : <span className="tiny muted">Admin required</span>}</td>
         </tr>)}
-      </tbody></table> : <p className="small">No active suppressions match this search.</p>}
+      </tbody></ScrollTable> : <p className="small">No active suppressions match this search.</p>}
     </>}
   </section>;
 }

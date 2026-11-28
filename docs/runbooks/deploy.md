@@ -111,10 +111,9 @@ schema migration and controls service counts.
    Send controlled test messages to SES mailbox simulator addresses and verify
    the resulting delivery, bounce, complaint, suppression, idempotency replay
    and webhook behavior before reopening writes.
-6. For staff grants, verify the person's identity and exact account UUID through
-   an independent channel and require an enrolled MFA factor. Run the operator
-   command `admin make-staff -user <uuid> -email <address> -identity-verified -note "<verification evidence>"`.
-   The grant is audited and revokes prior sessions. Sign in again with MFA.
+6. Appoint the single installation owner after independent identity verification
+   and enrollment of both the ordinary and separate owner authenticators.
+   Follow the [private worker and owner bootstrap procedure](hosted-owner.md).
 
 Schema migrations run forward. Reusing a previous image requires checking its
 compatibility with the migrated schema. A restore needs a reviewed recovery

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BuildStatus, SiteFooter, SiteHeader } from "@/components/Site";
+import { SiteFooter, SiteHeader } from "@/components/Site";
 import { Pricing } from "@/components/Marketing";
 import { dict } from "@/lib/i18n";
 
@@ -10,7 +10,6 @@ export default function Page() {
   return (
     <>
       <SiteHeader t={t} />
-      <BuildStatus text={t.status} />
       <main id="main"><Pricing t={t} signup="/signup" /></main>
       <SiteFooter t={t} />
     </>

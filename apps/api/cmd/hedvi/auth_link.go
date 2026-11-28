@@ -1,26 +1,20 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"io"
-	"mime/quotedprintable"
-	"net/mail"
+	"hedvi.dev/api/internal/authmail"
 	"net/url"
 	"strings"
 )
 
 // Invoked only by the explicitly local-only admin auth-mail-link command.
 func printLocalAuthLink(raw []byte, appURL string) error {
-	m, err := mail.ReadMessage(bytes.NewReader(raw))
+	parts, err := authmail.ReadTextParts(raw)
 	if err != nil {
 		return err
 	}
-	body, err := io.ReadAll(quotedprintable.NewReader(m.Body))
-	if err != nil {
-		return err
-	}
+	body := parts["text/plain"]
 	origin, err := url.Parse(appURL)
 	if err != nil {
 		return err

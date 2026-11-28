@@ -191,30 +191,14 @@ func TestAPIStartupRejectsPrivilegedRolesAndMigrationAccess(t *testing.T) {
 	}
 }
 
-func TestStaffRoutesDisabledWhenDeployedAndNilAuditIPIsSafe(t *testing.T) {
+func TestDeployedPublicRoleNeverMountsOwnerRoutes(t *testing.T) {
 	e := testenv.New(t)
-	cookie, uid, _, pid := signupForSecurity(t, e)
-	e.Exec(`UPDATE users SET is_staff=true,totp_enabled_at=now() WHERE id=$1`, uid)
-	e.Exec(`UPDATE sessions SET mfa_verified_at=now() WHERE user_id=$1`, uid)
-	local := authConsole(e, &config.Config{Env: config.EnvTest, AWSMode: "mock"}, permissiveAuthLimiter{})
-	if status, _, _ := authCall(t, local, cookie, "/console/v1/admin/projects/"+uuid.NewString()+"/pause", map[string]any{"reason": "test"}); status != 404 {
-		t.Fatal("missing project", status)
-	}
-	r := httptest.NewRequest("POST", "/console/v1/admin/projects/"+pid.String()+"/pause", strings.NewReader(`{"reason":"test"}`))
-	r.RemoteAddr = "unparseable"
-	r.AddCookie(cookie)
-	r.Header.Set("X-Hedvi-Console", "1")
-	w := httptest.NewRecorder()
-	local.ServeHTTP(w, r)
-	if w.Code != 200 {
-		t.Fatal("nil audit IP", w.Code, w.Body.String())
-	}
-	if e.Count(`SELECT count(*) FROM audit_log WHERE action='project.paused' AND target_id=$1 AND ip IS NULL`, pid.String()) != 1 {
-		t.Fatal("nil IP audit missing")
-	}
+	cookie, _, _, _ := signupForSecurity(t, e)
 	deployed := authConsole(e, &config.Config{Env: config.EnvProduction, AWSMode: "aws"}, permissiveAuthLimiter{})
-	if status, _, _ := authCall(t, deployed, cookie, "/console/v1/admin/projects/"+pid.String()+"/pause", map[string]any{"reason": "test"}); status != 404 {
-		t.Fatal("deployed staff endpoint registered", status)
+	for _, path := range []string{"/console/v1/admin/unlock", "/console/v1/admin/memberships", "/console/v1/admin/projects/" + uuid.NewString() + "/decision"} {
+		if status, _, _ := authCall(t, deployed, cookie, path, map[string]any{}); status != 404 {
+			t.Fatalf("deployed public console registered %s: %d", path, status)
+		}
 	}
 }
 

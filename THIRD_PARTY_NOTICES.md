@@ -27,7 +27,7 @@ Infrastructure templates invoke independently licensed services and tools.
 Publishing Terraform configuration does not sublicense Terraform or AWS/Railway.
 No affiliation with or endorsement by Resend is implied.
 
-Inventory: 421 dependency records.
+Inventory: 457 dependency records.
 
 | Ecosystem | Package | Version(s) | Declared license / original notice |
 |---|---|---|---|
@@ -452,3 +452,37 @@ Inventory: 421 dependency records.
 | npm | `yocto-queue` | 0.1.0 | MIT |
 | npm | `zod` | 4.6.7 | MIT |
 | npm | `zod-validation-error` | 4.0.2 | MIT |
+| npm | `pngjs` | 5.0.0 | MIT |
+| npm | `get-caller-file` | 2.0.5 | ISC |
+| npm | `playwright-core` | 1.56.1 | Apache-2.0 |
+| npm | `find-up` | 4.1.0 | MIT |
+| npm | `locate-path` | 5.0.0 | MIT |
+| npm | `p-locate` | 4.1.0 | MIT |
+| npm | `p-limit` | 2.3.0 | MIT |
+| npm | `set-blocking` | 2.0.0 | ISC |
+| npm | `require-directory` | 2.1.1 | MIT |
+| npm | `p-try` | 2.2.0 | MIT |
+| npm | `strip-ansi` | 6.0.1 | MIT |
+| npm | `wrap-ansi` | 6.2.0 | MIT |
+| npm | `ansi-styles` | 4.3.0 | MIT |
+| npm | `string-width` | 4.2.3 | MIT |
+| npm | `fsevents` | 2.3.2 | MIT |
+| npm | `color-name` | 1.1.4 | MIT |
+| npm | `color-convert` | 2.0.1 | MIT |
+| npm | `yargs-parser` | 18.1.3 | ISC |
+| npm | `decamelize` | 1.2.0 | MIT |
+| npm | `camelcase` | 5.3.1 | MIT |
+| npm | `emoji-regex` | 8.0.0 | MIT |
+| npm | `require-main-filename` | 2.0.0 | ISC |
+| npm | `y18n` | 4.0.3 | ISC |
+| npm | `which-module` | 2.0.1 | ISC |
+| npm | `cliui` | 6.0.0 | ISC |
+| npm | `yargs` | 15.4.1 | MIT |
+| npm | `ansi-regex` | 5.0.1 | MIT |
+| npm | `dijkstrajs` | 1.0.3 | MIT |
+| npm | `qrcode` | 1.5.4 | MIT |
+| npm | `is-fullwidth-code-point` | 3.0.0 | MIT |
+| npm | `minimatch` | 10.2.6 | BlueOak-1.0.0 |
+| npm | `playwright` | 1.56.1 | Apache-2.0 |
+| npm | `@types/qrcode` | 1.5.5 | MIT |
+| npm | `@playwright/test` | 1.56.1 | Apache-2.0 |

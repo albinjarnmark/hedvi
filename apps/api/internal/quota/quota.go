@@ -55,8 +55,8 @@ func EnsurePeriod(ctx context.Context, tx pgx.Tx, org Org, now time.Time) (Perio
 func ensurePeriod(ctx context.Context, tx pgx.Tx, org Org, now time.Time, lock bool) (Period, error) {
 	var id uuid.UUID
 	err := tx.QueryRow(ctx, `SELECT COALESCE(
-        (SELECT id FROM usage_periods WHERE org_id=$1 AND stripe_invoice IS NOT NULL AND billing_usable
-          AND period_start<=$2 AND $2<period_end ORDER BY period_start DESC LIMIT 1),
+        (SELECT id FROM usage_periods WHERE org_id=$1 AND (stripe_invoice IS NOT NULL OR complimentary_grant IS NOT NULL) AND billing_usable
+          AND period_start<=$2 AND $2<period_end ORDER BY (stripe_invoice IS NOT NULL) DESC,period_start DESC LIMIT 1),
         hedvi_calendar_period($1,$2))`, org.ID, now).Scan(&id)
 	if err != nil {
 		return Period{}, err

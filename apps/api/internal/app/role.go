@@ -16,13 +16,17 @@ func CheckAPIRole(ctx context.Context, pool *pgxpool.Pool) error {
  AND pg_has_role(current_user,'hedvi_api','USAGE')
  AND NOT EXISTS(SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relkind IN ('r','p') AND pg_has_role(current_user,c.relowner,'MEMBER'))
  AND NOT EXISTS(SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' AND c.relname IN ('organizations','memberships','projects','domains','api_keys','emails','recipients','webhooks','webhook_events','webhook_deliveries','suppressions','audit_log','usage_periods','credit_lots','credit_ledger','quota_reservations','send_attempts','idempotency_records','send_counters','outbox','email_events','alerts','billing_customers','billing_orders','billing_invoices','billing_adjustments') AND NOT c.relrowsecurity)
+ AND NOT has_column_privilege(current_user,'public.users','is_staff','INSERT,UPDATE')
+ AND NOT EXISTS (SELECT 1 FROM unnest(ARRAY['public.instance_owner','public.owner_sessions','public.complimentary_memberships']) AS restricted(name)
+    WHERE has_table_privilege(current_user,name,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,TRIGGER')
+       OR has_any_column_privilege(current_user,name,'SELECT,INSERT,UPDATE,REFERENCES'))
  AND current_setting('row_security')='on'
  AND NOT has_table_privilege(current_user,'public.schema_migrations','INSERT,UPDATE,DELETE')`).Scan(&safe)
 	if err != nil {
 		return err
 	}
 	if !safe {
-		return errors.New("API database role must enforce tenant RLS and have no worker, owner, superuser or BYPASSRLS privileges")
+		return errors.New("API database role must enforce tenant RLS and have no owner-console privileges, worker membership, schema ownership, superuser or BYPASSRLS access")
 	}
 	return nil
 }

@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 import { describe, expect, it } from "vitest";
-import { dashboardPath, pagePolicy, proxyHeaders } from "./proxy-security";
+import { consoleUpstream, dashboardPath, pagePolicy, proxyHeaders, stripOwnerCookie } from "./proxy-security";
 
 describe("ingress boundary", () => {
   const key = Buffer.alloc(32, 7).toString("base64");
@@ -8,6 +8,19 @@ describe("ingress boundary", () => {
     for (const path of ["/login", "/signup", "/docs", "/legal/acceptable-use", "/console-api/me", "/app/project"]) expect(dashboardPath("app.example.com", path, "app.example.com")).toBe(path);
     expect(dashboardPath("app.example.com", "/", "app.example.com")).toBe("/app");
     expect(dashboardPath("app.attacker.example", "/", "app.example.com")).toBe("/");
+  });
+  it("keeps the owner credential on the dedicated upstream", () => {
+    const api = "http://api.internal:8780", worker = "http://worker.internal:8791";
+    expect(consoleUpstream("/console-api/admin/unlock", api, worker, true)).toEqual({base: worker, owner: true});
+    expect(consoleUpstream("/console-api/admin/summary", api, undefined, false).base).toBeUndefined();
+    expect(consoleUpstream("/console-api/admin/summary", "http://localhost:8780", undefined, true).base).toBeUndefined();
+    expect(consoleUpstream("/console-api/admin/summary", "http://localhost:8780", undefined, false).base).toBe("http://localhost:8780");
+    for (const path of ["/console-api/administer", "/console-api/me", "/console-api/auth/login"]) {
+      expect(consoleUpstream(path, api, worker, true)).toEqual({base: api, owner: false});
+    }
+    const headers = new Headers({cookie: "__Host-hedvi_session=ordinary; __Host-hedvi_owner=private; hedvi_owner=local"});
+    stripOwnerCookie(headers);
+    expect(headers.get("cookie")).toBe("__Host-hedvi_session=ordinary");
   });
   it("replaces spoofed attestations and signs the rewritten path", () => {
     const input = new Headers({ "x-real-ip": "192.0.2.1", "x-hedvi-client-ip": "198.51.100.1", "x-hedvi-proxy-time": "1", "x-hedvi-proxy-signature": "forged" });

@@ -102,7 +102,8 @@ pre.code { background: #050606; color: #e6e9e4; padding: 18px; border-radius: va
 .code-tabs [role="tab"]:hover { color: var(--text); }
 .code-tabs [role="tab"][aria-selected="true"] { color: var(--text); border-bottom-color: var(--lime); }
 .code-tabs pre.code { border: 0; border-radius: 0; }
-.copy-wrap { position: relative; } .copy-wrap .btn { position: absolute; top: 10px; right: 10px; opacity: .85; }
+.copy-wrap { min-width: 0; max-width: 100%; }
+.code-toolbar { display: flex; justify-content: flex-end; padding: 8px 12px; background: #050606; border-bottom: 1px solid var(--line); }
 
 /* Tables */
 table.table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
@@ -238,4 +239,25 @@ ul.checks li::before { content: "✓"; position: absolute; left: 0; color: var(-
 details summary { cursor: pointer; color: var(--text-2); }
 @media (max-width: 600px) {
   .checklist li { align-items: flex-start; }
+}
+
+/* Keep wide data inside its own scroller, including nested flex/grid cards. */
+.card, .stack, .row > *, .grid > *, .split > *, .docs article, .code-tabs, .table-scroll { min-width: 0; max-width: 100%; }
+.table-scroll { width: 100%; }
+.table-scroll > table { min-width: 480px; }
+.docs article .table td { overflow-wrap: anywhere; }
+pre.code { max-width: 100%; overscroll-behavior-x: contain; }
+.code-tabs [role="tablist"] { overflow-x: auto; }
+.main p, .notice, .sidebar p, .page-head h1 { overflow-wrap: anywhere; }
+input, select, textarea { min-width: 0; max-width: 100%; }
+input:autofill { -webkit-text-fill-color: var(--text); box-shadow: 0 0 0 1000px var(--surface-2) inset; caret-color: var(--text); }
+input:-webkit-autofill { -webkit-text-fill-color: var(--text); -webkit-box-shadow: 0 0 0 1000px var(--surface-2) inset; caret-color: var(--text); }
+.authenticator-qr { display: block; width: 208px; max-width: 100%; height: auto; border-radius: 12px; }
+.otp-input { max-width: 220px; font-family: var(--mono); letter-spacing: .35em; font-size: 1.35rem; }
+.agent-prompt { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 360px; }
+@media (max-width: 600px) {
+  .row > [style*="min-width"] { min-width: 0 !important; flex-basis: 100% !important; }
+  .btn { min-height: 44px; max-width: 100%; white-space: normal; text-align: center; }
+  .main { padding-left: 16px; padding-right: 16px; }
+  .table-scroll > table { min-width: 450px; }
 }

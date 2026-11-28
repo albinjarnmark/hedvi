@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"net/mail"
 	"sort"
 
 	"github.com/google/uuid"
@@ -45,8 +46,12 @@ func (s *SES) Send(ctx context.Context, in SendInput) (string, error) {
 	for _, k := range names {
 		tags = append(tags, sestypes.MessageTag{Name: aws.String(k), Value: aws.String(in.Tags[k])})
 	}
+	from := in.From
+	if in.Tags["hedvi_auth"] != "" {
+		from = (&mail.Address{Name: "Hedvi", Address: in.From}).String()
+	}
 	input := &sesv2.SendEmailInput{
-		FromEmailAddress:     aws.String(in.From),
+		FromEmailAddress:     aws.String(from),
 		Destination:          &sestypes.Destination{ToAddresses: in.Recipients},
 		Content:              &sestypes.EmailContent{Raw: &sestypes.RawMessage{Data: in.Raw}},
 		EmailTags:            tags,

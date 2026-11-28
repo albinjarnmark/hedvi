@@ -1,4 +1,5 @@
 "use client";
+import { ScrollTable } from "@/components/ScrollTable";
 import Link from "next/link";
 import { BillingSettings } from "@/components/BillingSettings";
 import { MFASettings } from "@/components/MFASettings";
@@ -114,9 +115,9 @@ export default function SettingsPage() {
       {audit.data && (
         <section className="card" style={{ marginTop: 20 }}>
           <h2>Audit log</h2>
-          <table className="table"><tbody>
+          <ScrollTable><tbody>
             {audit.data.data.slice(0, 50).map((a, i) => <tr key={i}><td className="small nowrap">{formatDate(a.created_at)}</td><td><code>{a.action}</code></td><td className="small">{a.actor || a.actor_kind}</td></tr>)}
-          </tbody></table>
+          </tbody></ScrollTable>
         </section>
       )}
     </>

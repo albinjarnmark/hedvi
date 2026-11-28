@@ -7,19 +7,43 @@ import (
 	"hedvi.dev/api/internal/apierr"
 	"hedvi.dev/api/internal/billing"
 	"net/http"
+	"time"
 )
 
 func (s *Server) billingStatus(w http.ResponseWriter, r *http.Request, a *access) {
-	if s.Billing == nil {
-		writeJSON(w, 200, billing.Status{Enabled: false})
-		return
+	var status billing.Status
+	var err error
+	if s.Billing != nil {
+		status, err = s.Billing.Status(r.Context(), a.OrgID, a.UserID)
+		if err != nil {
+			s.fail(w, r, err)
+			return
+		}
 	}
-	status, err := s.Billing.Status(r.Context(), a.OrgID, a.UserID)
+	type membership struct {
+		Plan string    `json:"plan"`
+		Ends time.Time `json:"ends_at"`
+	}
+	var active *membership
+	err = s.tx(r.Context(), a, func(tx pgx.Tx) error {
+		var g membership
+		err := tx.QueryRow(r.Context(), `SELECT plan,period_end FROM usage_periods WHERE org_id=$1 AND complimentary_grant IS NOT NULL AND billing_usable AND period_start<=now() AND period_end>now() ORDER BY period_start DESC LIMIT 1`, a.OrgID).Scan(&g.Plan, &g.Ends)
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil
+		}
+		if err == nil {
+			active = &g
+		}
+		return err
+	})
 	if err != nil {
 		s.fail(w, r, err)
 		return
 	}
-	writeJSON(w, 200, status)
+	writeJSON(w, 200, struct {
+		billing.Status
+		Complimentary *membership `json:"complimentary"`
+	}{status, active})
 }
 func (s *Server) billingOrder(w http.ResponseWriter, r *http.Request, a *access) {
 	id, err := pathUUID(r, "id")

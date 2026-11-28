@@ -61,7 +61,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             const current = n.href === "" ? pathname === base : pathname.startsWith(href);
             return <Link key={n.label} href={href} aria-current={current ? "page" : undefined}>{n.label}</Link>;
           })}
-          {me.user.is_staff && ["local", "test"].includes(me.environment.env) && <Link href="/app/admin" aria-current={pathname.startsWith("/app/admin") ? "page" : undefined}>Staff</Link>}
+          {me.user.is_staff && me.user.mfa_enabled && me.user.session_mfa && <Link href="/app/admin" aria-current={pathname.startsWith("/app/admin") ? "page" : undefined}>Owner console</Link>}
           <div className="spacer" />
           <a href={sourceUrl} className="tiny">Source · AGPL-3.0</a>
           {me.environment.aws_mode === "mock" && <p className="tiny" style={{ color: "var(--lime)", padding: "0 8px" }}>Local simulator: nothing leaves this machine.</p>}

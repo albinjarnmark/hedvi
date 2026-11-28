@@ -1,4 +1,5 @@
 "use client";
+import { ScrollTable } from "@/components/ScrollTable";
 import Link from "next/link";
 import { formatDate } from "@/lib/api";
 import { Status } from "./Status";
@@ -11,7 +12,7 @@ export type EmailSummary = {
 export function EmailTable({ emails, hrefBase, empty }: { emails: EmailSummary[]; hrefBase: string; empty: React.ReactNode }) {
   if (emails.length === 0) return <div className="card muted">{empty}</div>;
   return (
-    <table className="table">
+    <ScrollTable>
       <thead><tr><th>Status</th><th>To</th><th>Subject</th><th>Created</th></tr></thead>
       <tbody>
         {emails.map((e) => (
@@ -23,6 +24,6 @@ export function EmailTable({ emails, hrefBase, empty }: { emails: EmailSummary[]
           </tr>
         ))}
       </tbody>
-    </table>
+    </ScrollTable>
   );
 }

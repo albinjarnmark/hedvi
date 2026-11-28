@@ -7,6 +7,23 @@ export function dashboardPath(host: string, pathname: string, appHost?: string):
   return appHost && host.toLowerCase() === appHost.toLowerCase() && pathname === "/" ? "/app" : pathname;
 }
 
+// Only the configured private worker receives the second owner cookie.
+// The local single-process simulator may serve owner routes on loopback.
+export function consoleUpstream(path: string, api: string, worker: string | undefined, hosted: boolean) {
+  const owner = path.startsWith("/console-api/admin/");
+  if (!owner) return { base: api, owner };
+  if (worker) return { base: worker, owner };
+  let loopback = false;
+  try { loopback = ["127.0.0.1", "[::1]", "localhost"].includes(new URL(api).hostname); } catch { /* Reject malformed configuration. */ }
+  return { base: !hosted && loopback ? api : undefined, owner };
+}
+
+export function stripOwnerCookie(headers: Headers) {
+  const cookies = headers.get("cookie")?.split(";").map(v => v.trim()).filter(v => v && !/^(?:__Host-)?hedvi_owner=/.test(v)).join("; ");
+  if (cookies) headers.set("cookie", cookies);
+  else headers.delete("cookie");
+}
+
 export function proxyHeaders(input: Headers, method: string, escapedPath: string, provider: string | undefined, key: string | undefined, now = Date.now()): Headers {
   const headers = new Headers(input);
   for (const name of ["X-Hedvi-Client-IP", "X-Hedvi-Proxy-Time", "X-Hedvi-Proxy-Signature"]) headers.delete(name);

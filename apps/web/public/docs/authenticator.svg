@@ -7,20 +7,20 @@
 <rect x="36" y="88" width="322" height="158" rx="12" fill="#193B35" stroke="#426159"/>
 <circle cx="65" cy="119" r="14" fill="#D5F86B"/>
 <text x="65" y="125" text-anchor="middle" fill="#102C28" font-size="17" font-weight="700">1</text>
-<text x="52" y="171" fill="#F7F4EA" font-size="24" font-weight="700">Confirm password</text>
+<text x="52" y="171" fill="#F7F4EA" font-size="21" font-weight="700">Confirm password once</text>
 <text x="52" y="202" fill="#C9D5CF" font-size="16">Open Settings → Security.</text>
 <path d="M362 165h10m-4-4 4 4-4 4" stroke="#D5F86B" stroke-width="2" fill="none"/>
 <rect x="378" y="88" width="322" height="158" rx="12" fill="#193B35" stroke="#426159"/>
 <circle cx="407" cy="119" r="14" fill="#D5F86B"/>
 <text x="407" y="125" text-anchor="middle" fill="#102C28" font-size="17" font-weight="700">2</text>
-<text x="394" y="171" fill="#F7F4EA" font-size="24" font-weight="700">Save the setup key</text>
-<text x="394" y="202" fill="#C9D5CF" font-size="16">Add it to your authenticator.</text>
+<text x="394" y="171" fill="#F7F4EA" font-size="24" font-weight="700">Scan the QR code</text>
+<text x="394" y="202" fill="#C9D5CF" font-size="16">Or open the app on your phone.</text>
 <path d="M704 165h10m-4-4 4 4-4 4" stroke="#D5F86B" stroke-width="2" fill="none"/>
 <rect x="720" y="88" width="322" height="158" rx="12" fill="#193B35" stroke="#426159"/>
 <circle cx="749" cy="119" r="14" fill="#D5F86B"/>
 <text x="749" y="125" text-anchor="middle" fill="#102C28" font-size="17" font-weight="700">3</text>
 <text x="736" y="171" fill="#F7F4EA" font-size="24" font-weight="700">Verify a code</text>
-<text x="736" y="202" fill="#C9D5CF" font-size="16">Enable two-factor sign-in.</text>
+<text x="736" y="202" fill="#C9D5CF" font-size="16">Verify and finish. All set.</text>
 <text x="36" y="298" fill="#C9D5CF" font-size="18">Enter a fresh six-digit code from the authenticator to confirm setup.</text>
 </g>
 </svg>

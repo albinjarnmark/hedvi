@@ -103,3 +103,5 @@ default test template used by another development task. Only disposable local
 test databases are permitted for fault and migration regressions.
 
 Legal links resolve against `HEDVI_LEGAL_ORIGIN` (defaults to `HEDVI_APP_URL`) and use immutable `/legal/versions/<manifest-version>/<document>` paths. Receipt rows retain the origin presented at acknowledgement alongside canonical versioned paths and JSON digests. Changing the public hostname alone does not invalidate an unchanged document acknowledgement. Keep archived legal JSON and routes when adopting future versions; `scripts/sync-legal.py --check` checks the current archive too. For Hedvi's domain, set the app origin to `https://app.hedvi.dev` and legal origin to `https://hedvi.dev`; self-hosters use their own origins.
+
+The hosted instance owner uses a second authenticator for privileged operations. Activation, factor recovery and revocation require the private operator procedure in the [instance owner runbook](hosted-owner.md).

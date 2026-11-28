@@ -1,4 +1,5 @@
 "use client";
+import { ScrollTable } from "@/components/ScrollTable";
 import Link from "next/link";
 import { useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -54,7 +55,7 @@ export default function EmailDetailPage() {
         <div className="stack">
           <div className="card">
             <h2>Recipients</h2>
-            <table className="table">
+            <ScrollTable>
               <thead><tr><th>Address</th><th>Status</th><th>Detail</th></tr></thead>
               <tbody>
                 {(data.recipients ?? []).map((r) => (
@@ -65,7 +66,7 @@ export default function EmailDetailPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </ScrollTable>
           </div>
           <div className="card">
             <h2>Timeline</h2>

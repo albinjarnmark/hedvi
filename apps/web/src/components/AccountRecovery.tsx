@@ -46,6 +46,7 @@ export function CompleteAccountMail({ signup = false }: { signup?: boolean }) {
   const captured = useRef<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
   const { data: manifest, error: manifestError } = useLoad<LegalManifest>(signup ? "/auth/legal" : null);
   const { pending, error, run } = useAction();
   useEffect(() => {
@@ -59,6 +60,12 @@ export function CompleteAccountMail({ signup = false }: { signup?: boolean }) {
   return <form className="card stack" onSubmit={async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    if (data.get("password") !== data.get("confirm-password")) {
+      setPasswordError(sv ? "Lösenorden matchar inte." : "Passwords do not match.");
+      event.currentTarget.querySelector<HTMLInputElement>("#confirm-password")?.focus();
+      return;
+    }
+    setPasswordError("");
     if (signup && !manifest) return;
     const result = await run(() => api<{ project?: { id: string }; test_key?: { key: string } }>(signup ? "/auth/signup/complete" : "/auth/password-reset/complete", {
       method: "POST", body: {
@@ -80,6 +87,8 @@ export function CompleteAccountMail({ signup = false }: { signup?: boolean }) {
       <div className="field"><label htmlFor="organization">{sv ? "Företag eller projekt" : "Company or project"}</label><input id="organization" name="organization" autoComplete="organization" maxLength={100} /></div>
     </>}
     <div className="field"><label htmlFor="password">{sv ? "Nytt lösenord (minst 12 tecken)" : "New password (at least 12 characters)"}</label><input id="password" name="password" type="password" minLength={12} maxLength={256} autoComplete="new-password" required /></div>
+    <div className="field"><label htmlFor="confirm-password">{sv ? "Bekräfta lösenord" : "Confirm password"}</label><input id="confirm-password" name="confirm-password" type="password" minLength={12} maxLength={256} autoComplete="new-password" aria-invalid={!!passwordError} aria-describedby={passwordError ? "password-mismatch" : undefined} onChange={() => setPasswordError("")} required /></div>
+    {passwordError && <p id="password-mismatch" className="error" role="alert">{passwordError}</p>}
     {signup && manifest && <LegalAcknowledgement manifest={manifest} />}
     {(error || manifestError) && <p className="error" role="alert">{error ?? manifestError?.message}</p>}
     <button className="btn btn-primary" disabled={pending || (signup && !manifest)}>{signup ? (sv ? "Skapa konto" : "Create account") : (sv ? "Ändra lösenord" : "Change password")}</button>

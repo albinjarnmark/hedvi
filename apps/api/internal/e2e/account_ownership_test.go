@@ -8,11 +8,8 @@ import (
 	"hedvi.dev/api/internal/authmail"
 	"hedvi.dev/api/internal/legal"
 	"hedvi.dev/api/internal/testenv"
-	"io"
-	"mime/quotedprintable"
 	"net/http"
 	"net/http/httptest"
-	"net/mail"
 	"strings"
 	"sync"
 	"testing"
@@ -244,16 +241,14 @@ func TestExistingSignupNoticeRetriesWithoutRedeemableProof(t *testing.T) {
 	if err := e.WorkerPool.QueryRow(e.Ctx, `SELECT raw FROM localmock.ses_outbound LIMIT 1`).Scan(&raw); err != nil {
 		t.Fatal(err)
 	}
-	msg, err := mail.ReadMessage(bytes.NewReader(raw))
+	parts, err := authmail.ReadTextParts(raw)
 	if err != nil {
 		t.Fatal(err)
 	}
-	content, err := io.ReadAll(quotedprintable.NewReader(msg.Body))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if strings.Contains(string(content), "#token=") || strings.Contains(string(content), "expires in 30 minutes") {
-		t.Fatal("account-exists notice disclosed a credential or claimed proof expiry")
+	for _, content := range parts {
+		if strings.Contains(content, "#token=") || strings.Contains(content, "expires in 30 minutes") {
+			t.Fatal("account-exists notice disclosed a credential or claimed proof expiry")
+		}
 	}
 	if e.Count(`SELECT count(*) FROM auth_challenges WHERE consumed_at IS NULL AND ready_at IS NOT NULL`) != 0 {
 		t.Fatal("account notice became an ownership proof")

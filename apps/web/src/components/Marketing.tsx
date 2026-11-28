@@ -11,7 +11,7 @@ export function Home({ t, signup }: { t: Dict; signup: string }) {
     <>
       <section className="hero hero-center">
         <div className="container">
-          <span className="badge badge-beta" style={{ marginBottom: 22 }}>{t.status}</span>
+          <span className="eyebrow">{t.status}</span>
           <h1>{t.hero.title}</h1>
           <p className="lead">{t.hero.lead}</p>
           <div className="row" style={{ marginTop: 28 }}>

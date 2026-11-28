@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { canonicalPage, isAppPage } from "@/lib/navigation";
-import { dashboardPath, pagePolicy, proxyHeaders } from "@/lib/proxy-security";
+import { consoleUpstream, dashboardPath, pagePolicy, proxyHeaders, stripOwnerCookie } from "@/lib/proxy-security";
 
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -26,8 +26,12 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(`/sv${pathname === "/" ? "" : pathname}${search}`, process.env.HEDVI_SITE_URL), 308);
   }
   if (pathname === "/console-api" || pathname.startsWith("/console-api/")) {
-    const destination = new URL(`/console/v1${pathname.slice("/console-api".length)}${search}`, process.env.HEDVI_API_INTERNAL_URL ?? "http://127.0.0.1:8780");
+    const publicAPI = process.env.HEDVI_API_INTERNAL_URL ?? "http://127.0.0.1:8780";
+    const {base: upstream, owner} = consoleUpstream(pathname, publicAPI, process.env.HEDVI_ADMIN_INTERNAL_URL, Boolean(appHost));
+    if (!upstream) return new NextResponse(null, {status: 404, headers: {"Cache-Control": "no-store"}});
+    const destination = new URL(`/console/v1${pathname.slice("/console-api".length)}${search}`, upstream);
     const headers = proxyHeaders(request.headers, request.method, destination.pathname, process.env.HEDVI_INGRESS_PROVIDER, process.env.HEDVI_PROXY_ATTESTATION_KEY);
+    if (!owner) stripOwnerCookie(headers);
     return NextResponse.rewrite(destination, { request: { headers } });
   }
   const target = dashboardPath(hostname, pathname, process.env.HEDVI_APP_HOST);

@@ -22,10 +22,10 @@ export function CopyButton({ value, label = "Copy" }: { value: string; label?: s
 export function CodeBlock({ code }: { code: string }) {
   return (
     <div className="copy-wrap">
-      <pre className="code">
+      <div className="code-toolbar"><CopyButton value={code} /></div>
+      <pre className="code" tabIndex={0} aria-label="Code example">
         <code>{code}</code>
       </pre>
-      <CopyButton value={code} />
     </div>
   );
 }

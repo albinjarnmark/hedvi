@@ -158,21 +158,39 @@ func TestTOTPConcurrentLoginConsumesCodeOnce(t *testing.T) {
 func TestStaffGrantRequiresVerifiedAccountAndRevokesSessions(t *testing.T) {
 	e := testenv.New(t)
 	cookie, uid, _, _ := signupForSecurity(t, e)
+	factor := newOwnerFactor(uid)
 	note := "Verified exact user UUID with known person over established independent channel"
-	if err := console.GrantStaff(e.Ctx, e.WorkerPool, uid, "security@example.test", note, true); err == nil {
+	if err := console.GrantStaff(e.Ctx, e.WorkerPool, e.Sealer, "test", uid, "security@example.test", note, true, factor); err == nil {
 		t.Fatal("staff without MFA")
 	}
-	e.Exec(`UPDATE users SET totp_enabled_at=now() WHERE id=$1`, uid)
+	ordinary := auth.NewTOTPSecret()
+	enc, err := e.Sealer.Seal([]byte(ordinary), []byte("totp:"+uid.String()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	e.Exec(`UPDATE users SET totp_enabled_at=now(),totp_secret_enc=$2 WHERE id=$1`, uid, enc)
+	for _, bad := range []console.OwnerFactor{
+		{Environment: "test", UserID: uid, Email: factor.Email, Secret: factor.Secret, Code: "xxxxxx"},
+		{Environment: "test", UserID: uid, Email: factor.Email, Secret: ordinary, Code: auth.TOTPNow(ordinary, time.Now())},
+		{Environment: "production", UserID: uid, Email: factor.Email, Secret: factor.Secret, Code: factor.Code},
+	} {
+		if err := console.GrantStaff(e.Ctx, e.WorkerPool, e.Sealer, "test", uid, factor.Email, note, true, bad); err == nil {
+			t.Fatal("invalid or reused operator proof accepted")
+		}
+	}
+	if e.Count(`SELECT count(*) FROM instance_owner`) != 0 || e.Count(`SELECT count(*) FROM users WHERE is_staff`) != 0 {
+		t.Fatal("invalid activation changed owner state")
+	}
 	for _, c := range []struct {
 		id       uuid.UUID
 		email    string
 		verified bool
 	}{{uuid.Nil, "security@example.test", true}, {uid, "different@example.test", true}, {uid, "security@example.test", false}} {
-		if err := console.GrantStaff(e.Ctx, e.WorkerPool, c.id, c.email, note, c.verified); err == nil {
+		if err := console.GrantStaff(e.Ctx, e.WorkerPool, e.Sealer, "test", c.id, c.email, note, c.verified, factor); err == nil {
 			t.Fatal("unverified/mismatched staff grant")
 		}
 	}
-	if err := console.GrantStaff(e.Ctx, e.WorkerPool, uid, "security@example.test", note, true); err != nil {
+	if err := console.GrantStaff(e.Ctx, e.WorkerPool, e.Sealer, "test", uid, "security@example.test", note, true, factor); err != nil {
 		t.Fatal(err)
 	}
 	if status := cookieRequest(e.Handler, cookie, "GET", "/console/v1/me", nil); status != 401 {

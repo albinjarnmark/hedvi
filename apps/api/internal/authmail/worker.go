@@ -1,11 +1,9 @@
 package authmail
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"hedvi.dev/api/internal/address"
@@ -13,9 +11,6 @@ import (
 	"hedvi.dev/api/internal/faults"
 	"hedvi.dev/api/internal/provider"
 	"hedvi.dev/api/internal/sesevent"
-	"mime/quotedprintable"
-	"net/url"
-	"strings"
 	"time"
 )
 
@@ -184,51 +179,6 @@ func (w *Worker) RunOnce(ctx context.Context) error {
 	return err
 }
 
-func (w *Worker) render(j *job) ([]byte, error) {
-	u, err := url.Parse(w.AppURL)
-	if err != nil {
-		return nil, err
-	}
-	path := "/verify-email"
-	subject := "Finish creating your Hedvi account"
-	intro := "Use this link to verify your email and choose your password."
-	if j.Purpose == "reset" {
-		path = "/reset-password"
-		subject = "Reset your Hedvi password"
-		intro = "Use this link to choose a new password. Your authenticator remains required if enabled."
-	}
-	if j.Existing {
-		path = "/forgot-password"
-		subject = "Your Hedvi account"
-		intro = "An account already uses this email. Sign in or request a password reset here."
-	}
-	u.Path = path
-	u.RawPath = ""
-	u.RawQuery = "locale=" + j.Data.Locale
-	u.Fragment = "token=" + j.Data.Token
-	if j.Existing {
-		u.Fragment = ""
-	}
-	body := intro + "\n\n" + u.String() + "\n\nThis link expires in 30 minutes. If you did not request this message, you can ignore it.\nHedvi\n"
-	if j.Data.Locale == "sv" {
-		body = "Du har begärt åtkomst till Hedvi. Öppna länken för att fortsätta. En eventuell autentiseringsapp krävs fortfarande.\n\n" + u.String() + "\n\nLänken gäller i 30 minuter. Om du inte begärde meddelandet kan du ignorera det.\nHedvi\n"
-	}
-	if j.Existing {
-		body = strings.ReplaceAll(body, "This link expires in 30 minutes. ", "")
-		body = strings.ReplaceAll(body, "Länken gäller i 30 minuter. ", "")
-	}
-	var out bytes.Buffer
-	fmt.Fprintf(&out, "From: Hedvi <%s>\r\nTo: %s\r\nSubject: %s\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n", w.From, j.Data.Email, subject)
-	q := quotedprintable.NewWriter(&out)
-	if _, err := q.Write([]byte(body)); err != nil {
-		return nil, err
-	}
-	if err := q.Close(); err != nil {
-		return nil, err
-	}
-	return out.Bytes(), nil
-}
-
 func (w *Worker) Cleanup(ctx context.Context) error {
 	return db.Tx(ctx, w.Pool, func(tx pgx.Tx) error {
 		if err := Lock(ctx, tx); err != nil {
@@ -259,7 +209,8 @@ func (w *Worker) ApplyEvent(ctx context.Context, ev sesevent.Event) error {
 	if err != nil {
 		return nil
 	}
-	if ev.Mail.Source != w.From || len(ev.Mail.Destination) != 1 || ev.EventType != "" && ev.NotificationType != "" && ev.EventType != ev.NotificationType {
+	source, sourceErr := address.Parse(ev.Mail.Source)
+	if sourceErr != nil || source.Email != w.From || len(ev.Mail.Destination) != 1 || ev.EventType != "" && ev.NotificationType != "" && ev.EventType != ev.NotificationType {
 		return nil
 	}
 	for _, tag := range []string{"hedvi_email", "hedvi_project", "hedvi_attempt"} {

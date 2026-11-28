@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
+	"io"
 	"log/slog"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -33,9 +36,10 @@ const adminHelp = `hedvi admin commands (worker database role, every change is a
   set-plan        -org <id> -plan free|flex|pro_50k|pro_100k|custom
   billing-reconcile -org <id> -ref <order UUID or Stripe invoice ID> -note <reason>
   grant-credits   -org <id> -recipients 10000 -ref <text>   (Flex lot, 12 months)
-  make-staff      -user <id> -email <address> -identity-verified -note <independent identity check> (requires MFA)
+  make-staff      -user <id> -email <address> -identity-verified -owner-factor-stdin -note <independent identity check> (two authenticators)
   resolve-unknown -attempt <id> -outcome accepted|not_sent -note <text>
   auth-mail-link -email <address>  print the latest simulated account link (local only)
+  revoke-staff -user <exact UUID> -note <reason>  revoke owner access and all sessions
   seed-local      create a local demo account with an approved project (local only)
   contract-fixture  print JSON with fresh keys, a verified domain and a signed webhook sample (local only)`
 
@@ -61,6 +65,7 @@ func admin(ctx context.Context, cfg *config.Config, log *slog.Logger, args []str
 	ref := fs.String("ref", "", "external reference")
 	email := fs.String("email", "", "user email")
 	user := fs.String("user", "", "exact user id confirmed through an independent trusted channel")
+	factorStdin := fs.Bool("owner-factor-stdin", false, "read separately enrolled owner factor and first proof from private stdin")
 	identityVerified := fs.Bool("identity-verified", false, "operator has independently verified the human and exact account ID")
 	attempt := fs.String("attempt", "", "send attempt id")
 	outcome := fs.String("outcome", "", "accepted or not_sent")
@@ -170,12 +175,35 @@ func admin(ctx context.Context, cfg *config.Config, log *slog.Logger, args []str
 			fmt.Println("credit lot", id)
 			return auditSystem(tx, &oid, "credits.granted", "credit_lot", id.String(), map[string]any{"recipients": *recipients, "ref": *ref})
 		})
+	case "revoke-staff":
+		uid, err := uuid.Parse(*user)
+		if err != nil {
+			return errors.New("provide the exact owner UUID")
+		}
+		return console.RevokeStaff(ctx, pool, uid, *note)
 	case "make-staff":
 		uid, err := uuid.Parse(*user)
 		if err != nil {
 			return errors.New("-user must be the exact independently verified account UUID; an email alone is insufficient")
 		}
-		if err := console.GrantStaff(ctx, pool, uid, *email, *note, *identityVerified); err != nil {
+		if !*factorStdin {
+			return errors.New("use the private owner-factor helper and -owner-factor-stdin")
+		}
+		// Read a bounded envelope from a private pipe, never from arguments or logs.
+		if info, err := os.Stdin.Stat(); err != nil || info.Mode()&os.ModeCharDevice != 0 {
+			return errors.New("owner-factor-stdin requires a private input stream")
+		}
+		raw, err := io.ReadAll(io.LimitReader(os.Stdin, 2049))
+		if err != nil || len(raw) > 2048 {
+			return errors.New("could not read bounded owner enrollment")
+		}
+		var factor console.OwnerFactor
+		dec := json.NewDecoder(bytes.NewReader(raw))
+		dec.DisallowUnknownFields()
+		if err := dec.Decode(&factor); err != nil || dec.Decode(&struct{}{}) != io.EOF {
+			return errors.New("invalid owner enrollment input")
+		}
+		if err := console.GrantStaff(ctx, pool, a.Sealer, string(cfg.Env), uid, *email, *note, *identityVerified, factor); err != nil {
 			return err
 		}
 		fmt.Println("staff granted and all existing sessions revoked; sign in again with MFA")
