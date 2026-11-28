@@ -769,7 +769,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/settings/page.tsx",
-      "sha256": "13fd798f548458bbaae31235884527b76f1129cf51a2180d1d26f39192cc095e"
+      "sha256": "cfd8e54f0ce11899837301ee5f574875382ced0707cdfe9cbf5066d970ce84de"
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/test-inbox/page.tsx",

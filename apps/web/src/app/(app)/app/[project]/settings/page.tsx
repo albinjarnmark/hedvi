@@ -78,18 +78,20 @@ export default function SettingsPage() {
           <h2>Usage and cost control</h2>
           {u.data && (
             <>
-              <p>Included: <strong>{u.data.recipients.consumed.toLocaleString()}</strong> sent, {u.data.recipients.reserved.toLocaleString()} reserved, <strong>{u.data.recipients.remaining.toLocaleString()}</strong> left of {u.data.recipients.included.toLocaleString()} until {formatDate(u.data.period_end)}.</p>
-              <p className="small">Attachment data: {bytes(u.data.attachment_data_bytes.consumed)} of {bytes(u.data.attachment_data_bytes.included)} this month.</p>
+              {u.data.recipients.included > 0 ? <>
+                <p>Monthly allowance: <strong>{u.data.recipients.remaining.toLocaleString()}</strong> of {u.data.recipients.included.toLocaleString()} recipients left until {formatDate(u.data.period_end)}.</p>
+                <p className="small">{u.data.recipients.consumed.toLocaleString()} sent · {u.data.recipients.reserved.toLocaleString()} reserved. Attachment data: {bytes(u.data.attachment_data_bytes.consumed)} of {bytes(u.data.attachment_data_bytes.included)} used this period.</p>
+              </> : <p>Flex uses prepaid credits. Each pack has its own expiry date and includes 250 MiB of attachment data.</p>}
               {u.data.credits.length > 0 && (
                 <ul className="small">{u.data.credits.map((c) => <li key={c.id}>Flex credits: {c.remaining.toLocaleString()} of {c.granted.toLocaleString()} left · {c.expired_at ? "expired" : `expire ${formatDate(c.expires_at)}`}</li>)}</ul>
               )}
             </>
           )}
           <p className="notice small"><strong>Hard stop is on.</strong> Your application’s sending stops when it runs out of eligible units, including its sign-in and password emails. Warnings arrive at 80 % and 95 % in the dashboard and by webhook (<code>hedvi.quota.warning</code>).</p>
-          <label className="row" style={{ fontWeight: 400 }}>
+          {u.data && u.data.recipients.included > 0 && <label className="row" style={{ fontWeight: 400 }}>
             <input type="checkbox" checked={o.use_credits_for_overage} disabled={pending} onChange={(e) => save({ use_credits_for_overage: e.target.checked })} />
             Use Flex credits when monthly quota is used up
-          </label>
+          </label>}
           <p className="small muted">Sending stops when included and eligible prepaid units run out.</p>
         </section>
         {["owner","admin","billing"].includes(s.data.role)&&<BillingSettings project={pid} preferred={o.currency}/>}
