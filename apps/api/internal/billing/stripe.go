@@ -37,7 +37,7 @@ type Config struct {
 	Live                                                               bool
 	RequestVersion                                                     int
 	Prices                                                             map[string]Price
-	Countries                                                          map[string]bool
+	Countries, ManagedCountries                                        map[string]bool
 }
 
 func Load(command, env, appURL string) (*Config, error) {
@@ -68,6 +68,17 @@ func Load(command, env, appURL string) (*Config, error) {
 			return nil, errors.New("provide the authorized ISO billing countries")
 		}
 		c.Countries[country] = true
+	}
+	c.ManagedCountries = map[string]bool{}
+	if raw := os.Getenv("HEDVI_STRIPE_MANAGED_COUNTRIES"); raw != "" {
+		for _, item := range strings.Split(raw, ",") {
+			country := strings.ToUpper(strings.TrimSpace(item))
+			if !countryCode.MatchString(country) || c.Countries[country] || c.RequestVersion != 2 {
+				return nil, errors.New("managed billing countries require v2 and must be distinct from direct billing countries")
+			}
+			c.ManagedCountries[country] = true
+			c.Countries[country] = true
+		}
 	}
 	ids := map[string]bool{}
 	products := map[string]bool{}

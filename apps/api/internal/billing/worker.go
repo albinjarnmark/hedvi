@@ -215,7 +215,7 @@ func (s *Service) checkOrder(ctx context.Context, j job) error {
 	var subStatus string
 	termsAccepted := false
 	scanStarted := time.Now().UTC()
-	err := s.Pool.QueryRow(ctx, `SELECT o.org_id,c.id,COALESCE(c.customer_id,''),o.id,o.sku,o.currency,o.country,o.price_id,o.amount,COALESCE(o.session_id,''),COALESCE(o.subscription_id,''),COALESCE(o.subscription_item_id,''),o.created_at,o.state,o.invoice_cursor,COALESCE(o.subscription_status,''),o.cancel_at FROM billing_orders o JOIN billing_customers c ON c.org_id=o.org_id WHERE o.id=$1`, j.id).Scan(&org, &customerRef, &o.Customer, &o.ID, &o.SKU, &o.Currency, &o.Country, &o.PriceID, &o.Amount, &o.Session, &o.Subscription, &o.Item, &o.Created, &o.State, &cursor, &subStatus, &cancelAt)
+	err := s.Pool.QueryRow(ctx, `SELECT o.org_id,c.id,COALESCE(c.customer_id,''),o.id,o.sku,o.currency,o.country,o.price_id,o.amount,COALESCE(o.session_id,''),COALESCE(o.subscription_id,''),COALESCE(o.subscription_item_id,''),o.created_at,o.state,o.invoice_cursor,COALESCE(o.subscription_status,''),o.cancel_at,o.request_version FROM billing_orders o JOIN billing_customers c ON c.org_id=o.org_id WHERE o.id=$1`, j.id).Scan(&org, &customerRef, &o.Customer, &o.ID, &o.SKU, &o.Currency, &o.Country, &o.PriceID, &o.Amount, &o.Session, &o.Subscription, &o.Item, &o.Created, &o.State, &cursor, &subStatus, &cancelAt, &o.RequestVersion)
 	if err != nil {
 		return err
 	}
@@ -261,7 +261,7 @@ func (s *Service) checkOrder(ctx context.Context, j job) error {
 		if err = s.get(ctx, "/checkout/sessions/"+o.Session, nil, &cs); err != nil {
 			return err
 		}
-		if cs.ID != o.Session || cs.Customer == nil || cs.Customer.ID != o.Customer || cs.ClientReferenceID != o.ID.String() || cs.Metadata["hedvi_order"] != o.ID.String() || cs.Livemode != s.C.Live || string(cs.Mode) != s.C.Prices[o.SKU+"_"+o.Currency].mode() {
+		if (cs.ManagedPayments != nil && cs.ManagedPayments.Enabled) != (o.RequestVersion == 3) || cs.ID != o.Session || cs.Customer == nil || cs.Customer.ID != o.Customer || cs.ClientReferenceID != o.ID.String() || cs.Metadata["hedvi_order"] != o.ID.String() || cs.Livemode != s.C.Live || string(cs.Mode) != s.C.Prices[o.SKU+"_"+o.Currency].mode() {
 			return errors.New("checkout ownership mismatch")
 		}
 		switch cs.Status {
@@ -284,6 +284,18 @@ func (s *Service) checkOrder(ctx context.Context, j job) error {
 				break
 			}
 			if o.SKU == "flex" {
+				if o.RequestVersion == 3 && cs.PaymentStatus == "unpaid" && cs.PaymentIntent != nil {
+					var pi stripe.PaymentIntent
+					if err = s.get(ctx, "/payment_intents/"+cs.PaymentIntent.ID, nil, &pi); err != nil {
+						return err
+					}
+					if pi.ID != cs.PaymentIntent.ID || pi.Customer == nil || pi.Customer.ID != o.Customer || pi.Livemode != s.C.Live || pi.ManagedPayments == nil || !pi.ManagedPayments.Enabled {
+						return errors.New("managed payment ownership mismatch")
+					}
+					if pi.Status == "canceled" || pi.Status == "requires_payment_method" && pi.LastPaymentError != nil {
+						state = "expired"
+					}
+				}
 				if cs.PaymentStatus == "paid" && cs.Invoice != nil && cs.PaymentIntent != nil {
 					invoices = append(invoices, cs.Invoice.ID)
 					if state != "paid" {
@@ -300,7 +312,7 @@ func (s *Service) checkOrder(ctx context.Context, j job) error {
 				if err = s.get(ctx, "/subscriptions/"+o.Subscription, nil, &sub); err != nil {
 					return err
 				}
-				if sub.ID != o.Subscription || sub.Customer == nil || sub.Customer.ID != o.Customer || sub.Metadata["hedvi_order"] != o.ID.String() || sub.Livemode != s.C.Live {
+				if (sub.ManagedPayments != nil && sub.ManagedPayments.Enabled) != (o.RequestVersion == 3) || sub.ID != o.Subscription || sub.Customer == nil || sub.Customer.ID != o.Customer || sub.Metadata["hedvi_order"] != o.ID.String() || sub.Livemode != s.C.Live {
 					return errors.New("subscription ownership mismatch")
 				}
 				subStatus = string(sub.Status)

@@ -185,11 +185,11 @@
     },
     {
       "path": "apps/api/internal/billing/checkout.go",
-      "sha256": "57ddf0250ac7eaf072e198a3356d7608e856a9e968711d5632d17c54be893f90"
+      "sha256": "39f1f93d2ca7bb71607639cf3782789fd3a3418a981be7e2184a275c650b6bde"
     },
     {
       "path": "apps/api/internal/billing/invoice.go",
-      "sha256": "fc95cd23cd58a8e0c8a95cfe1bb716b522e5cfc65affca2bf0aa5131e40f1caa"
+      "sha256": "28a371cd4c3d434cd55640ef5996280f07332d164ec9abf08dedd431d0ef1416"
     },
     {
       "path": "apps/api/internal/billing/profile.go",
@@ -197,7 +197,7 @@
     },
     {
       "path": "apps/api/internal/billing/stripe.go",
-      "sha256": "cf5a0134e3ddb6608164bc5e8afa444b679e3ce035ac9209e813337f76dadd84"
+      "sha256": "6bfc56399e31c067e3754656dbde2c86bd06cb3b1c324b7cbf46d31a7eaa41e9"
     },
     {
       "path": "apps/api/internal/billing/stripe_error_test.go",
@@ -205,7 +205,7 @@
     },
     {
       "path": "apps/api/internal/billing/worker.go",
-      "sha256": "2c1674a0cf1e9b9a9de22a33cdb9a93a7abf130f5acd3d8bd88299d24cf8b99a"
+      "sha256": "6f65f38556bbedbb615df8f20ce65cefcbd8e213b27b0503c3d00666e68cf85e"
     },
     {
       "path": "apps/api/internal/blob/blob.go",
@@ -360,6 +360,10 @@
       "sha256": "54820a22c3e6d10ae0ef6cec2d5f604c58494c2af2051c4e4c7ae3edfffa00f5"
     },
     {
+      "path": "apps/api/internal/db/migrations/0021_managed_checkout.sql",
+      "sha256": "7df03993077fbe1863b9c542c75722a58715cfa6f5247994809a09ceac1b5a8c"
+    },
+    {
       "path": "apps/api/internal/domains/mail_from.go",
       "sha256": "0d43880c5e7faff48b5b705cbe18f29a81ba91c7010e9ab29d62b320aff85ee0"
     },
@@ -405,11 +409,11 @@
     },
     {
       "path": "apps/api/internal/e2e/billing_address_test.go",
-      "sha256": "5c72c6081da613f4d6a5af7a95d57d6003c75509f6b6692315942421fc8f94e0"
+      "sha256": "491d8ad799965d96dac8c654694fe19023bf9696dc89cf6d5ec5dfeb6b33b43d"
     },
     {
       "path": "apps/api/internal/e2e/billing_test.go",
-      "sha256": "4e391c0d0aed80423e236545953ecc7debf3a95745d9b50ad3304802d7d4ac3d"
+      "sha256": "ffca8b50f160064ccc9121cfe9cfd154f01d07f07559ed231e354dcb5907ad0b"
     },
     {
       "path": "apps/api/internal/e2e/domain_dns_ownership_test.go",
@@ -1025,7 +1029,7 @@
     },
     {
       "path": "apps/web/src/components/BillingSettings.tsx",
-      "sha256": "fdf6a5d8c08e72d74f1f95b2e1afe63869c9e60c6dbf92664d81b4efe6163572"
+      "sha256": "a9c4e604aed1e6f0289397755994cd002acf82dbfe89815a1cadf3d6d5f80f4e"
     },
     {
       "path": "apps/web/src/components/CloudflareSetup.tsx",
@@ -1593,7 +1597,7 @@
     },
     {
       "path": "docs/status.md",
-      "sha256": "12a4ca40d2ded3ec4f8a6b83c625cae3092225d835f2f11c7725e505202d53de"
+      "sha256": "c173c4a28a059a8f9bac6c926cd48fffe4fbbe2ff7305ba1a6e32132b7609737"
     },
     {
       "path": "infra/terraform/AUTH-MAIL.md",

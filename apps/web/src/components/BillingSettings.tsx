@@ -23,6 +23,7 @@ type Billing = {
   has_pro: boolean;
   currency: string;
   countries: string[];
+  managed_countries?: string[];
   has_customer: boolean;
   billing_profile: BillingProfile | null;
   billing_profile_editable: boolean;
@@ -74,6 +75,7 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
   if (!data?.enabled) return gift ? <section className="card"><h2>Membership</h2>{gift}</section> : null;
   const currency = data.currency || choice;
   const country = countryChoice ?? data.billing_profile?.country ?? "";
+  const managed = data.managed_countries?.includes(country);
   const regionRequired = country === "US" || country === "CA";
   const postalRequired = country !== "HK" && country !== "AE";
   const chooseBaseline = data.baseline === "flex" || (data.baseline === "free" && data.has_credits);
@@ -127,7 +129,7 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
               {data.billing_profile.state && <><br />{data.billing_profile.state}</>}
               <br />{countryName(data.billing_profile.country)}
             </p>
-            <p className="small muted">This address is used for invoices and tax. Contact support to change it. Stripe may ask for your legal business name when you provide a tax ID.</p>
+            <p className="small muted">{managed ? "This is your Hedvi company profile. Confirm your invoice address in Checkout." : "This address is used for invoices and tax. Contact support to change it. Stripe may ask for your legal business name when you provide a tax ID."}</p>
           </div>
         ) : (
           <fieldset className="stack" disabled={pending}>
@@ -154,7 +156,7 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
             </select>
           </fieldset>
         )}
-        <p className="small muted">Your card can be issued in a different country. Payment details entered in Stripe do not change your company billing address.</p>
+        <p className="small muted">{managed ? "Sold through Link. Confirm your billing address, currency and total in Checkout. You can manage purchases at link.com." : "Your card can be issued in a different country. Payment details entered in Stripe do not change your company billing address."}</p>
         <p className="small muted">
           {sku === "flex"
             ? "A first Flex purchase moves a Free organization to prepaid usage. Each pack includes 250 MiB of attachment data."

@@ -68,7 +68,11 @@ func (s *Service) inspectInvoice(ctx context.Context, id string, o Order) (e evi
 	// exact session, invoice, PaymentIntent and captured charge below. Pro
 	// remains limited to automatically collected subscription invoices.
 	collectionOK := inv.CollectionMethod == "charge_automatically" || o.SKU == "flex" && inv.CollectionMethod == "send_invoice"
-	if !catalogTotal(&inv, o.Amount) || inv.AmountRemaining != 0 || inv.AmountPaid != inv.Total || inv.AmountPaidOffStripe != 0 || inv.Subtotal != o.Amount || !collectionOK || inv.AutomaticTax == nil || !inv.AutomaticTax.Enabled || inv.AutomaticTax.Status != "complete" || inv.StatusTransitions == nil || inv.StatusTransitions.PaidAt <= 0 || inv.CustomerAddress == nil || inv.CustomerAddress.Country != o.Country {
+	countryOK := inv.CustomerAddress != nil && inv.CustomerAddress.Country == o.Country
+	if o.RequestVersion == 3 {
+		countryOK = inv.CustomerAddress != nil && countryCode.MatchString(inv.CustomerAddress.Country) && inv.Issuer != nil && inv.Issuer.Type == "stripe" && inv.AutomaticTax != nil && inv.AutomaticTax.Liability != nil && inv.AutomaticTax.Liability.Type == "stripe"
+	}
+	if !catalogTotal(&inv, o.Amount) || inv.AmountRemaining != 0 || inv.AmountPaid != inv.Total || inv.AmountPaidOffStripe != 0 || inv.Subtotal != o.Amount || !collectionOK || inv.AutomaticTax == nil || !inv.AutomaticTax.Enabled || inv.AutomaticTax.Status != "complete" || inv.StatusTransitions == nil || inv.StatusTransitions.PaidAt <= 0 || !countryOK {
 		return
 	}
 	var lines page[stripe.InvoiceLineItem]
@@ -88,7 +92,7 @@ func (s *Service) inspectInvoice(ctx context.Context, id string, o Order) (e evi
 		if err = s.get(ctx, "/checkout/sessions/"+o.Session, nil, &cs); err != nil {
 			return
 		}
-		if cs.Consent == nil || cs.Consent.TermsOfService != "accepted" || cs.ID != o.Session || cs.Metadata["hedvi_order"] != o.ID.String() || cs.ClientReferenceID != o.ID.String() || cs.Customer == nil || cs.Customer.ID != o.Customer || cs.Mode != "payment" || cs.Status != "complete" || cs.PaymentStatus != "paid" || cs.Invoice == nil || cs.Invoice.ID != id || cs.PaymentIntent == nil || cs.PaymentIntent.ID == "" || cs.Livemode != s.C.Live || cs.AmountTotal != inv.Total {
+		if (cs.ManagedPayments != nil && cs.ManagedPayments.Enabled) != (o.RequestVersion == 3) || cs.Consent == nil || cs.Consent.TermsOfService != "accepted" || cs.ID != o.Session || cs.Metadata["hedvi_order"] != o.ID.String() || cs.ClientReferenceID != o.ID.String() || cs.Customer == nil || cs.Customer.ID != o.Customer || cs.Mode != "payment" || cs.Status != "complete" || cs.PaymentStatus != "paid" || cs.Invoice == nil || cs.Invoice.ID != id || cs.PaymentIntent == nil || cs.PaymentIntent.ID == "" || cs.Livemode != s.C.Live || cs.AmountTotal != inv.Total {
 			return
 		}
 		flexIntent = cs.PaymentIntent.ID
@@ -125,7 +129,7 @@ func (s *Service) inspectInvoice(ctx context.Context, id string, o Order) (e evi
 	if err = s.get(ctx, "/payment_intents/"+e.payment, nil, &pi); err != nil {
 		return
 	}
-	if pi.ID != e.payment || pi.Livemode != s.C.Live || pi.Status != "succeeded" || pi.Customer == nil || pi.Customer.ID != o.Customer || pi.AmountReceived != inv.Total || pi.LatestCharge == nil || string(pi.Currency) != o.Currency {
+	if (pi.ManagedPayments != nil && pi.ManagedPayments.Enabled) != (o.RequestVersion == 3) || pi.ID != e.payment || pi.Livemode != s.C.Live || pi.Status != "succeeded" || pi.Customer == nil || pi.Customer.ID != o.Customer || pi.AmountReceived != inv.Total || pi.LatestCharge == nil || string(pi.Currency) != o.Currency {
 		return
 	}
 	e.charge = pi.LatestCharge.ID
@@ -133,7 +137,7 @@ func (s *Service) inspectInvoice(ctx context.Context, id string, o Order) (e evi
 	if err = s.get(ctx, "/charges/"+e.charge, nil, &ch); err != nil {
 		return
 	}
-	if ch.ID != e.charge || ch.Customer == nil || ch.Customer.ID != o.Customer || ch.PaymentIntent == nil || ch.PaymentIntent.ID != pi.ID || ch.Livemode != s.C.Live || !ch.Paid || !ch.Captured || ch.AmountCaptured != inv.Total || string(ch.Currency) != o.Currency || ch.PaymentMethodDetails == nil || ch.PaymentMethodDetails.Type != "card" {
+	if ch.ID != e.charge || ch.Customer == nil || ch.Customer.ID != o.Customer || ch.PaymentIntent == nil || ch.PaymentIntent.ID != pi.ID || ch.Livemode != s.C.Live || !ch.Paid || !ch.Captured || ch.AmountCaptured != inv.Total || string(ch.Currency) != o.Currency || ch.PaymentMethodDetails == nil || ch.PaymentMethodDetails.Type == "" || o.RequestVersion != 3 && ch.PaymentMethodDetails.Type != "card" {
 		return
 	}
 	e.total = inv.Total
@@ -257,7 +261,7 @@ func (s *Service) checkInvoice(ctx context.Context, j job) error {
 	var o Order
 	var org uuid.UUID
 	var corroborated []string
-	err := s.Pool.QueryRow(ctx, `SELECT o.org_id,o.id,o.sku,o.currency,o.country,o.price_id,o.amount,c.customer_id,coalesce(o.session_id,''),coalesce(o.subscription_id,''),coalesce(o.subscription_item_id,'') FROM billing_invoices i JOIN billing_orders o ON o.org_id=i.org_id AND o.id=i.order_id JOIN billing_customers c ON c.org_id=o.org_id WHERE i.id=$1`, j.id).Scan(&org, &o.ID, &o.SKU, &o.Currency, &o.Country, &o.PriceID, &o.Amount, &o.Customer, &o.Session, &o.Subscription, &o.Item)
+	err := s.Pool.QueryRow(ctx, `SELECT o.org_id,o.id,o.sku,o.currency,o.country,o.price_id,o.amount,c.customer_id,coalesce(o.session_id,''),coalesce(o.subscription_id,''),coalesce(o.subscription_item_id,''),o.request_version FROM billing_invoices i JOIN billing_orders o ON o.org_id=i.org_id AND o.id=i.order_id JOIN billing_customers c ON c.org_id=o.org_id WHERE i.id=$1`, j.id).Scan(&org, &o.ID, &o.SKU, &o.Currency, &o.Country, &o.PriceID, &o.Amount, &o.Customer, &o.Session, &o.Subscription, &o.Item, &o.RequestVersion)
 	if err != nil {
 		return err
 	}

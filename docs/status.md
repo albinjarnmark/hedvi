@@ -49,10 +49,7 @@ Existing Hedvi-bound Stripe customers now prefer English: four staging customers
 and one production customer were updated without changing their addresses/currencies.
 A new live English Checkout was verified and expired unpaid; no real charge was made.
 
-Paid production purchases still accept only Sweden. Opening EU27 is prepared but
-awaits a specific approval required by the execution safety review. The sandbox
-now matches the production Small Seller setting. Country availability remains explicit: Stripe Tax support alone does not establish
-tax registration or business eligibility. Global fiscal readiness is not verified.
+Production direct purchases are enabled for all 27 EU billing countries. StackX has completed Stripe Managed Payments onboarding for additional markets. A live unpaid session confirmed account access. Additional markets require a tested managed checkout and entitlement rollout before activation.
 
 ## Hosted acceptance on 28 November
 

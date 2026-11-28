@@ -16,6 +16,7 @@ import (
 )
 
 type Order struct {
+	RequestVersion                                                                int
 	ID                                                                            uuid.UUID
 	SKU, Currency, Country, PriceID, Customer, Session, Subscription, Item, State string
 	Amount                                                                        int64
@@ -31,16 +32,17 @@ type OrderSummary struct {
 	Created     time.Time  `json:"created_at"`
 }
 type Status struct {
-	ProfileEditable bool           `json:"billing_profile_editable"`
-	Profile         *Profile       `json:"billing_profile"`
-	Baseline        string         `json:"baseline"`
-	HasCredits      bool           `json:"has_credits"`
-	HasPro          bool           `json:"has_pro"`
-	Enabled         bool           `json:"enabled"`
-	Currency        string         `json:"currency"`
-	Countries       []string       `json:"countries"`
-	HasCustomer     bool           `json:"has_customer"`
-	Orders          []OrderSummary `json:"orders"`
+	ProfileEditable  bool           `json:"billing_profile_editable"`
+	Profile          *Profile       `json:"billing_profile"`
+	Baseline         string         `json:"baseline"`
+	HasCredits       bool           `json:"has_credits"`
+	HasPro           bool           `json:"has_pro"`
+	Enabled          bool           `json:"enabled"`
+	Currency         string         `json:"currency"`
+	ManagedCountries []string       `json:"managed_countries,omitempty"`
+	Countries        []string       `json:"countries"`
+	HasCustomer      bool           `json:"has_customer"`
+	Orders           []OrderSummary `json:"orders"`
 }
 
 func (s *Service) customerTx(ctx context.Context, org, user uuid.UUID, fn func(pgx.Tx) error) error {
@@ -61,6 +63,10 @@ func (s *Service) Status(ctx context.Context, org, user uuid.UUID) (Status, erro
 	for c := range s.C.Countries {
 		v.Countries = append(v.Countries, c)
 	}
+	for country := range s.C.ManagedCountries {
+		v.ManagedCountries = append(v.ManagedCountries, country)
+	}
+	sort.Strings(v.ManagedCountries)
 	sort.Strings(v.Countries)
 	err := s.customerTx(ctx, org, user, func(tx pgx.Tx) error {
 		if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM billing_orders b WHERE b.org_id=o.id AND b.sku<>'flex' AND b.state NOT IN ('expired','ended')),o.plan,EXISTS(SELECT 1 FROM credit_lots l WHERE l.org_id=o.id AND billing_usable AND expires_at>now() AND expired_at IS NULL AND granted>reserved+consumed+expired_amount),COALESCE(c.currency,''),c.customer_id IS NOT NULL,c.billing_profile,COALESCE(c.profile_rejected AND NOT c.creation_uncertain AND c.customer_id IS NULL,false) FROM organizations o LEFT JOIN billing_customers c ON c.org_id=o.id WHERE o.id=$1`, org).Scan(&v.HasPro, &v.Baseline, &v.HasCredits, &v.Currency, &v.HasCustomer, &v.Profile, &v.ProfileEditable); err != nil {
@@ -130,6 +136,10 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 	requestVersion := 1
 	if s.C.RequestVersion == 2 {
 		requestVersion = 2
+	}
+	newOrderVersion := requestVersion
+	if s.C.ManagedCountries[country] {
+		newOrderVersion = 3
 	}
 	var customerUUID uuid.UUID
 	var customerCreated time.Time
@@ -220,7 +230,11 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 			return "", err
 		}
 	}
-	if err := s.verifyCustomer(ctx, o.Customer, customerUUID, &profile); err != nil {
+	var verifyProfile *Profile
+	if !s.C.ManagedCountries[country] {
+		verifyProfile = &profile
+	}
+	if err := s.verifyCustomer(ctx, o.Customer, customerUUID, verifyProfile); err != nil {
 		return "", err
 	}
 	// No local payable order exists until Customer creation is confirmed. This
@@ -232,7 +246,7 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 		// A timed-out create, double-click or second browser tab reuses an open checkout.
 		err := tx.QueryRow(ctx, `SELECT return_project_id,id,sku,currency,country,coalesce(session_id,''),state,created_at,request_version FROM billing_orders WHERE org_id=$1 AND (request_id=$2 OR (sku=$3 AND state IN ('creating','open','review')) OR ($3<>'flex' AND sku<>'flex' AND state NOT IN ('ended','expired'))) ORDER BY (request_id=$2) DESC,created_at LIMIT 1`, org, token, sku).Scan(&project, &o.ID, &o.SKU, &o.Currency, &o.Country, &o.Session, &o.State, &o.Created, &orderVersion)
 		if errors.Is(err, pgx.ErrNoRows) {
-			return tx.QueryRow(ctx, `INSERT INTO billing_orders(org_id,request_id,sku,currency,country,price_id,amount,return_project_id,request_version) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id,state,created_at,request_version`, org, token, sku, currency, country, p.ID, p.Amount, project, requestVersion).Scan(&o.ID, &o.State, &o.Created, &orderVersion)
+			return tx.QueryRow(ctx, `INSERT INTO billing_orders(org_id,request_id,sku,currency,country,price_id,amount,return_project_id,request_version) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id,state,created_at,request_version`, org, token, sku, currency, country, p.ID, p.Amount, project, newOrderVersion).Scan(&o.ID, &o.State, &o.Created, &orderVersion)
 		}
 		if err != nil {
 			return err
@@ -244,6 +258,11 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 	})
 	if err != nil {
 		return "", err
+	}
+	if newOrderVersion == 3 && orderVersion != 3 {
+		if err := s.verifyCustomer(ctx, o.Customer, customerUUID, &profile); err != nil {
+			return "", err
+		}
 	}
 	var session stripe.CheckoutSession
 	if o.Session != "" {
@@ -264,12 +283,18 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 		} else {
 			v.Set("subscription_data[metadata][hedvi_order]", o.ID.String())
 		}
+		if orderVersion == 3 {
+			for _, key := range []string{"allowed_payment_method_types[0]", "adaptive_pricing[enabled]", "automatic_tax[enabled]", "tax_id_collection[enabled]", "customer_update[address]", "customer_update[name]", "billing_address_collection", "invoice_creation[enabled]"} {
+				v.Del(key)
+			}
+			v.Set("managed_payments[enabled]", "true")
+		}
 		err = s.call(ctx, "POST", "/checkout/sessions", v, "hedvi-checkout-"+o.ID.String(), &session)
 	}
 	if err != nil {
 		return "", err
 	}
-	if session.Customer == nil || session.Customer.ID != o.Customer || session.ClientReferenceID != o.ID.String() || session.Mode != stripe.CheckoutSessionMode(p.mode()) || session.Livemode != s.C.Live || !stripeID.MatchString(session.ID) {
+	if (session.ManagedPayments != nil && session.ManagedPayments.Enabled) != (orderVersion == 3) || session.Customer == nil || session.Customer.ID != o.Customer || session.ClientReferenceID != o.ID.String() || session.Mode != stripe.CheckoutSessionMode(p.mode()) || session.Livemode != s.C.Live || !stripeID.MatchString(session.ID) {
 		return "", errors.New("unexpected Stripe session")
 	}
 	if err := s.customerTx(ctx, org, user, func(tx pgx.Tx) error {

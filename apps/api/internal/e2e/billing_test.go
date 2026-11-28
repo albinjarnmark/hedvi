@@ -24,6 +24,7 @@ import (
 
 type billingJSON = map[string]any
 type stripeFixture struct {
+	managed, wrongIssuer                        bool
 	customerErrorCode                           string
 	customerRetryable                           bool
 	customerAddress                             billingJSON
@@ -93,6 +94,9 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 			consent = ""
 		}
 		session := billingJSON{"id": f.session, "consent": billingJSON{"terms_of_service": consent}, "consent_collection": billingJSON{"terms_of_service": "required"}, "mode": mode, "status": f.status, "payment_status": map[bool]string{true: "paid", false: "unpaid"}[f.paid], "customer": "cus_hedvi", "metadata": billingJSON{"hedvi_order": f.order}, "client_reference_id": f.order, "payment_intent": "pi_hedvi", "amount_subtotal": f.amount, "amount_total": total, "currency": f.currency, "automatic_tax": billingJSON{"enabled": true, "status": "complete"}, "customer_details": billingJSON{"address": billingJSON{"country": f.customerDetailsCountry}}, "url": "https://checkout.stripe.com/c/pay/mock", "invoice": f.invoiceID, "subscription": f.sub}
+		if f.managed {
+			session["managed_payments"] = billingJSON{"enabled": true}
+		}
 		if f.missingCheckoutIntent {
 			delete(session, "payment_intent")
 		} else if f.emptyCheckoutIntent {
@@ -165,15 +169,26 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 		f.checkoutKeys = append(f.checkoutKeys, r.Header.Get("Idempotency-Key"))
 		// Endive rejects the old payment_method_types request parameter. Keep
 		// card-only Checkout compatible with the pinned Stripe API version.
-		if r.Form.Get("allowed_payment_method_types[0]") != "card" || r.Form.Has("payment_method_types[0]") || r.Form.Has("allowed_payment_method_types[1]") {
-			return nil, fmt.Errorf("invalid checkout payment-method filter")
-		}
-		expectedLocale := "en"
-		if f.legacyCheckout {
-			expectedLocale = ""
-		}
-		if r.Form.Get("locale") != expectedLocale || r.Form.Get("metadata[hedvi_order]") != f.order || r.Form.Get("line_items[0][price]") != f.price || r.Form.Get("automatic_tax[enabled]") != "true" || r.Form.Get("consent_collection[terms_of_service]") != "required" || r.Form.Get("customer_update[address]") != "never" || r.Form.Get("billing_address_collection") != "auto" || r.Form.Get("shipping_address_collection[allowed_countries][0]") != "" {
-			return nil, fmt.Errorf("invalid checkout")
+		if f.managed {
+			if r.Form.Get("managed_payments[enabled]") != "true" || r.Form.Get("locale") != "en" || r.Form.Get("line_items[0][price]") != f.price {
+				return nil, fmt.Errorf("missing managed checkout parameters")
+			}
+			for _, key := range []string{"allowed_payment_method_types[0]", "automatic_tax[enabled]", "invoice_creation[enabled]", "adaptive_pricing[enabled]", "tax_id_collection[enabled]", "customer_update[address]", "customer_update[name]"} {
+				if r.Form.Has(key) {
+					return nil, fmt.Errorf("invalid managed parameter %s", key)
+				}
+			}
+		} else {
+			if r.Form.Get("allowed_payment_method_types[0]") != "card" || r.Form.Has("payment_method_types[0]") || r.Form.Has("allowed_payment_method_types[1]") {
+				return nil, fmt.Errorf("invalid checkout payment-method filter")
+			}
+			expectedLocale := "en"
+			if f.legacyCheckout {
+				expectedLocale = ""
+			}
+			if r.Form.Get("locale") != expectedLocale || r.Form.Get("metadata[hedvi_order]") != f.order || r.Form.Get("line_items[0][price]") != f.price || r.Form.Get("automatic_tax[enabled]") != "true" || r.Form.Get("consent_collection[terms_of_service]") != "required" || r.Form.Get("customer_update[address]") != "never" || r.Form.Get("billing_address_collection") != "auto" || r.Form.Get("shipping_address_collection[allowed_countries][0]") != "" {
+				return nil, fmt.Errorf("invalid checkout")
+			}
 		}
 		result = cs()
 		if f.lostSessionResponses > 0 {
@@ -242,6 +257,22 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 		result = items(billingJSON{"id": "dp_hedvi", "charge": "ch_hedvi", "status": f.dispute})
 	default:
 		return nil, fmt.Errorf("unhandled fixture %s", path)
+	}
+	if f.managed {
+		switch path {
+		case "/invoices/" + f.invoiceID:
+			invoice := result.(billingJSON)
+			issuer := "stripe"
+			if f.wrongIssuer {
+				issuer = "self"
+			}
+			invoice["issuer"] = billingJSON{"type": issuer}
+			invoice["automatic_tax"].(billingJSON)["liability"] = billingJSON{"type": "stripe"}
+		case "/payment_intents/pi_hedvi":
+			result.(billingJSON)["managed_payments"] = billingJSON{"enabled": true}
+		case "/charges/ch_hedvi":
+			result.(billingJSON)["payment_method_details"] = billingJSON{"type": "link"}
+		}
 	}
 	raw, _ := json.Marshal(result)
 	return &http.Response{StatusCode: 200, Body: io.NopCloser(bytes.NewReader(raw)), Header: make(http.Header)}, nil

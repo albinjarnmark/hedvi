@@ -506,3 +506,33 @@ func TestStripeLegacyCheckoutRetriesUnchanged(t *testing.T) {
 		t.Fatal("order version was mutable")
 	}
 }
+
+func TestStripeManagedMerchantGrantsOnlyItsOwnPaidInvoice(t *testing.T) {
+	for _, wrong := range []bool{false, true} {
+		h := newBillingAddressHarness(t)
+		h.e.Console.Billing.C.Countries["US"] = true
+		h.e.Console.Billing.C.ManagedCountries = map[string]bool{"US": true}
+		h.f.managed = true
+		p := testBillingProfile()
+		p.Country = "US"
+		p.State = "CA"
+		p.PostalCode = "94103"
+		if code := h.request(p); code != 200 {
+			t.Fatalf("managed checkout: %d", code)
+		}
+		h.f.wrongIssuer = wrong
+		h.f.invoiceCountry = "US"
+		h.f.paid = true
+		h.f.status = "complete"
+		if err := h.worker.RunOnce(h.e.Ctx); err != nil {
+			t.Fatal(err)
+		}
+		want := 1
+		if wrong {
+			want = 0
+		}
+		if h.e.Count("SELECT count(*) FROM credit_lots WHERE granted=10000") != want {
+			t.Fatalf("unexpected grant; wrong issuer %v", wrong)
+		}
+	}
+}
