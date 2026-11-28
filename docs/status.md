@@ -33,8 +33,25 @@ Checkout, portal and new customer invoice preferences explicitly request English
 Billing addresses allow Hong Kong and UAE without postal codes; US/CA additionally
 require their region. International account tests include canonical invoice countries
 and zero-tax paid invoices, without weakening payment or address binding.
-These changes require deployment and hosted acceptance before being called live.
-Country availability remains explicit: Stripe Tax support alone does not establish
+Revision `e92053d97887dc214aaee51513a41e8c27111446` is deployed to both environments
+with migration0020. The request-format rollout completed in two phases after old
+API replicas were removed. Both AWS deployment checks passed, including an actual
+customer RAW send. All five CI jobs passed in run46145239275. Production public
+checks passed for all34 pages and26 illustrations; legacy Swedish routes redirect
+to English, and Safari confirmed the live homepage, dashboard and Checkout.
+
+An app-created sandbox purchase with a German company address charged USD4 plus
+USD1 VAT and produced exactly one10,000-recipient Flex grant. The invoice and
+customer retained the DE address. Separate sandbox preflights covered DE with/without
+a VAT ID, US, GB with a VAT ID, HK without a postal code, and excluded ES/IT
+territories. These preflights do not establish tax obligations or country eligibility.
+Existing Hedvi-bound Stripe customers now prefer English: four staging customers
+and one production customer were updated without changing their addresses/currencies.
+A new live English Checkout was verified and expired unpaid; no real charge was made.
+
+Paid production purchases still accept only Sweden. Opening EU27 is prepared but
+awaits a specific approval required by the execution safety review. The sandbox
+now matches the production Small Seller setting. Country availability remains explicit: Stripe Tax support alone does not establish
 tax registration or business eligibility. Global fiscal readiness is not verified.
 
 ## Hosted acceptance on 28 November
@@ -66,8 +83,9 @@ live unpaid Checkout acceptance are separate evidence. Expiring the unpaid live
 order produced a real signed webhook; the worker reconciled it to expired with
 zero failures and no allowance grant.
 
-API and worker revision `0d33c086ed0edb0c64a4789a83f6f9f63e6e5940` is deployed
-to staging and production, with migrations through 0019. The web release includes
+The earlier sending-capacity release was
+`0d33c086ed0edb0c64a4789a83f6f9f63e6e5940`; the international follow-up above is now
+deployed to staging and production, with migrations through0020. The web release includes
 the matching sending-capacity copy; its Source link identifies the shipped build. Usable paid Flex and
 Pro allowances have no hourly or daily plan admission cap. Free retains 50/hour
 and 200/day; purchased units, abuse protections, manual restrictions and shared

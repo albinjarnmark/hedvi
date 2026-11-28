@@ -37,7 +37,7 @@ export const productName: Record<string, string> = {
 
 export const orderState: Record<string, string> = {
   creating: "Preparing checkout",
-  open: "Awaiting confirmation",
+  open: "Payment not confirmed",
   paid: "Payment confirmed",
   active: "Subscription active",
   ended: "Subscription ended",

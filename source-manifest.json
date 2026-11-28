@@ -885,7 +885,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/settings/billing-return/page.tsx",
-      "sha256": "b8caed1295492446a3d7e091926a4956736be8d6efb1507ca8dbe332fbfe487c"
+      "sha256": "a4224e414f02854bba831056295be8df9fac38ba3a294a25307f85d73e297015"
     },
     {
       "path": "apps/web/src/app/(app)/app/[project]/settings/page.tsx",
@@ -917,7 +917,7 @@
     },
     {
       "path": "apps/web/src/app/(site)/docs/guides.tsx",
-      "sha256": "1495c34cf8dfa440264aeab009267182115751d8660f425fabea6a793e7d2b2c"
+      "sha256": "fea106c79664818827a30af39219eb6872d451d411b8aaed07168570cf1d8461"
     },
     {
       "path": "apps/web/src/app/(site)/docs/layout.tsx",
@@ -1025,7 +1025,7 @@
     },
     {
       "path": "apps/web/src/components/BillingSettings.tsx",
-      "sha256": "b3db537c21433461b88971ccacf613e0bc1a4dc4483104f0ceab6e5ff9902303"
+      "sha256": "fdf6a5d8c08e72d74f1f95b2e1afe63869c9e60c6dbf92664d81b4efe6163572"
     },
     {
       "path": "apps/web/src/components/CloudflareSetup.tsx",
@@ -1593,7 +1593,7 @@
     },
     {
       "path": "docs/status.md",
-      "sha256": "321001a8565b6608803f751ceacfbb9d66d960750f59d176ca3c59437bce65d8"
+      "sha256": "12a4ca40d2ded3ec4f8a6b83c625cae3092225d835f2f11c7725e505202d53de"
     },
     {
       "path": "infra/terraform/AUTH-MAIL.md",

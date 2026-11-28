@@ -53,7 +53,7 @@ export const guides: Doc[] = [
     <ol>
       <li>Choose the product and currency, then enter the company name and full billing address in Hedvi. The first checkout fixes the organization&apos;s billing currency and invoice address.</li>
       <li>Select <strong>Continue to Stripe Checkout</strong>. Check the company details, enter any applicable tax ID and payment method, inspect the total and terms, then confirm payment on Stripe. Payment-method details do not change the saved company invoice address.</li>
-      <li>Read the return page or reopen <strong>Settings → Billing → Recent purchases</strong>. An order may show <strong>Awaiting confirmation</strong> or <strong>Payment pending</strong> while Stripe and Hedvi reconcile it. Check the existing order before starting another purchase.</li>
+      <li>Read the return page or reopen <strong>Settings → Billing → Recent purchases</strong>. <strong>Payment not confirmed</strong> can mean you left Checkout without paying or confirmation has not arrived yet. <strong>Payment pending</strong> means the payment is processing. If you already paid, wait for the existing order before trying again.</li>
       <li>Check the available recipients, attachment allowance and credit expiry under <strong>Usage and cost control</strong>. Sender-domain verification, automatic sending activation, API rate limits and abuse protections still apply. Active Flex and Pro allowances have no hourly or daily plan cap.</li>
     </ol>
     <h2>Use Flex alongside Free or Pro</h2>
