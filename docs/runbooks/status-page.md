@@ -2,15 +2,27 @@
 
 The hosted status page at https://status.hedvi.dev is a static GitHub Pages site,
 independent of Railway. HTTPS is enforced; the Cloudflare record is DNS-only.
-The `Hosted status` workflow checks only fixed public endpoints, approximately
-every five minutes. It has no AWS, Stripe, database or customer credentials.
-The scheduled job is disabled in forks and requires the repository variable
-`HEDVI_HOSTED_STATUS=true` in the official hosted repository.
+The page obtains current fixed-endpoint observations from the separate Cloudflare
+Worker `hedvi-status-probe` when opened, refreshing every minute. The worker caches
+results for 60 seconds and has no secrets or storage bindings. Its source is
+`apps/status/probe-worker.mjs`; deploy this exact module to the named Worker.
+Only GET/HEAD `/status.json` are accepted. Query parameters cannot choose targets,
+redirects are rejected, reads are bounded, and failed probes are retried once.
+The only allowed browser origin is https://status.hedvi.dev.
+
+The `Hosted status` workflow also publishes a static snapshot and operator incident
+notice. A five-minute GitHub schedule is configured, but scheduled execution was
+not observed during release acceptance; do not rely on that scheduler for alerts.
+Push/manual publishing was verified. The current Cloudflare observations avoid
+presenting stale GitHub snapshots as the current state. If Cloudflare is unavailable,
+the page falls back only to a sufficiently recent static snapshot. No component has
+AWS, Stripe, database or customer credentials. The GitHub scheduled job is disabled
+in forks and requires `HEDVI_HOSTED_STATUS=true` in the official hosted repository.
 
 Website and dashboard checks require HTTP 200 HTML. API readiness requires HTTP
 200 and the expected database-readiness response. Each failed check is retried.
-After publishing, a failed check makes the workflow fail so operators who enable
-GitHub Actions failure notifications receive the notification. Keep the independent
+A failed manually/push-triggered snapshot marks its GitHub workflow as failed.
+Cloudflare probes are on demand, not continuous alerting or incident history. Keep the independent
 AWS SNS queue, provider and reputation alarms enabled; HTTP checks do not replace
 them and do not prove message delivery.
 

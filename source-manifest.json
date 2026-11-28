@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/status.yml",
-      "sha256": "1f3c75bf90d7069bb39738bd3bdbd3a9feda34fdd5ebe2b6fd4c4b770eee162a"
+      "sha256": "9133a6baf989788d57d223b110cca9b36c7469414c1335a75a508f3b17ee43c1"
     },
     {
       "path": ".gitignore",
@@ -709,15 +709,23 @@
     },
     {
       "path": "apps/status/index.html",
-      "sha256": "1a4ecbe9e9c738ecd55bbfbe1e39d37fdca26e319c60f047f2efdebebd54cc22"
+      "sha256": "e04ed7708f6d6520565e53b5422e2a26790675cc204b39e963ea6c9af0974a40"
+    },
+    {
+      "path": "apps/status/probe-worker.mjs",
+      "sha256": "58a9ee824d029730907abe3a3d0e14eeb5909ac50381d4f9f95c0330979da8d8"
+    },
+    {
+      "path": "apps/status/probe-worker.test.mjs",
+      "sha256": "3a62e4fd60e8410a4face1203721f155840352a6afc67649789850cc1f190ac0"
     },
     {
       "path": "apps/status/status.mjs",
-      "sha256": "965f8a8a7742c66de57e140daec8da98162c7af81ce65708f73e9fca201b356f"
+      "sha256": "968a30b8868c38ed23bc62e43b5f3e1ba27df44f7b11fedae7a970039da795ed"
     },
     {
       "path": "apps/status/status.test.mjs",
-      "sha256": "606fcfc5d8cab8f803cb17e55e1a8aa584ab550e6c6869fc8182dbf18920c81e"
+      "sha256": "f7a2ac9d764346260c1b7c11f0e03abfb71c8e5af58f9b37a35f4fe976921828"
     },
     {
       "path": "apps/status/style.css",
@@ -1269,7 +1277,7 @@
     },
     {
       "path": "apps/web/tests/browser/status.spec.ts",
-      "sha256": "dd4b285281e7ce843a9626d7de4674e16031afd019b0b94b473afdae563fc123"
+      "sha256": "1e09a558950c166e1f01727c56dde45360e157d0a7196a34919ebe15d2a89a98"
     },
     {
       "path": "apps/web/tsconfig.json",
@@ -1569,7 +1577,7 @@
     },
     {
       "path": "docs/runbooks/status-page.md",
-      "sha256": "db9f5f1feed10c9640d09d84e4bd1032c606e6d49f5ecf1b3bc44f338b9da9d9"
+      "sha256": "c85d20625d3fbac90fdc6703891e1d41c1f0ab23b5e9baf643e52a8f7d78540c"
     },
     {
       "path": "docs/runbooks/unknown-sends.md",
@@ -1581,7 +1589,7 @@
     },
     {
       "path": "docs/status.md",
-      "sha256": "8d4323e35444a37c87ac232c1446fe8bea40d55e1a9f416b9ac0e828c7800cdf"
+      "sha256": "48e060ad2613b16e4c1cebba1cdf27b075b4f298602daba6e6e7b2c43caa4c90"
     },
     {
       "path": "infra/terraform/AUTH-MAIL.md",
@@ -1669,7 +1677,7 @@
     },
     {
       "path": "scripts/build-status.py",
-      "sha256": "e68b5079311d6b4112c732da283154a98beec8b4839dc62d25314525f887b1f5"
+      "sha256": "d8ea095da291bc93d3aaf2d2f6b79b282442693673aab1ea942395b370846c8e"
     },
     {
       "path": "scripts/db/init-local.sql",

@@ -26,7 +26,7 @@ def probe(item):
             with opener.open(req, timeout=12) as response:
                 data = response.read(65536)
                 content_type = response.headers.get_content_type()
-                ok = response.status == 200 and (json.loads(data).get("status") == "ready" if name == "api" else content_type == "text/html" and b"<html" in data.lower())
+                ok = response.status == 200 and (json.loads(data).get("status") == "ready" if name == "api" else content_type == "text/html" and b"<html" in data.lower() and ((b'name="email"' in data and b'type="password"' in data) if name == "dashboard" else b"Email, without the overhead." in data and b"/signup" in data))
                 if not ok:
                     raise ValueError("Unexpected health response")
             return {"id": name, "status": "passing", "duration_ms": round((time.monotonic()-start)*1000)}

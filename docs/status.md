@@ -1,7 +1,7 @@
 # Build status against the plan (28 November 2026)
 
 The website and application are hosted at hedvi.dev and app.hedvi.dev. The
-controlled pilot and unrestricted paid customer onboarding remain separate checks. The pilot uses
+email API and live Stripe Checkout are enabled. Live card settlement remains a separate check. The pilot uses
 Railway in Amsterdam for application compute, PostgreSQL and Valkey, and AWS
 Stockholm for SES, S3, queues, keys and monitoring. It is not highly available.
 
@@ -42,14 +42,23 @@ Six live prices and three business-SaaS products passed restricted-key checks.
 Both live keys are privately stored in their respective production services; the
 worker passed all thirteen resource-read checks and denied customer/refund writes.
 The dedicated live portal and signed 23-event snapshot webhook are configured.
-Live billing remains disabled while Stripe support corrects the merchant legal
-entity and live tax configuration and payment acceptance are completed.
-A sandbox success does not verify live payments.
+Stripe support detached the merchant's former shared legal entity. StackX AB,
+its supplied VAT number and business ownership are now verified; no active account
+tasks remained. Swedish VAT collection is active using the operator-confirmed
+Small Seller setting and Tax Basic. Production API and worker now have billing
+enabled. The actual app opened a live, correctly branded Flex Checkout at 39 SEK
+plus 9.75 SEK VAT. No real card payment was submitted; sandbox settlement and
+live unpaid Checkout acceptance are separate evidence. Expiring the unpaid live
+order produced a real signed webhook; the worker reconciled it to expired with
+zero failures and no allowance grant.
 
-API and worker revision `a2f6b407c347a04cd4542f406bb477af452a9af4` is deployed to
-staging and production, with migrations through 0017. Web revision
-`2ccbf1d22cde175484337988d75f86d96094b47c` adds the independent HTTPS status link
-and clearer feature-availability copy. All five cloud CI jobs passed,
+API, worker and web revision `0d33c086ed0edb0c64a4789a83f6f9f63e6e5940` is deployed
+to staging and production, with migrations through 0019. Usable paid Flex and
+Pro allowances have no hourly or daily plan admission cap. Free retains 50/hour
+and 200/day; purchased units, abuse protections, manual restrictions and shared
+provider capacity remain enforced. Workers pace SES calls before payload reads.
+Database lock-order regressions, paid allowances and suppression-work guards are
+covered in the PostgreSQL suite. All five cloud CI jobs passed,
 including PostgreSQL/race tests, mobile WebKit and desktop Chromium checks,
 rendered Terraform policy tests, secret scanning and SDK contracts.
 
@@ -66,7 +75,16 @@ deployment gates now exercise provisioning and customer RAW sending. A deliberat
 invalid staging claim failed its gate before promotion. The production public-API
 attachment and idempotency test after deployment delivered with one accepted
 provider attempt and one consumed reservation. Thirty-four public pages, their
-documentation figures and HTTPS headers passed the final HTTP check.
+documentation figures and HTTPS headers passed the previous HTTP check. A new
+post-update attachment/idempotency acceptance request passed on 28 November,
+with one accepted provider attempt, one delivery event and one consumed unit.
+
+The independent status page obtains current on-demand HTTP observations from a
+Cloudflare Worker, retaining operator notices and using the newest valid check.
+GitHub push/manual snapshots work, but its scheduled trigger was not observed;
+continuous monitoring relies on the independent AWS provider and queue alarms.
+SES currently permits 50,000 recipients per rolling day and 14 per second across
+the account. Requests for 250,000/day and 100/second are pending, not approved.
 
 These are bounded acceptance results, not proof of zero future incidents. See the
 deployment runbook for ongoing host checks and recovery procedures.

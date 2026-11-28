@@ -13,8 +13,24 @@ export function classify(snapshot, now = Date.now()) {
   return snapshot.components.some(c => c.status === "failing") || snapshot.incident?.state === "active" ? "issue" : "passing";
 }
 
+export function retainPublished(previous, candidate, now = Date.now()) {
+  const when = Date.parse(candidate?.checked_at);
+  if (!Number.isFinite(when) || when > now + 60000 || classify(candidate, when) === "unknown") return previous;
+  return previous && Date.parse(previous.checked_at) > when ? previous : candidate;
+}
+
+export function combineObservations(saved, live, now = Date.now(), previous = null) {
+  // A transient fetch error cannot replace a newer verified failure with old green data.
+  // The latest operator notice applies to every candidate observation.
+  const candidates = [saved, live, previous].filter(Boolean).map(value => ({...value, incident: saved?.incident}));
+  const valid = candidates.filter(value => classify(value, now) !== "unknown");
+  valid.sort((a,b) => Date.parse(b.checked_at) - Date.parse(a.checked_at) || Number(b.components.some(c => c.status === "failing")) - Number(a.components.some(c => c.status === "failing")));
+  return valid[0] ?? saved;
+}
+
 if (typeof document !== "undefined") {
   let latest = null;
+  let published = null;
   const labels = {website: ["Website", "Public website and documentation entry point"], dashboard: ["Dashboard", "Sign-in page availability"], api: ["Email API", "API and database readiness"]};
   function render(snapshot) {
     const state = classify(snapshot);
@@ -44,10 +60,18 @@ if (typeof document !== "undefined") {
   }
   async function refresh() {
     try {
-      const response = await fetch(`./status.json?t=${Date.now()}`, {cache: "no-store", credentials: "omit", signal: AbortSignal.timeout(10000)});
-      if (!response.ok) throw new Error("Status unavailable");
-      latest = await response.json();
-    } catch { latest = null; }
+      async function read(url) {
+        const response = await fetch(url, {cache: "no-store", credentials: "omit", signal: AbortSignal.timeout(10000)});
+        if (!response.ok) throw new Error("Status unavailable");
+        return response.json();
+      }
+      const [saved, live] = await Promise.allSettled([
+        read(`./status.json?t=${Date.now()}`),
+        read("https://hedvi-status-probe.albinff.workers.dev/status.json"),
+      ]);
+      published = retainPublished(published, saved.status === "fulfilled" ? saved.value : null);
+      latest = combineObservations(published, live.status === "fulfilled" ? live.value : null, Date.now(), latest);
+    } catch { latest = combineObservations(published, null, Date.now(), latest); }
     render(latest);
   }
   refresh();

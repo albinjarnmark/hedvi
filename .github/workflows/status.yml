@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           persist-credentials: false
-      - run: node --test apps/status/status.test.mjs
+      - run: node --test apps/status/*.test.mjs
       - id: probe
         run: python3 scripts/build-status.py
       - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4

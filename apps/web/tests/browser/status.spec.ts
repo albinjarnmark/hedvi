@@ -3,11 +3,17 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 test("independent status fits the viewport and rejects stale passing results", async ({ page }, info) => {
-  let stale = false;
+  let stale = false, activeIncident = false, savedUnavailable = false, savedFailure = false, olderLive = false, liveFailure = false, liveUnavailable = false, savedOlder = false;
+  await page.clock.install();
+  await page.route("https://hedvi-status-probe.albinff.workers.dev/status.json", async route => {
+    if (liveUnavailable) { await route.abort(); return; }
+    await route.fulfill({headers:{"Access-Control-Allow-Origin":"*"},json:{checked_at:new Date(Date.now()-(stale?21*60*1000:olderLive?50000:0)).toISOString(),components:["website","dashboard","api"].map(id=>({id,status:liveFailure && id==="api"?"failing":"passing"}))}});
+  });
   await page.route("https://status.hedvi.test/**", async route => {
     const name = new URL(route.request().url()).pathname.replace(/^\/hedvi\//, "") || "index.html";
     if (name === "status.json") {
-      await route.fulfill({json: {checked_at: new Date(Date.now() - (stale ? 21 * 60 * 1000 : 0)).toISOString(), components: ["website", "dashboard", "api"].map(id => ({id, status: "passing"})), incident: {state: "none"}}});
+      if (savedUnavailable) { await route.abort(); return; }
+      await route.fulfill({json: {checked_at: new Date(Date.now() - (stale ? 21 * 60 * 1000 : savedOlder ? 300000 : 0)).toISOString(), components: ["website", "dashboard", "api"].map(id => ({id, status: savedFailure && id === "api" ? "failing" : "passing"})), incident: activeIncident ? {state:"active",title:"Sending delay",message:"We are investigating",updated_at:new Date().toISOString()} : {state: "none"}}});
       return;
     }
     const files: Record<string, [string, string]> = {
@@ -29,4 +35,20 @@ test("independent status fits the viewport and rejects stale passing results", a
   await page.reload();
   await expect(page.getByRole("heading", {name:"Current status is unavailable"})).toBeVisible();
   await expect(page.getByText("Unknown",{exact:true})).toHaveCount(3);
+  stale = false; savedFailure = true; olderLive = true;
+  await page.reload();
+  await expect(page.getByRole("heading",{name:"A service issue needs attention"})).toBeVisible();
+  savedFailure = false; olderLive = false; activeIncident = true;
+  await page.reload();
+  await expect(page.getByRole("heading",{name:"Sending delay"})).toBeVisible();
+  savedUnavailable = true;
+  await page.clock.runFor(61000);
+  await expect(page.getByRole("heading",{name:"Sending delay"})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"A service issue needs attention"})).toBeVisible();
+  savedUnavailable = false; activeIncident = false; savedOlder = true; liveFailure = true;
+  await page.reload();
+  await expect(page.getByRole("heading",{name:"A service issue needs attention"})).toBeVisible();
+  liveUnavailable = true;
+  await page.clock.runFor(61000);
+  await expect(page.getByRole("heading",{name:"A service issue needs attention"})).toBeVisible();
 });
