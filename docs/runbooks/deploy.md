@@ -134,3 +134,33 @@ possible during this stage. Apply again with the **same token and version** and
 the old credentials or unauthenticated connection fail. Use the private operator
 environment for these checks.
 [AWS ElastiCache AUTH rotation](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/auth.html)
+
+## Customer-domain acceptance gate
+
+A healthy HTTP endpoint and green CI do not prove DNS onboarding works. Before
+promoting a release that changes AWS permissions, tenancy or domains:
+
+1. With the candidate runtime's restricted AWS principal and unchanged permissions
+   boundary, create a **new**, environment-prefixed SES tenant, read its exact name
+   and environment tag, and associate the environment's configuration set. Repeat
+   for the existing tenant. Do not substitute operator/admin credentials for this
+   check. `GetTenant` on a missing tenant can return AccessDenied against `*`;
+   Hedvi creates first and verifies after success or AlreadyExists.
+2. In staging, create a fresh application project, accept current terms, add an
+   owned pilot subdomain, publish ownership and sending DNS, and confirm automatic
+   activation. No owner approval or questionnaire should appear. Verify the same
+   project again to check retry behavior. Preserve paused-project restrictions.
+3. Send one uniquely keyed message to the SES success simulator and confirm the
+   corresponding accepted and delivered events. Repeat only with the original
+   key and payload if acceptance is uncertain. Exercise bounce/complaint through
+   a separate disposable test project to avoid suppressing real customer traffic.
+4. Confirm the candidate API, worker and web revisions, then repeat domain
+   verification and one owned-mailbox delivery in production. Do not report the
+   release complete while a required check is unverified.
+
+Provider provisioning/read failures open one deduplicated critical
+`domain_provider_unavailable` alert per domain. The worker forwards it through
+SNS, independently of SES, and a successful provider check resolves it. DNS
+propagation and missing customer records remain visible in the domain guide;
+these are distinct from a provider permissions incident. A domain-check failure
+returns retryable `domain_verification_unavailable`, never email-resend advice.

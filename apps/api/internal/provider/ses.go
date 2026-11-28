@@ -128,17 +128,16 @@ func (s *SES) EnsureTenant(ctx context.Context, tenant string) error {
 	if !s.validCustomerTenant(tenant) {
 		return config.ErrProjectTenant
 	}
-	err := s.checkTenant(ctx, tenant)
-	var missing *sestypes.NotFoundException
-	if errors.As(err, &missing) {
-		_, err = s.Client.CreateTenant(ctx, &sesv2.CreateTenantInput{TenantName: aws.String(tenant), Tags: []sestypes.Tag{s.environmentTag()}})
-		var exists *sestypes.AlreadyExistsException
-		if err != nil && !errors.As(err, &exists) {
-			return fmt.Errorf("create SES tenant: %w", err)
-		}
-		err = s.checkTenant(ctx, tenant)
+	// GetTenant for a missing tenant is authorized against resource "*" by
+	// SES, so a correctly resource-scoped runtime policy gets AccessDenied,
+	// not NotFound. Create first; AlreadyExists never proves ownership.
+	// Check the returned name and environment before associating resources.
+	_, err := s.Client.CreateTenant(ctx, &sesv2.CreateTenantInput{TenantName: aws.String(tenant), Tags: []sestypes.Tag{s.environmentTag()}})
+	var exists *sestypes.AlreadyExistsException
+	if err != nil && !errors.As(err, &exists) {
+		return fmt.Errorf("create SES tenant: %w", err)
 	}
-	if err != nil {
+	if err = s.checkTenant(ctx, tenant); err != nil {
 		return err
 	}
 	return s.associate(ctx, tenant, fmt.Sprintf("arn:aws:ses:%s:%s:configuration-set/%s", s.Region, s.AccountID, s.ConfigSet))

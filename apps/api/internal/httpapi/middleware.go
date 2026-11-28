@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"runtime/debug"
 	"strconv"
+	"strings"
 	"time"
 
 	"hedvi.dev/api/internal/apierr"
@@ -61,7 +62,11 @@ func Common(log *slog.Logger, maxBody int64, next http.Handler) http.Handler {
 		defer func() {
 			if p := recover(); p != nil {
 				log.Error("panic", "request_id", id, "panic", p, "stack", string(debug.Stack()))
-				apierr.Write(rec, apierr.ErrInternal)
+				if r.Method == http.MethodPost && (r.URL.Path == "/emails" || strings.HasSuffix(r.Pattern, "/emails/{id}/resend")) {
+					apierr.Write(rec, apierr.ErrSendUncertain)
+				} else {
+					apierr.Write(rec, apierr.ErrInternal)
+				}
 			}
 			route := r.Pattern
 			if route == "" {

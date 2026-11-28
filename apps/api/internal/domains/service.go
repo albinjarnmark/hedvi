@@ -540,6 +540,10 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 			})
 		})
 		if err != nil {
+			var known *apierr.Error
+			if !errors.As(err, &known) {
+				s.providerAlert(ctx, pool, d, err)
+			}
 			return nil, err
 		}
 	} else if manual && d.LastCheckedAt != nil && time.Since(*d.LastCheckedAt) < 10*time.Second {
@@ -559,6 +563,7 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 	lastErr := ""
 	status := "temporary_failure"
 	if providerErr != nil {
+		s.providerAlert(ctx, pool, d, providerErr)
 		lastErr = "Could not confirm the provider identity. Sending is disabled until it can be verified."
 		if errors.Is(providerErr, provider.ErrIdentityOwnership) {
 			lastErr = "Provider identity ownership needs operator review."
@@ -592,6 +597,11 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 	analysisJSON, _ := json.Marshal(analysis)
 	var out *Domain
 	err = db.InOrg(ctx, pool, d.OrgID, func(tx pgx.Tx) error {
+		if providerErr == nil {
+			if _, err := tx.Exec(ctx, `UPDATE alerts SET resolved_at=now() WHERE dedupe_key=$1 AND resolved_at IS NULL`, "domain-provider:"+d.ID.String()); err != nil {
+				return err
+			}
+		}
 		if status == "verified" {
 			if !manual && providerErr == nil && (st.FollowDNS || st.MailFromStatus == "SUCCESS") {
 				if err := s.activateVerified(ctx, tx, d); err != nil {
@@ -640,4 +650,24 @@ func (s *Service) check(ctx context.Context, pool *pgxpool.Pool, requested *Doma
 // Ancestors must not capture the reserved SES namespace either.
 func (s *Service) reservedAuth(name string) bool {
 	return s.ReservedDomain != "" && (name == s.ReservedDomain || strings.HasSuffix(name, "."+s.ReservedDomain) || strings.HasSuffix(s.ReservedDomain, "."+name))
+}
+
+// Provider failures need an independent operations notification, not only a
+// customer-facing error. Keep raw AWS details in private logs and deduplicate
+// the customer-safe alert until a later successful provider check resolves it.
+func (s *Service) providerAlert(ctx context.Context, pool *pgxpool.Pool, d *Domain, cause error) {
+	if s.Log != nil {
+		s.Log.Error("domain provider unavailable", "domain_id", d.ID, "err", cause)
+	}
+	ctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 2*time.Second)
+	defer cancel()
+	err := db.InOrg(ctx, pool, d.OrgID, func(tx pgx.Tx) error {
+		_, err := tx.Exec(ctx, `INSERT INTO alerts(org_id,project_id,kind,severity,dedupe_key,message,data)
+			VALUES($1,$2,'domain_provider_unavailable','critical',$3,'Domain setup could not reach the email provider. Check runtime permissions and provider health.',$4)
+			ON CONFLICT DO NOTHING`, d.OrgID, d.ProjectID, "domain-provider:"+d.ID.String(), map[string]string{"domain_id": d.ID.String()})
+		return err
+	})
+	if err != nil && s.Log != nil {
+		s.Log.Error("persist domain provider alert", "domain_id", d.ID, "err", err)
+	}
 }

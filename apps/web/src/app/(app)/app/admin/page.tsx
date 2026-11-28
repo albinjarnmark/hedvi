@@ -93,18 +93,25 @@ function AccountDetail({org,back}:{org:Organization;back:()=>void}) {
   </>;
 }
 function Membership({org,grants,reload}:{org:Organization;grants:Grant[];reload:()=>Promise<void>}) {
-  const [editing,setEditing]=useState(false),[revoking,setRevoking]=useState<string|null>(null);
+  const [plan,setPlan]=useState<string|null>(null),[revoking,setRevoking]=useState<string|null>(null);
   const request=useRef<{input:string;id:string}|null>(null);
   const {pending,error,run}=useAction();
   const active=grants.filter(g=>g.state==="active");
-  return <><div className="owner-section-head"><div><h3>Complimentary access</h3><p className="small muted">A gift allowance expires automatically. The customer is never charged.</p></div>{!editing&&<button className="btn btn-primary btn-small" onClick={()=>setEditing(true)}>Give membership</button>}</div>
+  return <><div className="owner-section-head"><div><h3>Complimentary access</h3><p className="small muted">A gift allowance expires automatically. The customer is never charged.</p></div>{!plan&&<button className="btn btn-primary btn-small" onClick={()=>setPlan("flex")}>Give membership</button>}</div>
     {error&&<p role="alert" className="error">{error}</p>}
-    {editing&&<form className="owner-editor stack" onSubmit={e=>{const f=formData(e);const body={org_id:org.id,plan:f.get("plan"),reason:String(f.get("reason")).trim()};const input=JSON.stringify(body);if(request.current?.input!==input)request.current={input,id:crypto.randomUUID()};const id=request.current.id;void run(async()=>{await post("/admin/memberships",{...body,request_id:id});request.current=null;setEditing(false);await reload();});}}>
-      <h3>Give {org.name} a membership</h3><label>Plan<select name="plan">{Object.entries(plans).map(([key,label])=><option key={key} value={key}>{label} · {allowance[key]}</option>)}</select></label>
+    {plan&&<form className="owner-editor stack" onSubmit={e=>{const f=formData(e);const body={org_id:org.id,plan:f.get("plan"),reason:String(f.get("reason")).trim()};const input=JSON.stringify(body);if(request.current?.input!==input)request.current={input,id:crypto.randomUUID()};const id=request.current.id;void run(async()=>{await post("/admin/memberships",{...body,request_id:id});request.current=null;setPlan(null);await reload();});}}>
+      <h3>Give {org.name} a membership</h3>
+      <div>
+        <label htmlFor="gift-plan">Plan</label>
+        <select id="gift-plan" name="plan" value={plan} onChange={e=>setPlan(e.target.value)} aria-describedby="gift-allowance">
+          {Object.entries(plans).map(([key,label])=><option key={key} value={key}>{label}</option>)}
+        </select>
+        <p id="gift-allowance" className="small muted">{allowance[plan]}</p>
+      </div>
       <label>Reason (shown in the account audit log)<input name="reason" minLength={10} maxLength={500} required defaultValue="Complimentary access from Hedvi owner"/></label><p className="tiny muted">The customer can read this reason in their audit log. It is prefilled; no customer application is required.</p>
-      <div className="row"><button className="btn btn-primary" disabled={pending}>Give membership</button><button type="button" className="btn" disabled={pending} onClick={()=>setEditing(false)}>Cancel</button></div>
+      <div className="row"><button className="btn btn-primary" disabled={pending}>Give membership</button><button type="button" className="btn" disabled={pending} onClick={()=>setPlan(null)}>Cancel</button></div>
     </form>}
-    {!active.length&&!editing&&empty("No active gift membership","Give Flex credits or a Pro allowance using the button above. Existing paid purchases remain separate.")}
+    {!active.length&&!plan&&empty("No active gift membership","Give Flex credits or a Pro allowance using the button above. Existing paid purchases remain separate.")}
     {active.map(g=><div className="owner-list-row" key={g.id}><div className="owner-row-main"><strong>{plans[g.plan]??g.plan}</strong><span className="small muted">{allowance[g.plan]} · Ends {formatDate(g.ends_at)}</span></div><Status value="approved" label="Active gift"/><button className="btn btn-small" onClick={()=>setRevoking(g.id)}>End gift</button></div>)}
     {revoking&&<form className="owner-editor stack" onSubmit={e=>{const f=formData(e);void run(async()=>{await post(`/admin/memberships/${revoking}/revoke`,{reason:f.get("reason")});setRevoking(null);await reload();});}}><h3>End this gift?</h3><p className="small">Unused gift allowance is removed. Paid purchases are unaffected.</p><label>Reason (shown in the account audit log)<input name="reason" minLength={10} maxLength={500} required defaultValue="Complimentary access ended by Hedvi owner"/></label><div className="row"><button className="btn btn-danger" disabled={pending}>End remaining allowance</button><button type="button" className="btn" disabled={pending} onClick={()=>setRevoking(null)}>Cancel</button></div></form>}
     {grants.some(g=>g.state!=="active")&&<><h3 className="owner-subheading">Gift history</h3><div className="owner-list">{grants.filter(g=>g.state!=="active").map(g=><div className="owner-list-row" key={g.id}><div className="owner-row-main"><strong>{plans[g.plan]??g.plan}</strong><span className="small muted">{g.revoke_reason||g.reason}</span></div><Status value={g.state} label={g.state==="revoked"?"Ended":"Expired"}/></div>)}</div></>}

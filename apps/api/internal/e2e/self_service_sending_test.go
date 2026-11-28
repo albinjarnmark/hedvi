@@ -1,12 +1,14 @@
 package e2e
 
 import (
+	"testing"
+	"time"
+
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"hedvi.dev/api/internal/db"
 	"hedvi.dev/api/internal/legal"
 	"hedvi.dev/api/internal/testenv"
-	"testing"
-	"time"
 )
 
 func TestDomainAndTermsAutomaticallyEnableSending(t *testing.T) {
@@ -70,31 +72,47 @@ func TestAutomaticSendingRequiresExactOwnerConsentAndImmutableClaim(t *testing.T
 		t.Fatal(err)
 	}
 	dns.records = d.Records
-	for _, mutation := range []string{
-		`UPDATE memberships SET role='developer' WHERE user_id=$1`,
-		`UPDATE legal_receipts SET documents='[]'::jsonb WHERE user_id=$1`,
-	} {
-		e.Exec(mutation, user)
-		d, err = service.Verify(e.Ctx, org, project, d.ID)
-		if err != nil || d.ProviderState != "awaiting_dns" {
-			t.Fatal("missing valid consent provisioned", err)
+	assertWaiting := func(reason string) {
+		t.Helper()
+		// An unchanged cached response would also be awaiting_dns. Require a new check.
+		e.Exec(`UPDATE domains SET last_checked_at=NULL WHERE id=$1`, d.ID)
+		checked, err := service.Verify(e.Ctx, org, project, d.ID)
+		if err != nil {
+			t.Fatal(reason, err)
 		}
-		e.Exec(`UPDATE memberships SET role='owner' WHERE user_id=$1`, user)
+		if checked.ProviderState != "awaiting_dns" || checked.LastCheckedAt == nil ||
+			len(checked.Records) != 1 || checked.Records[0].Record != "Ownership" || checked.Records[0].Status != "verified" {
+			t.Fatal(reason, "expected fresh ownership proof without provider provisioning")
+		}
 	}
-	e.Exec(`UPDATE legal_receipts SET documents=$2 WHERE user_id=$1`, user, legal.Current().Documents)
+	e.Exec(`UPDATE memberships SET role='developer' WHERE org_id=$1 AND user_id=$2`, org, user)
+	assertWaiting("a developer's current receipt")
+
+	// Receipts are append-only. Give a different verified owner an original
+	// receipt with the correct version, adoption flag and six documents. Only
+	// one digest differs from the published manifest.
+	manifest := legal.Current()
+	otherOwner := uuid.New()
+	e.Exec(`INSERT INTO users(id,email,password_hash,email_verified_at) VALUES ($1,'other-owner@example.test','unused-test-hash',now())`, otherOwner)
+	e.Exec(`INSERT INTO memberships(org_id,user_id,role) VALUES ($1,$2,'owner')`, org, otherOwner)
+	e.Exec(`INSERT INTO legal_receipts(user_id,manifest_version,documents,document_origin,manifest_adopted,user_agent)
+		VALUES ($1,$2,jsonb_set($3::jsonb,'{0,sha256}',to_jsonb(repeat('0',64)),false),'https://legal.example.test',$4,'fixture')`,
+		otherOwner, manifest.Version, manifest.Documents, manifest.Adopted)
+	assertWaiting("an owner's mismatched document digests")
+
+	e.Exec(`UPDATE memberships SET role='owner' WHERE org_id=$1 AND user_id=$2`, org, user)
 	other := e.NewTenant("free")
-	err = db.InOrg(e.Ctx, e.APIPool, org, func(tx pgx.Tx) error {
+	for _, scope := range []uuid.UUID{org, other.OrgID} {
 		var ok bool
-		if err := tx.QueryRow(e.Ctx, `SELECT hedvi_org_has_live_consent($1,$2,$3,$4)`, other.OrgID, legal.Current().Version, legal.Current().Documents, legal.Current().Adopted).Scan(&ok); err != nil {
-			return err
+		err := db.InOrg(e.Ctx, e.APIPool, scope, func(tx pgx.Tx) error {
+			return tx.QueryRow(e.Ctx, `SELECT hedvi_org_has_live_consent($1,$2,$3,$4)`, org, manifest.Version, manifest.Documents, manifest.Adopted).Scan(&ok)
+		})
+		if err != nil {
+			t.Fatal(err)
 		}
-		if ok {
-			t.Fatal("other organization consent leaked")
+		if ok != (scope == org) {
+			t.Fatal("valid receipt must be visible only within its own organization")
 		}
-		return nil
-	})
-	if err != nil {
-		t.Fatal(err)
 	}
 	for _, sql := range []string{
 		`UPDATE domains SET name='different.example.org' WHERE id=$1`,
@@ -114,8 +132,5 @@ func TestAutomaticSendingRequiresExactOwnerConsentAndImmutableClaim(t *testing.T
 		t.Fatal("API approved project")
 	}
 	e.Exec(`UPDATE organizations SET risk_status='blocked' WHERE id=$1`, org)
-	d, err = service.Verify(e.Ctx, org, project, d.ID)
-	if err != nil || d.ProviderState != "awaiting_dns" {
-		t.Fatal("blocked organization provisioned", err)
-	}
+	assertWaiting("blocked organization with a valid owner's receipt")
 }

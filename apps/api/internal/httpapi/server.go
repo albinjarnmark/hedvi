@@ -212,7 +212,7 @@ func (s *Server) sendEmail(w http.ResponseWriter, r *http.Request) {
 		if !errors.As(err, &ae) {
 			s.Log.Error("accept email", "request_id", RequestID(r.Context()), "err", err)
 		}
-		apierr.Write(w, err)
+		apierr.WriteSend(w, err)
 		return
 	}
 	if !res.Replayed {
@@ -716,7 +716,7 @@ func (s *Server) verifyDomain(w http.ResponseWriter, r *http.Request) {
 	d, err := s.Domains.Verify(r.Context(), p.OrgID, p.ProjectID, id)
 	if err != nil {
 		s.logIfInternal(r, err)
-		apierr.Write(w, err)
+		apierr.WriteDomainCheck(w, err)
 		return
 	}
 	writeJSON(w, 200, map[string]any{"object": "domain", "id": d.ID.String(), "hedvi": map[string]string{"status": d.Status}})

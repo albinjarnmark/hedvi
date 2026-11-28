@@ -362,7 +362,14 @@ func (s *Server) fail(w http.ResponseWriter, r *http.Request, err error) {
 	if !errors.As(err, &ae) {
 		s.Log.Error("console request failed", "request_id", httpapi.RequestID(r.Context()), "route", r.Pattern, "err", err)
 	}
-	apierr.Write(w, err)
+	switch {
+	case strings.HasSuffix(r.Pattern, "/domains/{id}/verify"):
+		apierr.WriteDomainCheck(w, err)
+	case strings.HasSuffix(r.Pattern, "/emails/{id}/resend"):
+		apierr.WriteSend(w, err)
+	default:
+		apierr.Write(w, err)
+	}
 }
 
 func (s *Server) clientIP(r *http.Request) *netip.Addr {
