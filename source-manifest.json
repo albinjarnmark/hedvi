@@ -173,7 +173,7 @@
     },
     {
       "path": "apps/api/internal/billing/invoice.go",
-      "sha256": "a378ed9c242b7920bfa53ba7e69f7bbf96f87574b99f74304cf8310b234a2487"
+      "sha256": "2891daf1de3b8096e27d7a6380cff66950578f9f81dadfc678848c782abe6a0e"
     },
     {
       "path": "apps/api/internal/billing/profile.go",
@@ -357,7 +357,7 @@
     },
     {
       "path": "apps/api/internal/e2e/billing_test.go",
-      "sha256": "98ee0b2745a70d64d44e7849ee38879dc5b9ebbf172f6f4eb69ad828d39b53fd"
+      "sha256": "b7f8609adb29abda7c346d366ecfa108b7ea10ee11581b985c6a29f970ca7635"
     },
     {
       "path": "apps/api/internal/e2e/domain_dns_ownership_test.go",

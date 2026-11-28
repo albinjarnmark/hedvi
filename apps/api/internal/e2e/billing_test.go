@@ -30,6 +30,9 @@ type stripeFixture struct {
 	customerShipping                            billingJSON
 	customerDetailsCountry, invoiceCountry      string
 	invoiceCollection                           string
+	checkoutIntent                              string
+	missingCheckoutIntent, emptyCheckoutIntent  bool
+	uncaptured, underCaptured                   bool
 	customerCreates, sessionCreates             int
 	lostCustomerResponses, lostSessionResponses int
 	rejectCustomer                              bool
@@ -83,7 +86,16 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 		if f.missingConsent {
 			consent = ""
 		}
-		return billingJSON{"id": f.session, "consent": billingJSON{"terms_of_service": consent}, "consent_collection": billingJSON{"terms_of_service": "required"}, "mode": mode, "status": f.status, "payment_status": map[bool]string{true: "paid", false: "unpaid"}[f.paid], "customer": "cus_hedvi", "metadata": billingJSON{"hedvi_order": f.order}, "client_reference_id": f.order, "payment_intent": "pi_hedvi", "amount_subtotal": f.amount, "amount_total": total, "currency": f.currency, "automatic_tax": billingJSON{"enabled": true, "status": "complete"}, "customer_details": billingJSON{"address": billingJSON{"country": f.customerDetailsCountry}}, "url": "https://checkout.stripe.com/c/pay/mock", "invoice": f.invoiceID, "subscription": f.sub}
+		session := billingJSON{"id": f.session, "consent": billingJSON{"terms_of_service": consent}, "consent_collection": billingJSON{"terms_of_service": "required"}, "mode": mode, "status": f.status, "payment_status": map[bool]string{true: "paid", false: "unpaid"}[f.paid], "customer": "cus_hedvi", "metadata": billingJSON{"hedvi_order": f.order}, "client_reference_id": f.order, "payment_intent": "pi_hedvi", "amount_subtotal": f.amount, "amount_total": total, "currency": f.currency, "automatic_tax": billingJSON{"enabled": true, "status": "complete"}, "customer_details": billingJSON{"address": billingJSON{"country": f.customerDetailsCountry}}, "url": "https://checkout.stripe.com/c/pay/mock", "invoice": f.invoiceID, "subscription": f.sub}
+		if f.missingCheckoutIntent {
+			delete(session, "payment_intent")
+		} else if f.emptyCheckoutIntent {
+			// An expanded object must not bypass the exact-intent comparison.
+			session["payment_intent"] = billingJSON{"id": ""}
+		} else if f.checkoutIntent != "" {
+			session["payment_intent"] = f.checkoutIntent
+		}
+		return session
 	}
 	var result any
 	switch {
@@ -202,7 +214,11 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 	case path == "/payment_intents/pi_hedvi":
 		result = billingJSON{"id": "pi_hedvi", "status": "succeeded", "customer": "cus_hedvi", "amount_received": total, "currency": f.currency, "latest_charge": "ch_hedvi"}
 	case path == "/charges/ch_hedvi":
-		result = billingJSON{"id": "ch_hedvi", "customer": "cus_hedvi", "payment_intent": "pi_hedvi", "paid": true, "captured": true, "amount_captured": total, "currency": f.currency, "amount_refunded": f.refunded, "refunded": f.refunded == total, "disputed": f.dispute != "", "payment_method_details": billingJSON{"type": "card", "card": billingJSON{"country": "US"}}}
+		captured := total
+		if f.underCaptured {
+			captured--
+		}
+		result = billingJSON{"id": "ch_hedvi", "customer": "cus_hedvi", "payment_intent": "pi_hedvi", "paid": true, "captured": !f.uncaptured, "amount_captured": captured, "currency": f.currency, "amount_refunded": f.refunded, "refunded": f.refunded == total, "disputed": f.dispute != "", "payment_method_details": billingJSON{"type": "card", "card": billingJSON{"country": "US"}}}
 	case path == "/refunds":
 		result = items()
 	case path == "/disputes/dp_hedvi":
@@ -406,6 +422,39 @@ func TestStripeOrdersGrantOnlyCanonicalEconomicSources(t *testing.T) {
 				t.Fatal("unknown early dispute granted funds")
 			}
 			f.dispute = "won"
+			if sku == "flex" {
+				// The invoice is already discovered, paid and send_invoice. Change
+				// only one part of its payment proof, then reconcile the real DB
+				// row and assert that neither allowance nor a grant is created.
+				for _, bad := range []struct {
+					name string
+					set  func()
+				}{
+					{"missing_checkout_intent", func() { f.missingCheckoutIntent = true }},
+					{"empty_checkout_intent", func() { f.emptyCheckoutIntent = true }},
+					{"different_checkout_intent", func() { f.checkoutIntent = "pi_unrelated" }},
+					{"uncaptured_charge", func() { f.uncaptured = true }},
+					{"under_captured_charge", func() { f.underCaptured = true }},
+				} {
+					bad.set()
+					e.Exec(`UPDATE billing_invoices SET checked_at=NULL WHERE id=$1`, f.invoiceID)
+					if notify("evt_"+bad.name, "invoice.paid", f.invoiceID, true) != 204 {
+						t.Fatalf("%s: invoice signal rejected", bad.name)
+					}
+					if err := work.RunOnce(e.Ctx); err != nil {
+						t.Fatalf("%s: reconciliation: %v", bad.name, err)
+					}
+					if e.Count(`SELECT count(*) FROM billing_invoices WHERE id=$1 AND state='review' AND reason='invoice_mismatch' AND checked_at IS NOT NULL AND check_failures=0`, f.invoiceID) != 1 {
+						t.Fatalf("%s: incomplete payment proof was not reviewed", bad.name)
+					}
+					if e.Count(`SELECT count(*) FROM credit_lots`) != 0 || e.Count(`SELECT count(*) FROM usage_periods WHERE stripe_invoice IS NOT NULL`) != 0 || e.Count(`SELECT count(*) FROM credit_ledger WHERE kind='grant'`) != 0 {
+						t.Fatalf("%s: invalid payment proof created allowance", bad.name)
+					}
+					f.missingCheckoutIntent, f.emptyCheckoutIntent = false, false
+					f.checkoutIntent = ""
+					f.uncaptured, f.underCaptured = false, false
+				}
+			}
 			notify("evt_paid", "invoice.paid", f.invoiceID, true)
 			var wg sync.WaitGroup
 			errs := make(chan error, 3)

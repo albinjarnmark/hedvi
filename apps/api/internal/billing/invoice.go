@@ -88,7 +88,7 @@ func (s *Service) inspectInvoice(ctx context.Context, id string, o Order) (e evi
 		if err = s.get(ctx, "/checkout/sessions/"+o.Session, nil, &cs); err != nil {
 			return
 		}
-		if cs.Consent == nil || cs.Consent.TermsOfService != "accepted" || cs.ID != o.Session || cs.Metadata["hedvi_order"] != o.ID.String() || cs.ClientReferenceID != o.ID.String() || cs.Customer == nil || cs.Customer.ID != o.Customer || cs.Mode != "payment" || cs.Status != "complete" || cs.PaymentStatus != "paid" || cs.Invoice == nil || cs.Invoice.ID != id || cs.PaymentIntent == nil || cs.Livemode != s.C.Live || cs.AmountTotal != inv.Total {
+		if cs.Consent == nil || cs.Consent.TermsOfService != "accepted" || cs.ID != o.Session || cs.Metadata["hedvi_order"] != o.ID.String() || cs.ClientReferenceID != o.ID.String() || cs.Customer == nil || cs.Customer.ID != o.Customer || cs.Mode != "payment" || cs.Status != "complete" || cs.PaymentStatus != "paid" || cs.Invoice == nil || cs.Invoice.ID != id || cs.PaymentIntent == nil || cs.PaymentIntent.ID == "" || cs.Livemode != s.C.Live || cs.AmountTotal != inv.Total {
 			return
 		}
 		flexIntent = cs.PaymentIntent.ID
@@ -118,7 +118,7 @@ func (s *Service) inspectInvoice(ctx context.Context, id string, o Order) (e evi
 		return
 	}
 	e.payment = payment.Payment.PaymentIntent.ID
-	if flexIntent != "" && flexIntent != e.payment {
+	if o.SKU == "flex" && flexIntent != e.payment {
 		return
 	}
 	var pi stripe.PaymentIntent
