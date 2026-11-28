@@ -21,6 +21,19 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   output: "standalone",
   poweredByHeader: false,
+  // Handle the www host before normalizing trailing slashes on the destination host.
+  skipTrailingSlashRedirect: true,
+  async redirects() {
+    return [
+      {
+        source: "/:path(.*)",
+        has: [{ type: "host", value: "www\\.hedvi\\.dev" }],
+        destination: "https://hedvi.dev/:path",
+        statusCode: 301,
+      },
+      { source: "/:path+/", destination: "/:path+", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

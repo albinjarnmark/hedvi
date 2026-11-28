@@ -761,7 +761,7 @@
     },
     {
       "path": "apps/web/next.config.ts",
-      "sha256": "1f774a2761029b1a02b46fc8d9d07fbcede9e8d73da4ea3b587c7cd3ac1d202d"
+      "sha256": "df6ba4df9e9d9d39cea01f8d431d24100735b06ec3cde799e17e71e3e2d9c84c"
     },
     {
       "path": "apps/web/package.json",
@@ -860,6 +860,10 @@
       "sha256": "367f5c6ff4544aa0d46ee236e9e763fa95e66eb8b3f05a7cdc058aca539772c4"
     },
     {
+      "path": "apps/web/public/hedvi-share.png",
+      "sha256": "42e60ef5a88b483747b75a8f4038478f634ae65febfb1ef248588c6a814a40a2"
+    },
+    {
       "path": "apps/web/public/icon-180.png",
       "sha256": "1034b50e7a16f2c16fb03c9c9c90012abcbc1f5438d3abb5d900c6a77091500b"
     },
@@ -921,15 +925,15 @@
     },
     {
       "path": "apps/web/src/app/(site)/docs/[slug]/page.tsx",
-      "sha256": "f35ae5ab5da6efe06a1cfde0000daacfde3edf2ad2975b33f3fafbecb6bbb35d"
+      "sha256": "f7f7d6ae5c47c12f36a39b65b9ccf581fc33b673f12f2011f1fe4d8db1a135e7"
     },
     {
       "path": "apps/web/src/app/(site)/docs/content.tsx",
-      "sha256": "d3eabc8649aa27383364d859687e648316a764b74506b4d092000df2faf8654a"
+      "sha256": "0394796fd21e1c218e0906d8d0d2d62cb0cbf7fe077a1eec98cffe66569e42ee"
     },
     {
       "path": "apps/web/src/app/(site)/docs/guides.tsx",
-      "sha256": "a6e2e009245251d46a924b2219b746e6298c7521266a4bbe8334c2de934e180b"
+      "sha256": "2518ba71380d548d30721bd3d6cecd69d6287f8fce61026039ef6f40fbf6df7f"
     },
     {
       "path": "apps/web/src/app/(site)/docs/layout.tsx",
@@ -937,7 +941,7 @@
     },
     {
       "path": "apps/web/src/app/(site)/docs/page.tsx",
-      "sha256": "6099558171ab99032e485b7c1544e8aefe2a97890221aa0f6695e34c0d89dbd6"
+      "sha256": "460089448a2cfdfa4969bee2dccbea592a027b4d9464fb1e5950788bf21e8758"
     },
     {
       "path": "apps/web/src/app/(site)/forgot-password/page.tsx",
@@ -945,7 +949,7 @@
     },
     {
       "path": "apps/web/src/app/(site)/layout.tsx",
-      "sha256": "3433b998dd80a8ff60741a9b9d30640893d6844cbb351ff91be1b096904927f1"
+      "sha256": "6bda651caf671737ad54f8dcf274ffa7c309c32d92d8f4cfa2e8451d492ad649"
     },
     {
       "path": "apps/web/src/app/(site)/legal/accept/page.tsx",
@@ -953,31 +957,31 @@
     },
     {
       "path": "apps/web/src/app/(site)/legal/acceptable-use/page.tsx",
-      "sha256": "84bba1382bc9d94df871c4f82d42af34395e2d449b3cf4b275ae66ad81f43c49"
+      "sha256": "54e39a75837a39d3be10a07b36e09fb9dfa3ec328a0403b59a9cb9840a9c1107"
     },
     {
       "path": "apps/web/src/app/(site)/legal/cookies/page.tsx",
-      "sha256": "4588bbbeedfc2d6940e292da3f9e325dd6dba6c78d25bd36c440f5ecb0ccce43"
+      "sha256": "8bd4c9477704d4f943a0af8d7d07e25fc1b3630aed8d67f65b3931fddfea4721"
     },
     {
       "path": "apps/web/src/app/(site)/legal/dpa/page.tsx",
-      "sha256": "c7f50b7b3c576373fc0f9d5f2d0dddc246e884c15e3f3c7eb5520d6648802605"
+      "sha256": "56c0c5d6cf7a3c871de3edc88b04aba71bd76ce0e443021c01bc483c5706856d"
     },
     {
       "path": "apps/web/src/app/(site)/legal/privacy/page.tsx",
-      "sha256": "36b96cc2b78c388cd943fe72ad1dc62cccf398b7ea167041414bf3db2d0e45fd"
+      "sha256": "76da102a2a488487bda3803a42ab4b0ba73f0efd5736f823edff35328a63d5fd"
     },
     {
       "path": "apps/web/src/app/(site)/legal/subprocessors/page.tsx",
-      "sha256": "fe4000de3c065ee1340caf6f573d83b26ba0fd476fb7db5b4b0d20e837ab6733"
+      "sha256": "394482ce074bae88640c0ebec0a6ef0e1ab412972b9d4eb3efb35647001e02b2"
     },
     {
       "path": "apps/web/src/app/(site)/legal/terms/page.tsx",
-      "sha256": "82a4ff4ec6feed36eded420c8f0a24c70259d1da3455097a0c2886ccaf8287c0"
+      "sha256": "80810141b2140ea34f7b053a6718f9592255347faf8143c5d8b285b1631867a9"
     },
     {
       "path": "apps/web/src/app/(site)/legal/versions/[version]/[document]/page.tsx",
-      "sha256": "e4b760caac744dbb16ceb265e66731583905aa19b062e079a427e7eb120077d6"
+      "sha256": "da570e3bc048fec336f6f310a6ded4bfd7c64b390bcd52c81f17d131cbc1167c"
     },
     {
       "path": "apps/web/src/app/(site)/login/page.tsx",
@@ -985,11 +989,11 @@
     },
     {
       "path": "apps/web/src/app/(site)/page.tsx",
-      "sha256": "21c6295848af0517ac066bfcb564e4c0b2b63f069c2819e7d9fe8655a64b5a9f"
+      "sha256": "d829ce93a7b405e6854841fffac046bbae76e93c29fcb5df8da30a0c9880ca2d"
     },
     {
       "path": "apps/web/src/app/(site)/pricing/page.tsx",
-      "sha256": "e83e81c7f4d8d0adfca7f9778da1e560b00a13ad392bf03a1cc29594d994991e"
+      "sha256": "aa76ac75b2e60d47499e5a2bcdc5f298aa8c6d70bb237b9d1246576064798d25"
     },
     {
       "path": "apps/web/src/app/(site)/reset-password/page.tsx",
@@ -1018,6 +1022,14 @@
     {
       "path": "apps/web/src/app/globals.css",
       "sha256": "5b65b53bb2421048897bbd81972ec710dd03c59accf712d8a4b8bfc69664b5b7"
+    },
+    {
+      "path": "apps/web/src/app/robots.ts",
+      "sha256": "02fecdee8e92d2c67ec06a7770eb48306cadc2d3b9f66f3500999b0a60cfcb9f"
+    },
+    {
+      "path": "apps/web/src/app/sitemap.ts",
+      "sha256": "9c949631b596bc6b6e2a54eddd95a0612a411030ffed1d997d39a88c5e734d7a"
     },
     {
       "path": "apps/web/src/components/AccountRecovery.tsx",
@@ -1280,6 +1292,10 @@
       "sha256": "25a813bb752ab204548ade724ac896996b346c3b1f878720c97485a9e425fba9"
     },
     {
+      "path": "apps/web/src/lib/seo.ts",
+      "sha256": "aeac1dea8b87cdf869aba2a90181b86631d978870e40f490a447d42768128d51"
+    },
+    {
       "path": "apps/web/src/lib/snippets.ts",
       "sha256": "4fdcf970d1b8225d806d912ef3dd9b1f26612dcbd41b82d40d793898c12c250f"
     },
@@ -1290,6 +1306,10 @@
     {
       "path": "apps/web/tests/browser/release.spec.ts",
       "sha256": "94d489c8ab8a50904cb7b323ef94c8bd5657e3b3d2b72800679a601132e40640"
+    },
+    {
+      "path": "apps/web/tests/browser/seo.spec.ts",
+      "sha256": "c080ceccff18aa03c3b35c41a0f52ab5b9440d3b6206c45a7fbab7e9846c6f72"
     },
     {
       "path": "apps/web/tests/browser/status.spec.ts",

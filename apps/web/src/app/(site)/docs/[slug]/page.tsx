@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { docs, findDoc } from "../content";
 
@@ -8,7 +9,9 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  return { title: findDoc(slug)?.title ?? "Docs" };
+  const doc = findDoc(slug);
+  if (!doc) notFound();
+  return pageMetadata(`/docs/${doc.slug}`, doc.seoTitle ?? doc.title, doc.description);
 }
 
 export default async function DocPage({ params }: { params: Promise<{ slug: string }> }) {

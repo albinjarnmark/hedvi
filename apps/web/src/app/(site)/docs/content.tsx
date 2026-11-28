@@ -11,7 +11,7 @@ import { guides } from "./guides";
 
 const API = publicApiUrl;
 
-export type Doc = { slug: string; title: string; body: React.ReactNode };
+export type Doc = { slug: string; title: string; description: string; seoTitle?: string; body: React.ReactNode };
 
 const verifyNode = `import { Resend } from "resend";
 
@@ -37,10 +37,10 @@ export async function POST(req: Request) {
 }`;
 
 export const docs: Doc[] = [
-  { slug: "agent-setup", title: "Set up with your agent", body: <><p>Use your coding agent to get started with Hedvi in an existing application. Copy the prompt below into its chat and let it inspect your project.</p><AgentSetup /><h2>What you do yourself</h2><p>Complete account verification, choose your password and review the service terms. Enter API keys directly into your secret manager. Your agent can prepare the integration while you finish these steps.</p><h2>Start in the test inbox</h2><p>A test key lets you validate the integration before adding a domain or changing your existing email provider. Go live only after domain verification and automatic sending activation.</p></> },
+  { slug: "agent-setup", title: "Set up with your agent", description: "Copy a setup prompt for your coding agent, connect Hedvi to an existing project and check the first API request in your test inbox.", body: <><p>Use your coding agent to get started with Hedvi in an existing application. Copy the prompt below into its chat and let it inspect your project.</p><AgentSetup /><h2>What you do yourself</h2><p>Complete account verification, choose your password and review the service terms. Enter API keys directly into your secret manager. Your agent can prepare the integration while you finish these steps.</p><h2>Start in the test inbox</h2><p>A test key lets you validate the integration before adding a domain or changing your existing email provider. Go live only after domain verification and automatic sending activation.</p></> },
   {
     slug: "quickstart",
-    title: "Quickstart",
+    title: "Quickstart", description: "Send your first test email with curl, Node.js or Python, inspect the message in your Hedvi inbox and verify a domain when you are ready to go live.", seoTitle: "Email API quickstart: send your first test email",
     body: (
       <>
         <p>Verify your email and complete signup. Hedvi creates a project with a <strong>test key</strong>. Test emails are captured in your test inbox and never leave Hedvi, so you can start before you own a domain.</p>
@@ -63,7 +63,7 @@ export const docs: Doc[] = [
   },
   {
     slug: "sending",
-    title: "Sending email",
+    title: "Sending email", description: "Build a transactional email request with HTML, plain text, attachments and tags. See which fields Hedvi accepts and how to track the resulting message.",
     body: (
       <>
         <p><code>POST /emails</code> accepts a documented subset of Resend&apos;s request. Hedvi answers <code>200</code> only after the email, its recipients, its quota reservation and its send job are durably stored.</p>
@@ -89,7 +89,7 @@ export const docs: Doc[] = [
   },
   {
     slug: "test-mode",
-    title: "Test mode",
+    title: "Test mode", description: "Use a Hedvi test key to capture messages before they reach real recipients. Inspect message content, headers and attachments in the test inbox.",
     body: (
       <>
         <p>Test keys capture email in the project&apos;s test inbox. Whether a key is test or live is read from the key record in the database — the <code>hv_test_</code> prefix is only a visual hint. A database rule also refuses send jobs for test emails, so test mail cannot reach the sending provider.</p>
@@ -105,7 +105,7 @@ export const docs: Doc[] = [
   },
   {
     slug: "domains",
-    title: "Domains and DNS",
+    title: "Domains and DNS", description: "Connect a sending domain to Hedvi, publish its ownership, DKIM and MAIL FROM records, and check the verification status before sending live email.",
     body: (
       <>
         <p>Hedvi uses Amazon SES Easy DKIM and a custom MAIL FROM subdomain (default <code>send.yourdomain</code>). You publish:</p>
@@ -123,7 +123,7 @@ export const docs: Doc[] = [
   },
   {
     slug: "statuses",
-    title: "Delivery statuses",
+    title: "Delivery statuses", description: "Follow an email from acceptance through delivery. Learn what queued, delayed, bounced and unknown outcomes mean and when to take action.",
     body: (
       <>
         <p>Status is tracked per recipient. One email can be delivered to one address and bounce for another.</p>
@@ -151,7 +151,7 @@ export const docs: Doc[] = [
   },
   {
     slug: "idempotency",
-    title: "Idempotency",
+    title: "Idempotency", description: "Use an Idempotency-Key when sending email with Hedvi. Learn when you can safely retry a request and what happens if its payload changes.",
     body: (
       <>
         <p>Send an <code>Idempotency-Key</code> header (1–256 printable characters) to make retries safe. Keys are scoped to your organization, project, mode (test/live) and operation and kept for 24 hours. If an error leaves acceptance uncertain, reuse the original key and identical payload within that lifetime; otherwise inspect the email log before resending.</p>
@@ -167,7 +167,7 @@ export const docs: Doc[] = [
   },
   {
     slug: "webhooks",
-    title: "Webhooks",
+    title: "Webhooks", description: "Receive Hedvi email events at your own endpoint, verify webhook signatures and handle redelivery without processing the same event twice.",
     body: (
       <>
         <p>Add endpoints under <strong>Developers → Webhooks</strong>. Hedvi sends Resend-compatible payloads (<code>type</code>, <code>created_at</code>, <code>data</code>) for <code>email.sent</code>, <code>email.delivered</code>, <code>email.delivery_delayed</code>, <code>email.bounced</code>, <code>email.complained</code>, <code>email.failed</code> and <code>email.suppressed</code>, plus opt-in Hedvi events (<code>hedvi.email.delivery_unknown</code>, <code>hedvi.quota.warning</code>, <code>hedvi.project.paused</code>, <code>domain.updated</code>). Recipient events contain the affected recipient in <code>to</code>.</p>
@@ -187,7 +187,7 @@ export const docs: Doc[] = [
   },
   {
     slug: "errors",
-    title: "Errors and limits",
+    title: "Errors and limits", description: "Look up Hedvi API error responses, rate limits and retry guidance to decide when to correct a request, wait or check the email log.",
     body: (
       <>
         <p>Errors use Resend&apos;s shape: <code>{`{"statusCode": 422, "name": "validation_error", "message": "…"}`}</code>.</p>
@@ -213,7 +213,7 @@ export const docs: Doc[] = [
   },
   {
     slug: "compatibility",
-    title: "Resend compatibility",
+    title: "Resend compatibility", description: "Check which Resend SDK methods, email fields and webhook events work with Hedvi, and review the differences before moving an integration.",
     body: (
       <>
         <p>Tested against <strong>resend-node 6.39.0</strong> and <strong>resend-python 2.54.0</strong>. Other SDKs and versions are not promised until tested.</p>
@@ -235,7 +235,7 @@ export const docs: Doc[] = [
   },
   {
     slug: "switch-from-resend",
-    title: "Switch from Resend",
+    title: "Switch from Resend", description: "Move a Resend integration to Hedvi with a test key, compare supported requests and webhook events, then switch live traffic in small steps.", seoTitle: "Switch from Resend to the Hedvi email API",
     body: (
       <>
         <p>Changing the client takes a minute; switching production safely takes verified prerequisites. We support the switch with a checklist, not a promise of zero work.</p>
@@ -263,7 +263,7 @@ RESEND_API_KEY=hv_live_…`} />
   },
   {
     slug: "data-and-retention",
-    title: "Data and retention",
+    title: "Data and retention", description: "See where Hedvi processes email, how long message content and delivery events are kept, and what remains available after content expires.",
     body: (
       <>
     <DocFigure name="content-retention" alt="Content is retained for processing and expires according to its configured schedule." caption="Expiry removes email preview and resend access." />

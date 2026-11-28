@@ -1,9 +1,9 @@
 import { supportEmail } from "@/lib/public-site";
 import Link from "next/link";
-import type { Metadata } from "next";
+import { publicMetadata } from "@/lib/seo";
 import { docs } from "./content";
 
-export const metadata: Metadata = { title: "Documentation" };
+export const metadata = publicMetadata("/docs");
 
 export default function DocsIndex() {
   return (

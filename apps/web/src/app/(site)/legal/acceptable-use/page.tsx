@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
+import { publicMetadata } from "@/lib/seo";
 import { LegalDocument } from "@/components/LegalDocument";
 import document from "@/content/legal/acceptable-use.json";
 
-export const metadata: Metadata = { title: document.title };
+export const metadata = publicMetadata("/legal/acceptable-use");
 export default function Page() { return <LegalDocument document={document} />; }

@@ -16,7 +16,7 @@ function archived({ version, document }: Params) {
 }
 export async function generateMetadata({ params }: { params: Promise<Params> }): Promise<Metadata> {
   const p = await params;
-  return { title: `${archived(p).title} · ${p.version}` };
+  return { title: `${archived(p).title} · ${p.version}`, robots: { index: false, follow: true } };
 }
 export default async function Page({ params }: { params: Promise<Params> }) {
   const p = await params;
