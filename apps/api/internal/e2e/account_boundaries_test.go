@@ -200,6 +200,8 @@ func TestOwnershipMigrationDoesNotVerifyLegacyAccounts(t *testing.T) {
 	}
 	defer owner.Close()
 	_, err = owner.Exec(e.Ctx, `DROP TABLE legal_receipts,auth_mail_outbox,auth_challenges,auth_mail_suppressions,auth_mail_budgets CASCADE;
+ -- Remove the later owner trigger while reconstructing the pre-0009 schema.
+ DROP TRIGGER IF EXISTS revoke_owner_credentials ON users;
  DROP FUNCTION IF EXISTS hedvi_auth_pending_count();ALTER TABLE users DROP COLUMN email_verified_at,DROP COLUMN credential_version;
  DELETE FROM schema_migrations WHERE version='0009_account_ownership'`)
 	if err != nil {

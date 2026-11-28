@@ -17,7 +17,7 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "440e393ecfd0d688566b200344262fb945923e78b6ad24e061b32f45ab8a276e"
+      "sha256": "1e1dfdc602ab18a4e476f9fd95ff144d3f12d3bf4d24c29ddeb434f140bbc803"
     },
     {
       "path": ".github/workflows/deploy.yml",
@@ -333,7 +333,7 @@
     },
     {
       "path": "apps/api/internal/e2e/account_boundaries_test.go",
-      "sha256": "dc3e2becdfb2079861a886cf459f6ad6cd60a63d9ad1683823794ad8717d22fe"
+      "sha256": "f87177b1fb9c0bb21d863ddbe61f3099d842ef4f924b45b9464223b04e431985"
     },
     {
       "path": "apps/api/internal/e2e/account_crashes_test.go",
