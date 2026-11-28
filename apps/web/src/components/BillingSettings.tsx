@@ -77,7 +77,7 @@ export function BillingSettings({ project, preferred }: { project: string; prefe
   const country = countryChoice ?? data.billing_profile?.country ?? "";
   const managed = data.managed_countries?.includes(country);
   const regionRequired = country === "US" || country === "CA";
-  const postalRequired = country !== "HK" && country !== "AE";
+  const postalRequired = regionRequired || (!managed && country !== "HK" && country !== "AE");
   const chooseBaseline = data.baseline === "flex" || (data.baseline === "free" && data.has_credits);
 
   function openStripe(action: "checkout" | "portal", body: Record<string, unknown>) {

@@ -36,7 +36,7 @@ func (s *Service) normalizeProfile(p *Profile) (Profile, error) {
 		}
 	}
 	v.Country = strings.ToUpper(v.Country)
-	if v.Name == "" || v.Line1 == "" || v.City == "" || (v.PostalCode == "" && v.Country != "HK" && v.Country != "AE") || utf8.RuneCountInString(v.PostalCode) > 20 || !countryCode.MatchString(v.Country) || !s.C.Countries[v.Country] {
+	if v.Name == "" || v.Line1 == "" || v.City == "" || (v.PostalCode == "" && v.Country != "HK" && v.Country != "AE" && !s.C.ManagedCountries[v.Country]) || utf8.RuneCountInString(v.PostalCode) > 20 || !countryCode.MatchString(v.Country) || !s.C.Countries[v.Country] {
 		return Profile{}, invalid
 	}
 	if (v.Country == "US" || v.Country == "CA") && (v.State == "" || v.PostalCode == "") {

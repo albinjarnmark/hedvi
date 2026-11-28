@@ -193,7 +193,7 @@
     },
     {
       "path": "apps/api/internal/billing/profile.go",
-      "sha256": "81ef050249f20d2ecdab2b95a5cebfb828982b91573a57eae3e873b6ac61bcd1"
+      "sha256": "bcf6cf2d28e74913f7ce0d9754e33265379ca448342c8ca51ecf9a34f05b241b"
     },
     {
       "path": "apps/api/internal/billing/stripe.go",
@@ -921,7 +921,7 @@
     },
     {
       "path": "apps/web/src/app/(site)/docs/guides.tsx",
-      "sha256": "fea106c79664818827a30af39219eb6872d451d411b8aaed07168570cf1d8461"
+      "sha256": "a6e2e009245251d46a924b2219b746e6298c7521266a4bbe8334c2de934e180b"
     },
     {
       "path": "apps/web/src/app/(site)/docs/layout.tsx",
@@ -1029,7 +1029,7 @@
     },
     {
       "path": "apps/web/src/components/BillingSettings.tsx",
-      "sha256": "a9c4e604aed1e6f0289397755994cd002acf82dbfe89815a1cadf3d6d5f80f4e"
+      "sha256": "ef7a2a35152849273486c1efdeb99a78903f07d70df357fe35c1938dcb114544"
     },
     {
       "path": "apps/web/src/components/CloudflareSetup.tsx",
@@ -1557,7 +1557,7 @@
     },
     {
       "path": "docs/runbooks/billing.md",
-      "sha256": "e490116b0926613d06242983a649416302f40226c6700b9398b6c87ec49b1007"
+      "sha256": "175a3b5c5856eb87ca0272b8ca87062bcb246046955a9d35d7abbf2ff1d939de"
     },
     {
       "path": "docs/runbooks/database-bootstrap.md",

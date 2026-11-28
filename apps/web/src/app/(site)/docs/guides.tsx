@@ -51,8 +51,8 @@ export const guides: Doc[] = [
     <h2>Buy through Checkout</h2>
     <DocFigure name="billing-checkout" alt="Choose a product in Settings, confirm the total at Stripe, then check payment status in Hedvi." caption="The return page reads your order. The allowance appears after Hedvi verifies the invoice and payment." />
     <ol>
-      <li>Choose the product and currency, then enter the company name and full billing address in Hedvi. The first checkout fixes the organization&apos;s billing currency and invoice address.</li>
-      <li>Select <strong>Continue to Stripe Checkout</strong>. Check the company details, enter any applicable tax ID and payment method, inspect the total and terms, then confirm payment on Stripe. Payment-method details do not change the saved company invoice address.</li>
+      <li>Choose the product and currency, then enter the company name and full billing address in Hedvi. The first checkout saves your organization&apos;s currency and company profile.</li>
+      <li>Select <strong>Continue to Stripe Checkout</strong>. Check the company details, enter any applicable tax ID and payment method, inspect the total and terms, then confirm payment on Stripe. For a direct purchase, Hedvi uses the saved company invoice address. When Checkout says “Sold through Link,” confirm the invoice address in Checkout. Link issues the receipt and can display a local currency.</li>
       <li>Read the return page or reopen <strong>Settings → Billing → Recent purchases</strong>. <strong>Payment not confirmed</strong> can mean you left Checkout without paying or confirmation has not arrived yet. <strong>Payment pending</strong> means the payment is processing. If you already paid, wait for the existing order before trying again.</li>
       <li>Check the available recipients, attachment allowance and credit expiry under <strong>Usage and cost control</strong>. Sender-domain verification, automatic sending activation, API rate limits and abuse protections still apply. Active Flex and Pro allowances have no hourly or daily plan cap.</li>
     </ol>
@@ -61,7 +61,7 @@ export const guides: Doc[] = [
     <h2>Invoices, renewals and cancellation</h2>
     <DocFigure name="billing-cycle" alt="A verified invoice opens a paid period. A paid renewal opens the next one. At cancellation the organization returns to its baseline when the paid period ends." caption="A Pro period follows the dates on its paid invoice. Unused Pro allowance expires at the end of the period." />
     <ol>
-      <li>Choose <strong>Manage payment method, invoices or cancellation</strong> to open Stripe&apos;s customer portal. Use invoice history for receipts and payment methods to update your card.</li>
+      <li>Choose <strong>Manage payment method, invoices or cancellation</strong> to open Stripe&apos;s customer portal. Use invoice history for receipts and payment methods to update your card. For purchases sold through Link, you can also manage the subscription and receipts at link.com.</li>
       <li>Cancel a Pro subscription in the portal to stop its next renewal. Check the scheduled cancellation and paid-through dates in Hedvi. The current paid interval remains available until it ends.</li>
       <li>To change Pro tiers, cancel at period end and buy the new tier after the old subscription ends. An unpaid renewal grants no new Pro allowance. Update the payment method and check the invoice status.</li>
     </ol>
