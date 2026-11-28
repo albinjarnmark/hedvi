@@ -25,7 +25,7 @@
     },
     {
       "path": ".github/workflows/status.yml",
-      "sha256": "11d713f0fa765706a3311f1c298fd4515bc11a21c0406f68354c28e3d53725f8"
+      "sha256": "1f3c75bf90d7069bb39738bd3bdbd3a9feda34fdd5ebe2b6fd4c4b770eee162a"
     },
     {
       "path": ".gitignore",
