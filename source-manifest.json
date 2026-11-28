@@ -17,15 +17,19 @@
     },
     {
       "path": ".github/workflows/ci.yml",
-      "sha256": "a6dd5b121438e2c943ee9b96392de6de4a03714b81cc38c2e5cda2f801667d5d"
+      "sha256": "3e6d50371663a266f388816f0138e2008f5e455cf02ca91ba5a3b0ec2d01dbfa"
     },
     {
       "path": ".github/workflows/deploy.yml",
       "sha256": "7133a12cb9139fa6f0fa02add6528e194f61a860535b57b5ddfd400aa7f75253"
     },
     {
+      "path": ".github/workflows/status.yml",
+      "sha256": "11d713f0fa765706a3311f1c298fd4515bc11a21c0406f68354c28e3d53725f8"
+    },
+    {
       "path": ".gitignore",
-      "sha256": "201775e2a2bcfc24d7b2a9d1c530b4a0b21a1e6aee3735b95ed4511ab34ea88d"
+      "sha256": "34a41939abf64deb3dc533591b3e51ba03a1e2dd0ba2d3b67d357dd9b0b8a4ef"
     },
     {
       "path": ".gitleaks.toml",
@@ -680,6 +684,26 @@
       "sha256": "6cd7ebfb1c59ac670156bb8a4a370879fe31fa1ba894389ea13727f07e1ea994"
     },
     {
+      "path": "apps/status/incident.json",
+      "sha256": "9e600960347e98d9eb498d05f98604300bf152d32a8c53fd8ac64e96ec5e6900"
+    },
+    {
+      "path": "apps/status/index.html",
+      "sha256": "1a4ecbe9e9c738ecd55bbfbe1e39d37fdca26e319c60f047f2efdebebd54cc22"
+    },
+    {
+      "path": "apps/status/status.mjs",
+      "sha256": "965f8a8a7742c66de57e140daec8da98162c7af81ce65708f73e9fca201b356f"
+    },
+    {
+      "path": "apps/status/status.test.mjs",
+      "sha256": "606fcfc5d8cab8f803cb17e55e1a8aa584ab550e6c6869fc8182dbf18920c81e"
+    },
+    {
+      "path": "apps/status/style.css",
+      "sha256": "e1fe360e6f189d00d8ac2995d7f4fb614b3150c7e0d8114233fbe4971ea6d7ed"
+    },
+    {
       "path": "apps/web/AGENTS.md",
       "sha256": "063098f6cb31bb44c6f8fbea25b3876de7ee1e5f7d00a50dbab506f6415eb7f0"
     },
@@ -1220,6 +1244,10 @@
       "sha256": "0c8b287b2ccc16d99ae886fc1b50276c93ff2df0ea2987fe59b140c55d2e0a53"
     },
     {
+      "path": "apps/web/tests/browser/status.spec.ts",
+      "sha256": "dd4b285281e7ce843a9626d7de4674e16031afd019b0b94b473afdae563fc123"
+    },
+    {
       "path": "apps/web/tsconfig.json",
       "sha256": "a1461c53691838aa47e6051675587466513a5d1b24e9141aeea23b2fc37845e9"
     },
@@ -1509,11 +1537,15 @@
     },
     {
       "path": "docs/runbooks/incident.md",
-      "sha256": "58b00488b9451fa08ad8b041d161de6447c8d650de2ea1300f9ef1b879103734"
+      "sha256": "408776783b61b78234815d586fb0176c70b50d9afff9dd15537b85e58a71d1fb"
     },
     {
       "path": "docs/runbooks/restore-test.md",
       "sha256": "6f9416a192acbc9f8943f624c9c559a4b1f7f0e568cc0880fe92d6a077862301"
+    },
+    {
+      "path": "docs/runbooks/status-page.md",
+      "sha256": "ca5dad487a91ec758402c4e04ede8ca6346cc981e22634524090fa37b05f423a"
     },
     {
       "path": "docs/runbooks/unknown-sends.md",
@@ -1525,7 +1557,7 @@
     },
     {
       "path": "docs/status.md",
-      "sha256": "414a5c66aae31f3412d339dd94f897a9329cbbb1a869925a8abf14b7941bd90d"
+      "sha256": "cb75b9ba5a790102139271088a074f11102630a1009e2082a454b7ba5f905108"
     },
     {
       "path": "infra/terraform/AUTH-MAIL.md",
@@ -1610,6 +1642,10 @@
     {
       "path": "pnpm-workspace.yaml",
       "sha256": "b4289b17550a0947fd80854e04b1e8381dfb6f9faad9118056625fd84860bb85"
+    },
+    {
+      "path": "scripts/build-status.py",
+      "sha256": "e68b5079311d6b4112c732da283154a98beec8b4839dc62d25314525f887b1f5"
     },
     {
       "path": "scripts/db/init-local.sql",

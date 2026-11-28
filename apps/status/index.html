@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+  <title>Hedvi status</title>
+  <meta name="description" content="Independent, timestamped availability checks for Hedvi's website, dashboard and email API.">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header><a href="https://hedvi.dev" aria-label="Hedvi home"><img src="./logo.svg" alt="Hedvi" width="132" height="40"></a><span>Service status</span></header>
+  <main>
+    <p class="eyebrow">HEDVI STATUS</p>
+    <h1>How things are running.</h1>
+    <p class="intro">Availability checks, hosted separately from the app.</p>
+    <section class="summary" aria-live="polite" aria-atomic="true"><span class="dot" id="summary-dot"></span><div><h2 id="summary">Checking the latest results…</h2><p id="checked">Waiting for a timestamped check.</p></div></section>
+    <section id="incident" hidden><h2 id="incident-title"></h2><p id="incident-message"></p><p class="muted" id="incident-time"></p></section>
+    <section class="services" aria-labelledby="service-heading"><h2 id="service-heading" class="sr-only">Service checks</h2><div id="components"><p>Live check results require JavaScript. <a href="./status.json">Read the timestamped results</a>.</p></div></section>
+    <section class="explanation"><h2>What these checks tell you</h2><p>We check the public website, sign-in page and API database readiness approximately every five minutes. Scheduling can be delayed. Results older than 20 minutes are marked as unavailable.</p><p>A passing API check does not confirm email delivery or inbox placement. Sending incidents are also monitored through our provider and queue alerts. If your message is delayed, check its status in the email log before retrying.</p></section>
+    <section class="help"><h2>Need a hand?</h2><p><a href="mailto:hej@stackx.se">Contact Hedvi support</a> or use the <a href="https://hedvi.dev/docs/troubleshooting">troubleshooting guide</a>.</p></section>
+  </main>
+  <footer><a href="https://hedvi.dev">Back to Hedvi</a><span>StackX AB · Independent availability checks</span><a href="https://github.com/albinjarnmark/hedvi/actions/workflows/status.yml">Check history</a></footer>
+  <script type="module" src="./status.mjs"></script>
+</body>
+</html>

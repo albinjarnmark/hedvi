@@ -1,0 +1,58 @@
+name: Hosted status
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '2-57/5 * * * *'
+  push:
+    branches: [main]
+    paths: ['apps/status/**', 'scripts/build-status.py', '.github/workflows/status.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hosted-status
+  cancel-in-progress: false
+
+jobs:
+  check:
+    if: github.repository == 'albinjarnmark/hedvi' && vars.HEDVI_HOSTED_STATUS == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    outputs:
+      healthy: ${{ steps.probe.outputs.healthy }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - run: node --test apps/status/status.test.mjs
+      - id: probe
+        run: python3 scripts/build-status.py
+      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: .status-site
+          retention-days: 1
+  publish:
+    needs: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+  report-failure:
+    needs: [check, publish]
+    if: needs.check.outputs.healthy == 'false'
+    runs-on: ubuntu-latest
+    permissions: {}
+    timeout-minutes: 1
+    steps:
+      - run: |
+          echo 'A public Hedvi health check failed after retry. The status page has been updated. Review provider and queue alarms before resending any email.'
+          exit 1

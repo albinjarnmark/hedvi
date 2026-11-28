@@ -58,3 +58,4 @@ backend.hcl
 
 **/test-results/
 **/playwright-report/
+.status-site/

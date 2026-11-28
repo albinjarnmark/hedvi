@@ -31,15 +31,36 @@ owner unlocked the private console and exercised a temporary gift and revocation
 A logical production backup was restored to an isolated database; migration and
 retention code completed there, and the clone was removed afterwards.
 
-Real Stripe sandbox Checkout, VAT, prepaid Flex, Pro allowance, customer portal
-and cancellation at period end passed. Live billing remains disabled while Stripe
-support corrects the merchant legal entity. A sandbox success does not verify live
-payments.
+Real Stripe sandbox Checkout, VAT, prepaid Flex, Pro 50k allowance, customer portal,
+cancellation at period end and a full Flex refund passed. Both currencies, Pro
+100k and accelerated renewal still need the complete hosted acceptance matrix.
+Six live prices and three business-SaaS products are prepared. Live billing remains
+disabled while Stripe support corrects the merchant legal entity and the live
+credentials, webhook, tax configuration and payment acceptance are completed.
+A sandbox success does not verify live payments.
 
-The current release adds opt-in 30-day remembered login and automatic low-volume
-sending after domain/provider verification and current terms. Database migrations
-0013 and 0014 are required before updating the API and worker. See the deployment
-runbook for the host acceptance checks; source changes alone are not those checks.
+Source revision `a2f6b407c347a04cd4542f406bb477af452a9af4` is deployed to staging
+and production, with migrations through 0017. All five cloud CI jobs passed,
+including PostgreSQL/race tests, mobile WebKit and desktop Chromium checks,
+rendered Terraform policy tests, secret scanning and SDK contracts.
+
+The release includes opt-in 30-day remembered login, automatic sending after
+domain/provider verification and current terms, and organization-wide sending
+limits based on usable plan allowances. MAIL FROM changes preserve domain keys
+and pause queued attempts until the selected domain configuration is verified.
+Cloudflare bulk import checks for conflicting receiving-mail records first.
+
+Actual restricted AWS credentials passed positive and negative tenant/configuration
+checks in both environments. The temporary customer-domain exception was removed;
+the same customer identity then passed with the general policy. API and worker
+deployment gates now exercise provisioning and customer RAW sending. A deliberately
+invalid staging claim failed its gate before promotion. The production public-API
+attachment and idempotency test after deployment delivered with one accepted
+provider attempt and one consumed reservation. Thirty-four public pages, their
+documentation figures and HTTPS headers passed the final HTTP check.
+
+These are bounded acceptance results, not proof of zero future incidents. See the
+deployment runbook for ongoing host checks and recovery procedures.
 
 ## Implemented features
 

@@ -74,6 +74,8 @@ jobs:
       - run: pnpm --filter @hedvi/web typecheck
       - run: pnpm --filter @hedvi/web lint
       - run: pnpm --filter @hedvi/web test
+      - name: Verify stale status evidence fails closed
+        run: node --test apps/status/status.test.mjs
       - run: pnpm --filter @hedvi/web build
       - name: Install browser test engines
         run: pnpm --filter @hedvi/web exec playwright install --with-deps chromium webkit
