@@ -117,6 +117,64 @@ func TestQuotaSettlementCannotDeadlockConcurrentRevocation(t *testing.T) {
 	}
 }
 
+func TestCreditExpiryCannotDeadlockConcurrentRevocation(t *testing.T) {
+	e := testenv.New(t)
+	tn := e.NewTenant("flex")
+	e.Exec(`INSERT INTO credit_lots(org_id,source,granted,expires_at) VALUES($1,'grant',10,now()-interval '1 day')`, tn.OrgID)
+	ctx, cancel := context.WithTimeout(e.Ctx, 8*time.Second)
+	defer cancel()
+	revoke, err := e.WorkerPool.Begin(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer revoke.Rollback(context.Background())
+	if _, err := revoke.Exec(ctx, `SELECT id FROM organizations WHERE id=$1 FOR UPDATE`, tn.OrgID); err != nil {
+		t.Fatal(err)
+	}
+	settlement, err := e.WorkerPool.Begin(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer settlement.Rollback(context.Background())
+	pid := settlement.Conn().PgConn().PID()
+	done := make(chan error, 1)
+	go func() {
+		_, err := quota.ExpireLots(ctx, settlement, time.Now())
+		if err == nil {
+			err = settlement.Commit(ctx)
+		}
+		done <- err
+	}()
+	for {
+		var blocked bool
+		if err := revoke.QueryRow(ctx, `SELECT cardinality(pg_blocking_pids($1))>0`, pid).Scan(&blocked); err != nil {
+			t.Fatal(err)
+		}
+		if blocked {
+			break
+		}
+		select {
+		case <-ctx.Done():
+			t.Fatal(ctx.Err())
+		case <-time.After(10 * time.Millisecond):
+		}
+	}
+	// This is the same org -> credit ordering as a gift revoke/refund. Before
+	// the fix, expiry held the credit row while waiting for the org FK.
+	if _, err := revoke.Exec(ctx, `UPDATE credit_lots SET billing_usable=false WHERE org_id=$1`, tn.OrgID); err != nil {
+		t.Fatal("revocation deadlocked settlement", err)
+	}
+	if err := revoke.Commit(ctx); err != nil {
+		t.Fatal(err)
+	}
+	if err := <-done; err != nil {
+		t.Fatal("settlement", err)
+	}
+	if e.Count(`SELECT count(*) FROM credit_ledger WHERE org_id=$1 AND kind='expire' AND quantity=10`, tn.OrgID) != 1 {
+		t.Fatal("credit expiry was not recorded exactly once")
+	}
+}
+
 type countedPayloadReads struct {
 	blob.Store
 	gets atomic.Int32

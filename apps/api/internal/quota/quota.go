@@ -332,10 +332,36 @@ func GrantCredits(ctx context.Context, tx pgx.Tx, orgID uuid.UUID, source, ref s
 // ExpireLots closes lots past expiry. Unreserved remainder expires now;
 // reserved units settle later (consumed if sent, expired if released).
 func ExpireLots(ctx context.Context, tx pgx.Tx, now time.Time) (int64, error) {
+	// Ledger insertion takes an organization FK lock. Acquire it before any
+	// lot locks, matching billing and owner revocation, to avoid deadlocks.
+	// Bound each maintenance pass and only update organizations we locked.
+	orgRows, err := tx.Query(ctx, `SELECT o.id FROM organizations o
+		WHERE EXISTS (SELECT 1 FROM credit_lots l WHERE l.org_id=o.id
+			AND l.expires_at <= $1 AND l.expired_at IS NULL)
+		ORDER BY o.id LIMIT 1000 FOR KEY SHARE OF o`, now)
+	if err != nil {
+		return 0, err
+	}
+	var orgIDs []uuid.UUID
+	for orgRows.Next() {
+		var id uuid.UUID
+		if err := orgRows.Scan(&id); err != nil {
+			orgRows.Close()
+			return 0, err
+		}
+		orgIDs = append(orgIDs, id)
+	}
+	orgRows.Close()
+	if err := orgRows.Err(); err != nil {
+		return 0, err
+	}
+	if len(orgIDs) == 0 {
+		return 0, nil
+	}
 	rows, err := tx.Query(ctx, `UPDATE credit_lots SET expired_at = $1,
 			expired_amount = expired_amount + (granted - reserved - consumed - expired_amount)
-		WHERE expires_at <= $1 AND expired_at IS NULL
-		RETURNING id, org_id, expired_amount`, now)
+		WHERE expires_at <= $1 AND expired_at IS NULL AND org_id=ANY($2::uuid[])
+		RETURNING id, org_id, expired_amount`, now, orgIDs)
 	if err != nil {
 		return 0, err
 	}

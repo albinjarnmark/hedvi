@@ -449,7 +449,7 @@
     },
     {
       "path": "apps/api/internal/e2e/paid_capacity_test.go",
-      "sha256": "13ba960c47a3c847b213ea2615d3bd359f6dbb2c8455ffd10fa6782a209b4192"
+      "sha256": "e11dcc07889852ae404f68f6dbd6ab687e6cbad3085a492ccf5bd537f0d34926"
     },
     {
       "path": "apps/api/internal/e2e/pipeline_test.go",
@@ -609,7 +609,7 @@
     },
     {
       "path": "apps/api/internal/quota/quota.go",
-      "sha256": "e5e521ac6477a1e97455207c0d6c771472c022d4398c3a08af64bb9e434267b8"
+      "sha256": "ccd2be85e909ed3c32290a716197fbde83e91a554f24f8a9a0df0420f494df5c"
     },
     {
       "path": "apps/api/internal/quota/suppression_work.go",
