@@ -30,6 +30,17 @@ ALTER TABLE send_attempts ADD COLUMN provider_route_id text
   REFERENCES provider_send_routes(id) ON DELETE SET NULL;
 REVOKE INSERT,UPDATE,DELETE ON send_attempts FROM hedvi_api;
 
+-- Customer-scoped provider incidents are visible through the ordinary alert
+-- projection, but only the worker may write them. Preserve legitimate API
+-- quota/domain-alert writes while blocking kind/key spoofing and key squatting.
+CREATE POLICY api_provider_alert_insert ON alerts AS RESTRICTIVE FOR INSERT TO hedvi_api
+  WITH CHECK (kind<>'provider_sending_paused' AND dedupe_key NOT LIKE 'provider-send:%');
+CREATE POLICY api_provider_alert_update ON alerts AS RESTRICTIVE FOR UPDATE TO hedvi_api
+  USING (kind<>'provider_sending_paused' AND dedupe_key NOT LIKE 'provider-send:%')
+  WITH CHECK (kind<>'provider_sending_paused' AND dedupe_key NOT LIKE 'provider-send:%');
+CREATE POLICY api_provider_alert_delete ON alerts AS RESTRICTIVE FOR DELETE TO hedvi_api
+  USING (kind<>'provider_sending_paused' AND dedupe_key NOT LIKE 'provider-send:%');
+
 -- Existing unscoped provider:<code> alerts cannot be assigned to one path
 -- safely. Leave them for explicit operator review; new route alerts use an
 -- independent key and are never suppressed by those legacy incidents.

@@ -4,7 +4,7 @@ import { cloudflareZoneFile, type SendingDNSRecord } from "@/lib/dns-import";
 
 export function CloudflareSetup({domain,records,mailFromDomain,onCheck,pending}:{domain:string;mailFromDomain:string;records:SendingDNSRecord[];onCheck:()=>void;pending:boolean}) {
   const [open,setOpen]=useState(false),[downloaded,setDownloaded]=useState(false),[error,setError]=useState("");
-  const ownershipOnly=records.length===1&&records[0].record==="Ownership";
+  const ownershipOnly=records.length===1&&records[0]?.record==="Ownership";
   function download() {
     try {
       const text=cloudflareZoneFile(domain,records,mailFromDomain);

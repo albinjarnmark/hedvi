@@ -54,7 +54,7 @@ run "legacy_staging_excludes_production" {
   assert {
     condition = one([
       for s in data.aws_iam_policy_document.worker.statement : (
-        s.effect == "Allow" && toset(s.actions) == toset(["ses:SendRawEmail"]) &&
+        coalesce(s.effect, "Allow") == "Allow" && toset(s.actions) == toset(["ses:SendRawEmail"]) &&
         toset(s.resources) == toset(["arn:aws:ses:eu-north-1:123456789012:identity/*", "arn:aws:ses:eu-north-1:123456789012:configuration-set/hedvi-staging"]) &&
         one([for c in s.condition : c.test == "StringLike" && c.variable == "ses:TenantName" && toset(c.values) == toset(["hedvi-${join("", [for i in range(32) : "?"])}"])])
       ) if s.sid == "SendCustomerRaw"
@@ -93,7 +93,7 @@ run "production_uses_only_production_tenants" {
   assert {
     condition = one([
       for s in data.aws_iam_policy_document.worker.statement : (
-        s.effect == "Allow" && toset(s.actions) == toset(["ses:SendRawEmail"]) &&
+        coalesce(s.effect, "Allow") == "Allow" && toset(s.actions) == toset(["ses:SendRawEmail"]) &&
         toset(s.resources) == toset(["arn:aws:ses:eu-north-1:123456789012:identity/*", "arn:aws:ses:eu-north-1:123456789012:configuration-set/hedvi-production"]) &&
         one([for c in s.condition : c.test == "StringLike" && c.variable == "ses:TenantName" && toset(c.values) == toset(["hedvi-production-${join("", [for i in range(32) : "?"])}"])])
       ) if s.sid == "SendCustomerRaw"

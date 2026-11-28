@@ -99,15 +99,22 @@ run "auth_is_operator_owned" {
     error_message = "Customer RAW must exclude the operator mailbox, its domain and subdomains even if SES authorizes a parent identity."
   }
   assert {
+    # The merged JSON can be deferred until apply. Check its plan-time inputs.
     condition = toset([
-      for s in jsondecode(data.aws_iam_policy_document.worker.json).Statement : s.Sid
-      if s.Effect == "Allow" && (can(s.NotAction) || anytrue([for a in flatten([try(s.Action, [])]) : can(regex("^(ses:send|ses:\\*|\\*)", lower(a)))]))
+      for s in data.aws_iam_policy_document.worker.statement : s.sid
+      if coalesce(s.effect, "Allow") == "Allow" && (try(length(s.not_actions), 0) > 0 || anytrue([for a in coalesce(s.actions, toset([])) : can(regex("^(ses:send|ses:.*[?*]|\\*)", lower(a)))]))
     ]) == toset(["SendCustomerRaw", "SendOperatorAuthMail"])
     error_message = "A third grant must not enable Simple, templated or unscoped sending."
   }
   assert {
+    condition = alltrue(flatten([
+      for p in data.aws_iam_policy_document.worker.source_policy_documents : [for s in jsondecode(p).Statement : s.Effect == "Deny"]
+    ])) && try(length(data.aws_iam_policy_document.worker.override_policy_documents), 0) == 0
+    error_message = "Imported guard documents must contain only denials and no override document may replace a reviewed grant."
+  }
+  assert {
     condition = one([
-      for s in jsondecode(data.aws_iam_policy_document.worker.json).Statement : (
+      for s in jsondecode(data.aws_iam_policy_document.worker.source_policy_documents[0]).Statement : (
         s.Effect == "Deny" && s.Resource == "*" && toset(s.Action) == toset(["ses:SendEmail", "ses:SendRawEmail"]) &&
         s.Condition.StringEqualsIgnoreCase["ses:FromAddress"] == "accounts@auth.example.com" &&
         s.Condition.StringNotEquals["ses:TenantName"] == "operator-hedvi-staging-auth"

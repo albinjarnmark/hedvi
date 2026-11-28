@@ -12,6 +12,7 @@ import (
 
 	"hedvi.dev/api/internal/db"
 	"hedvi.dev/api/internal/provider"
+	"hedvi.dev/api/internal/sesevent"
 	"hedvi.dev/api/internal/testenv"
 	"hedvi.dev/api/internal/worker"
 )
@@ -121,6 +122,45 @@ func TestProviderSendIncidentLifecycleAndIsolation(t *testing.T) {
 			return err
 		}); err == nil {
 			t.Fatal("public API can access worker-owned health state", query)
+		}
+	}
+	var protectedID uuid.UUID
+	if err := e.WorkerPool.QueryRow(e.Ctx, `SELECT id FROM alerts WHERE project_id=$1 AND dedupe_key LIKE 'provider-send:%' AND resolved_at IS NULL LIMIT 1`, a.ProjectID).Scan(&protectedID); err != nil {
+		t.Fatal(err)
+	}
+	for _, query := range []string{`UPDATE alerts SET resolved_at=now(),notified_at=now(),kind='quota_threshold',dedupe_key='renamed' WHERE id=$1`, `DELETE FROM alerts WHERE id=$1`} {
+		if err := db.InOrg(e.Ctx, e.APIPool, a.OrgID, func(tx pgx.Tx) error {
+			tag, err := tx.Exec(e.Ctx, query, protectedID)
+			if err == nil && tag.RowsAffected() != 0 {
+				t.Fatal("public API mutated a protected provider incident")
+			}
+			return err
+		}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, fields := range [][2]string{{"provider_sending_paused", "forged-provider"}, {"quota_threshold", "provider-send:forged"}} {
+		if err := db.InOrg(e.Ctx, e.APIPool, a.OrgID, func(tx pgx.Tx) error {
+			_, err := tx.Exec(e.Ctx, `INSERT INTO alerts(org_id,project_id,kind,severity,dedupe_key,message) VALUES($1,$2,$3,'critical',$4,'forged')`, a.OrgID, a.ProjectID, fields[0], fields[1])
+			return err
+		}); err == nil {
+			t.Fatal("public API forged a provider incident or squatted its dedupe key", fields)
+		}
+	}
+	// Legitimate API alert writes still work, but cannot be renamed into the
+	// reserved kind/key namespace on a later update.
+	var ordinaryID uuid.UUID
+	if err := db.InOrg(e.Ctx, e.APIPool, a.OrgID, func(tx pgx.Tx) error {
+		return tx.QueryRow(e.Ctx, `INSERT INTO alerts(org_id,kind,severity,dedupe_key,message) VALUES($1,'quota_threshold','info','ordinary-api-alert','quota') RETURNING id`, a.OrgID).Scan(&ordinaryID)
+	}); err != nil {
+		t.Fatal(err)
+	}
+	for _, assignment := range []string{`kind='provider_sending_paused'`, `dedupe_key='provider-send:forged'`} {
+		if err := db.InOrg(e.Ctx, e.APIPool, a.OrgID, func(tx pgx.Tx) error {
+			_, err := tx.Exec(e.Ctx, `UPDATE alerts SET `+assignment+` WHERE id=$1`, ordinaryID)
+			return err
+		}); err == nil {
+			t.Fatal("public API renamed an ordinary alert into a provider incident")
 		}
 	}
 }
@@ -296,5 +336,114 @@ func TestConcurrentProviderSendFailuresOpenOneIncident(t *testing.T) {
 	monitor := &worker.Monitor{Pool: e.WorkerPool, Publisher: &worker.SNSAlertPublisher{Client: sns, TopicARN: "test"}}
 	if err := monitor.RunOnce(e.Ctx); err != nil || len(sns.calls) != 1 {
 		t.Fatal("concurrent incident produced duplicate notification", err, len(sns.calls))
+	}
+}
+
+func TestProviderSendResponseAfterSESEventStillProvesRecovery(t *testing.T) {
+	e := testenv.New(t)
+	tenant := e.NewTenant("free")
+	denied := *e.Sender
+	denied.Provider = incidentSendProvider{Provider: e.Sim, send: deniedProviderSend}
+	if err := denied.Handle(e.Ctx, incidentEmail(t, e, tenant)); err != nil {
+		t.Fatal(err)
+	}
+	emailID := incidentEmail(t, e, tenant)
+	sender := *e.Sender
+	sender.Provider = incidentSendProvider{Provider: e.Sim, send: func(ctx context.Context, in provider.SendInput) (string, error) {
+		id, err := e.Sim.Send(ctx, in)
+		if err != nil {
+			return id, err
+		}
+		tags := map[string][]string{}
+		for key, value := range in.Tags {
+			tags[key] = []string{value}
+		}
+		event := sesevent.Event{EventType: "Send", Send: &struct{}{}, Mail: sesevent.Mail{
+			Timestamp: time.Now(), MessageID: id, Source: in.From, Destination: in.Recipients, Tags: tags,
+		}}
+		if err := e.Events.Apply(ctx, event); err != nil {
+			return "", err
+		}
+		if e.Count(`SELECT count(*) FROM send_attempts WHERE email_id=$1 AND state='resolved_accepted'`, emailID) != 1 ||
+			e.Count(`SELECT count(*) FROM alerts WHERE project_id=$1 AND dedupe_key LIKE 'provider-send:%' AND resolved_at IS NULL`, tenant.ProjectID) != 1 {
+			t.Fatal("SES event should settle delivery without claiming current provider recovery")
+		}
+		return id, nil
+	}}
+	if err := sender.Handle(e.Ctx, emailID); err != nil {
+		t.Fatal(err)
+	}
+	if e.Count(`SELECT count(*) FROM alerts WHERE project_id=$1 AND dedupe_key LIKE 'provider-send:%' AND resolved_at IS NULL`, tenant.ProjectID) != 0 ||
+		e.Count(`SELECT count(*) FROM provider_send_routes WHERE project_id=$1 AND last_outcome='accepted'`, tenant.ProjectID) != 1 ||
+		e.Count(`SELECT count(*) FROM recipients WHERE email_id=$1 AND billing_state='consumed'`, emailID) != 1 ||
+		e.Count(`SELECT count(*) FROM localmock.ses_outbound`) != 1 {
+		t.Fatal("direct acceptance after feedback lost recovery or duplicated delivery accounting")
+	}
+}
+
+func TestProviderIncidentQuotaSettlementUsesConsistentLockOrder(t *testing.T) {
+	e := testenv.New(t)
+	tenant := e.NewTenant("free")
+	acceptedID, exhaustedID := incidentEmail(t, e, tenant), incidentEmail(t, e, tenant)
+	e.Exec(`UPDATE emails SET queue_deadline_at=now()+interval '20 seconds' WHERE id=$1`, exhaustedID)
+	ctx, cancel := context.WithTimeout(e.Ctx, 8*time.Second)
+	defer cancel()
+	blocker, err := e.WorkerPool.Begin(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer blocker.Rollback(context.Background()) //nolint:errcheck
+	if _, err := blocker.Exec(ctx, `SELECT id FROM usage_periods WHERE org_id=$1 FOR UPDATE`, tenant.OrgID); err != nil {
+		t.Fatal(err)
+	}
+	waitForQuotaWaiters := func(want int) {
+		t.Helper()
+		for {
+			var n int
+			if err := e.WorkerPool.QueryRow(ctx, `SELECT count(*) FROM pg_stat_activity WHERE datname=current_database()
+				AND wait_event_type='Lock' AND query LIKE 'UPDATE usage_periods SET reserved = reserved - %'`).Scan(&n); err != nil {
+				t.Fatal(err)
+			}
+			if n >= want {
+				return
+			}
+			select {
+			case <-time.After(10 * time.Millisecond):
+			case <-ctx.Done():
+				t.Fatal("provider outcomes did not reach quota settlement", want, n)
+			}
+		}
+	}
+	accepted := make(chan error, 1)
+	go func() { accepted <- e.Sender.Handle(ctx, acceptedID) }()
+	waitForQuotaWaiters(1)
+	denied := *e.Sender
+	denied.Provider = incidentSendProvider{Provider: e.Sim, send: deniedProviderSend}
+	exhausted := make(chan error, 1)
+	go func() { exhausted <- denied.Handle(ctx, exhaustedID) }()
+	waitForQuotaWaiters(2)
+	// The accepted outcome is first in the quota lock queue. If the newer
+	// exhausted refusal held the route lock already, releasing this blocker
+	// would create the quota -> route / route -> quota deadlock.
+	if err := blocker.Commit(ctx); err != nil {
+		t.Fatal(err)
+	}
+	for _, done := range []<-chan error{accepted, exhausted} {
+		select {
+		case err := <-done:
+			if err != nil {
+				t.Fatal("provider settlement lost its result", err)
+			}
+		case <-ctx.Done():
+			t.Fatal("provider outcomes deadlocked")
+		}
+	}
+	if e.Count(`SELECT count(*) FROM emails WHERE id=$1 AND send_state='sent'`, acceptedID) != 1 ||
+		e.Count(`SELECT count(*) FROM emails WHERE id=$1 AND send_state='failed'`, exhaustedID) != 1 ||
+		e.Count(`SELECT count(*) FROM recipients WHERE email_id=$1 AND billing_state='consumed'`, acceptedID) != 1 ||
+		e.Count(`SELECT count(*) FROM recipients WHERE email_id=$1 AND billing_state='released'`, exhaustedID) != 1 ||
+		e.Count(`SELECT count(*) FROM provider_send_routes WHERE project_id=$1 AND last_outcome='failure'`, tenant.ProjectID) != 1 ||
+		e.Count(`SELECT count(*) FROM alerts WHERE project_id=$1 AND dedupe_key LIKE 'provider-send:%' AND resolved_at IS NULL`, tenant.ProjectID) != 1 {
+		t.Fatal("outcome ordering changed quota, retry exhaustion or the newer failure")
 	}
 }

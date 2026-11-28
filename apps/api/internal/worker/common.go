@@ -94,19 +94,21 @@ func bindProviderSendRoute(ctx context.Context, tx pgx.Tx, c claimed, configurat
 // arrival time of their responses. Its row lock serializes concurrent results
 // and the alert transition in the enclosing email-settlement transaction.
 func recordProviderSendResult(ctx context.Context, tx pgx.Tx, emailID, attemptID uuid.UUID, code string, accepted bool) error {
-	state, outcome := "retryable", "failure"
+	states, outcome := []string{"retryable"}, "failure"
 	if accepted {
-		state, outcome = "accepted", "accepted"
+		// SES feedback may have settled the same attempt before its direct
+		// SendEmail response arrived. That direct response still proves recovery.
+		states, outcome = []string{"accepted", "resolved_accepted"}, "accepted"
 	}
 	var routeID string
 	var org, project, domain uuid.UUID
 	err := tx.QueryRow(ctx, `UPDATE provider_send_routes r SET last_attempt_started_at=a.started_at,
 		last_attempt_id=a.id,last_outcome=$4,updated_at=now()
 		FROM send_attempts a JOIN emails e ON e.id=a.email_id
-		WHERE a.id=$1 AND a.email_id=$2 AND a.state=$3 AND a.provider_route_id=r.id
+		WHERE a.id=$1 AND a.email_id=$2 AND a.state=ANY($3) AND a.provider_route_id=r.id
 		AND r.org_id=e.org_id AND r.project_id=e.project_id AND r.domain_id=e.domain_id AND r.from_domain=e.from_domain
 		AND (r.last_attempt_started_at IS NULL OR (r.last_attempt_started_at,r.last_attempt_id)<(a.started_at,a.id))
-		RETURNING r.id,r.org_id,r.project_id,r.domain_id`, attemptID, emailID, state, outcome).Scan(&routeID, &org, &project, &domain)
+		RETURNING r.id,r.org_id,r.project_id,r.domain_id`, attemptID, emailID, states, outcome).Scan(&routeID, &org, &project, &domain)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return nil // stale/duplicate response, legacy attempt, or retired claim
 	}

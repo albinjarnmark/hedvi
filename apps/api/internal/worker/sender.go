@@ -350,8 +350,8 @@ func failEmail(ctx context.Context, tx pgx.Tx, e *emailInfo, code, reason string
 	return emit(ctx, tx, e, webhooks.EmailFailed, addrs, time.Now(), map[string]any{"failed": map[string]string{"reason": reason, "code": code}})
 }
 
-// RecordAccepted settles an attempt that SES accepted. It is idempotent and
-// also used when SES events reconcile an attempt with unknown outcome.
+// RecordAccepted settles a direct successful provider response idempotently.
+// SES events and manual reconciliation use recordAcceptedTx instead.
 func RecordAccepted(ctx context.Context, pool *pgxpool.Pool, emailID, attemptID uuid.UUID, messageID string) error {
 	return db.Tx(ctx, pool, func(tx pgx.Tx) error {
 		if err := recordAcceptedTx(ctx, tx, emailID, attemptID, messageID, ""); err != nil {
@@ -445,20 +445,26 @@ func (s *Sender) recordRetryable(ctx context.Context, emailID, attemptID uuid.UU
 		if err != nil {
 			return err
 		}
-		if se.Alert {
-			if err := recordProviderSendResult(ctx, tx, emailID, attemptID, se.Code, false); err != nil {
+		next := time.Now().Add(retryBackoff(c.attempts))
+		if next.After(c.deadline) {
+			if err := failEmail(ctx, tx, e, "retries_exhausted", "The provider was unavailable until the maximum queue time passed."); err != nil {
+				return err
+			}
+		} else {
+			if _, err := tx.Exec(ctx, `UPDATE emails SET send_state = 'retry_wait', next_attempt_at = $2, lease_owner = NULL, lease_expires_at = NULL
+				WHERE id = $1`, emailID, next); err != nil {
+				return err
+			}
+			if err := sendOutbox(ctx, tx, e.OrgID, emailID, next); err != nil {
 				return err
 			}
 		}
-		next := time.Now().Add(retryBackoff(c.attempts))
-		if next.After(c.deadline) {
-			return failEmail(ctx, tx, e, "retries_exhausted", "The provider was unavailable until the maximum queue time passed.")
+		// Accepted and exhausted attempts must both settle quota before locking
+		// the route, so concurrent results cannot invert their shared lock order.
+		if se.Alert {
+			return recordProviderSendResult(ctx, tx, emailID, attemptID, se.Code, false)
 		}
-		if _, err := tx.Exec(ctx, `UPDATE emails SET send_state = 'retry_wait', next_attempt_at = $2, lease_owner = NULL, lease_expires_at = NULL
-			WHERE id = $1`, emailID, next); err != nil {
-			return err
-		}
-		return sendOutbox(ctx, tx, e.OrgID, emailID, next)
+		return nil
 	})
 }
 

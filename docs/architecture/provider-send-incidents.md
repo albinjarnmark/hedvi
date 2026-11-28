@@ -36,7 +36,9 @@ a successful incident transition.
 ## Retention and access
 
 The worker alone can read or mutate `provider_send_routes`. The public API
-cannot change send attempts or the watermark. Route rows contain identifiers,
+cannot change send attempts, the watermark or provider-send alerts, including
+renaming an ordinary alert into their reserved kind/key namespace. Its existing
+quota and domain-alert writes remain available. Route rows contain identifiers,
 the sending domain, tenant/configuration names and attempt ordering; they do
 not contain message content, recipient addresses or sender mailbox local parts.
 
