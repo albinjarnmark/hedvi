@@ -35,6 +35,7 @@ type Price struct {
 type Config struct {
 	Account, Portal, APIKey, ReaderKey, Secret, PreviousSecret, AppURL string
 	Live                                                               bool
+	RequestVersion                                                     int
 	Prices                                                             map[string]Price
 	Countries                                                          map[string]bool
 }
@@ -48,6 +49,14 @@ func Load(command, env, appURL string) (*Config, error) {
 		return nil, nil
 	}
 	c := &Config{Account: os.Getenv("HEDVI_STRIPE_ACCOUNT_ID"), Portal: os.Getenv("HEDVI_STRIPE_PORTAL_CONFIGURATION"), APIKey: os.Getenv("HEDVI_STRIPE_API_KEY"), ReaderKey: os.Getenv("HEDVI_STRIPE_RECONCILE_KEY"), Secret: os.Getenv("HEDVI_STRIPE_WEBHOOK_SECRET"), PreviousSecret: os.Getenv("HEDVI_STRIPE_PREVIOUS_WEBHOOK_SECRET"), AppURL: strings.TrimRight(appURL, "/"), Prices: map[string]Price{}, Countries: map[string]bool{}}
+	c.RequestVersion = 1 // Upgrade writers only after every API replica understands both formats.
+	if v := os.Getenv("HEDVI_STRIPE_REQUEST_VERSION"); v != "" {
+		version, err := strconv.Atoi(v)
+		if err != nil || (version != 1 && version != 2) {
+			return nil, errors.New("HEDVI_STRIPE_REQUEST_VERSION must be 1 or 2")
+		}
+		c.RequestVersion = version
+	}
 	mode := os.Getenv("HEDVI_STRIPE_MODE")
 	c.Live = mode == "live"
 	if (mode != "live" && mode != "test") || c.Live != (env == "production") || !strings.HasPrefix(c.Account, "acct_") || !stripeID.MatchString(c.Account) || !strings.HasPrefix(c.Portal, "bpc_") || !stripeID.MatchString(c.Portal) {

@@ -38,7 +38,7 @@ func newBillingAddressHarness(t *testing.T) billingAddressHarness {
 	original := http.DefaultTransport
 	http.DefaultTransport = f
 	t.Cleanup(func() { http.DefaultTransport = original })
-	c := billing.Config{Portal: "bpc_hedvi", Account: "acct_hedvi", AppURL: "https://app.example.test", Countries: map[string]bool{"SE": true}, Prices: map[string]billing.Price{"flex_sek": {SKU: "flex", Currency: "sek", ID: f.price, Product: "prod_hedvi", Amount: f.amount}}}
+	c := billing.Config{RequestVersion: 2, Portal: "bpc_hedvi", Account: "acct_hedvi", AppURL: "https://app.example.test", Countries: map[string]bool{"SE": true}, Prices: map[string]billing.Price{"flex_sek": {SKU: "flex", Currency: "sek", ID: f.price, Product: "prod_hedvi", Amount: f.amount}}}
 	worker := billing.New(c, e.WorkerPool, true)
 	if err := worker.Validate(e.Ctx); err != nil {
 		t.Fatal(err)
@@ -134,7 +134,7 @@ func TestStripeBillingAddressRetryKeepsParameters(t *testing.T) {
 				if len(h.f.customerKeys) != 2 || h.f.customerKeys[0] != h.f.customerKeys[1] || h.f.customerForms[0] != h.f.customerForms[1] {
 					t.Fatal("customer replay changed idempotency key or body")
 				}
-			} else if len(h.f.checkoutForms) != 2 || h.f.checkoutForms[0] != h.f.checkoutForms[1] {
+			} else if len(h.f.checkoutForms) != 2 || h.f.checkoutForms[0] != h.f.checkoutForms[1] || h.f.checkoutKeys[0] != h.f.checkoutKeys[1] {
 				t.Fatal("checkout replay changed invoice binding")
 			}
 			if h.e.Count(`SELECT count(*) FROM billing_customers`) != 1 || h.e.Count(`SELECT count(*) FROM billing_orders`) != 1 {
@@ -499,7 +499,7 @@ func TestStripeLegacyCheckoutRetriesUnchanged(t *testing.T) {
 	if got := h.request(p); got != 200 {
 		t.Fatalf("legacy checkout retry: %d", got)
 	}
-	if len(h.f.checkoutForms) != 2 || h.f.checkoutForms[0] != h.f.checkoutForms[1] {
+	if len(h.f.checkoutForms) != 2 || h.f.checkoutForms[0] != h.f.checkoutForms[1] || h.f.checkoutKeys[0] != h.f.checkoutKeys[1] {
 		t.Fatal("legacy checkout changed idempotent request")
 	}
 	if _, err := h.e.WorkerPool.Exec(h.e.Ctx, `UPDATE billing_orders SET request_version=2`); err == nil {

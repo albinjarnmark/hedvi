@@ -185,7 +185,7 @@
     },
     {
       "path": "apps/api/internal/billing/checkout.go",
-      "sha256": "370148837aec2f571dd8f55ff9d0e1ce050461b41a961caa9ad25cd2d8fef175"
+      "sha256": "57ddf0250ac7eaf072e198a3356d7608e856a9e968711d5632d17c54be893f90"
     },
     {
       "path": "apps/api/internal/billing/invoice.go",
@@ -197,7 +197,7 @@
     },
     {
       "path": "apps/api/internal/billing/stripe.go",
-      "sha256": "e9cdafe31106ca07865fda89247802717967d60ffeda49f711c67bbef190fc57"
+      "sha256": "cf5a0134e3ddb6608164bc5e8afa444b679e3ce035ac9209e813337f76dadd84"
     },
     {
       "path": "apps/api/internal/billing/stripe_error_test.go",
@@ -405,11 +405,11 @@
     },
     {
       "path": "apps/api/internal/e2e/billing_address_test.go",
-      "sha256": "a9d83254a90c2abc4c0f8da8eb002c9350b4aa58c7f27a59faa9ef57af034249"
+      "sha256": "5c72c6081da613f4d6a5af7a95d57d6003c75509f6b6692315942421fc8f94e0"
     },
     {
       "path": "apps/api/internal/e2e/billing_test.go",
-      "sha256": "a629d8059df73e667cd61307fa93fb9569f6df68ef5ab7d4daba607c832308da"
+      "sha256": "4e391c0d0aed80423e236545953ecc7debf3a95745d9b50ad3304802d7d4ac3d"
     },
     {
       "path": "apps/api/internal/e2e/domain_dns_ownership_test.go",
@@ -1553,7 +1553,7 @@
     },
     {
       "path": "docs/runbooks/billing.md",
-      "sha256": "623af8ac8f3a022dea84d50e2357bee8fa3f9a38efd948601756477cb54d5955"
+      "sha256": "e490116b0926613d06242983a649416302f40226c6700b9398b6c87ec49b1007"
     },
     {
       "path": "docs/runbooks/database-bootstrap.md",

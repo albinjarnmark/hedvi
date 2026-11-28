@@ -127,6 +127,10 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 		return "", limitErr
 	}
 	defer done()
+	requestVersion := 1
+	if s.C.RequestVersion == 2 {
+		requestVersion = 2
+	}
 	var customerUUID uuid.UUID
 	var customerCreated time.Time
 	var customerVersion, orderVersion int
@@ -135,7 +139,7 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 		if _, err := tx.Exec(ctx, `SELECT id FROM organizations WHERE id=$1 FOR UPDATE`, org); err != nil {
 			return err
 		}
-		if _, err := tx.Exec(ctx, `INSERT INTO billing_customers(org_id,currency,billing_profile,request_version) VALUES($1,$2,$3,2) ON CONFLICT DO NOTHING`, org, currency, profile); err != nil {
+		if _, err := tx.Exec(ctx, `INSERT INTO billing_customers(org_id,currency,billing_profile,request_version) VALUES($1,$2,$3,$4) ON CONFLICT DO NOTHING`, org, currency, profile, requestVersion); err != nil {
 			return err
 		}
 		if _, err := tx.Exec(ctx, `SELECT hedvi_retry_billing_profile($1,$2,$3)`, org, profile, currency); err != nil {
@@ -228,7 +232,7 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 		// A timed-out create, double-click or second browser tab reuses an open checkout.
 		err := tx.QueryRow(ctx, `SELECT return_project_id,id,sku,currency,country,coalesce(session_id,''),state,created_at,request_version FROM billing_orders WHERE org_id=$1 AND (request_id=$2 OR (sku=$3 AND state IN ('creating','open','review')) OR ($3<>'flex' AND sku<>'flex' AND state NOT IN ('ended','expired'))) ORDER BY (request_id=$2) DESC,created_at LIMIT 1`, org, token, sku).Scan(&project, &o.ID, &o.SKU, &o.Currency, &o.Country, &o.Session, &o.State, &o.Created, &orderVersion)
 		if errors.Is(err, pgx.ErrNoRows) {
-			return tx.QueryRow(ctx, `INSERT INTO billing_orders(org_id,request_id,sku,currency,country,price_id,amount,return_project_id,request_version) VALUES($1,$2,$3,$4,$5,$6,$7,$8,2) RETURNING id,state,created_at,request_version`, org, token, sku, currency, country, p.ID, p.Amount, project).Scan(&o.ID, &o.State, &o.Created, &orderVersion)
+			return tx.QueryRow(ctx, `INSERT INTO billing_orders(org_id,request_id,sku,currency,country,price_id,amount,return_project_id,request_version) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id,state,created_at,request_version`, org, token, sku, currency, country, p.ID, p.Amount, project, requestVersion).Scan(&o.ID, &o.State, &o.Created, &orderVersion)
 		}
 		if err != nil {
 			return err

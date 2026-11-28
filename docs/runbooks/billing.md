@@ -86,7 +86,11 @@ The public product uses English. New accounts default to USD; existing customer
 currencies remain fixed. New Stripe requests select English for Checkout, the
 portal and Customer invoice preferences. Migration0020 binds the request format
 to each durable customer attempt/order: old writers default to v1, new writers
-explicitly insert v2, and neither format may change after creation. Lost responses
+explicitly select `HEDVI_STRIPE_REQUEST_VERSION` (default1), and neither format may
+change after creation. First deploy all APIs with version1 and confirm every old
+API replica is removed. Then set version2 on the new APIs. Rollback must use a
+version-aware binary after the first v2 intent exists. A legacy binary cannot read
+v2 safely. Lost responses
 reuse the original key and exact parameter set across a rolling deployment.
 
 `HEDVI_STRIPE_COUNTRIES` admits new purchases. Removing a country does not revoke

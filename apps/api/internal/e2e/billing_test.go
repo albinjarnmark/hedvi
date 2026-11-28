@@ -39,6 +39,7 @@ type stripeFixture struct {
 	lostCustomerResponses, lostSessionResponses int
 	rejectCustomer                              bool
 	customerKeys, customerForms, checkoutForms  []string
+	checkoutKeys                                []string
 
 	blockedPath                                                              string
 	missingConsent                                                           bool
@@ -161,6 +162,7 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 		f.order = r.Form.Get("client_reference_id")
 		f.sessionCreates++
 		f.checkoutForms = append(f.checkoutForms, r.Form.Encode())
+		f.checkoutKeys = append(f.checkoutKeys, r.Header.Get("Idempotency-Key"))
 		// Endive rejects the old payment_method_types request parameter. Keep
 		// card-only Checkout compatible with the pinned Stripe API version.
 		if r.Form.Get("allowed_payment_method_types[0]") != "card" || r.Form.Has("payment_method_types[0]") || r.Form.Has("allowed_payment_method_types[1]") {
@@ -267,7 +269,7 @@ func TestStripeOrdersGrantOnlyCanonicalEconomicSources(t *testing.T) {
 			original := http.DefaultTransport
 			http.DefaultTransport = f
 			t.Cleanup(func() { http.DefaultTransport = original })
-			c := billing.Config{Portal: "bpc_hedvi", Account: "acct_hedvi", AppURL: "https://app.example.test", Secret: "unit-signing-credential", Countries: map[string]bool{"SE": true}, Prices: map[string]billing.Price{sku + "_" + product.currency: {SKU: sku, Currency: product.currency, ID: f.price, Product: "prod_hedvi", Amount: f.amount}}}
+			c := billing.Config{RequestVersion: 2, Portal: "bpc_hedvi", Account: "acct_hedvi", AppURL: "https://app.example.test", Secret: "unit-signing-credential", Countries: map[string]bool{"SE": true}, Prices: map[string]billing.Price{sku + "_" + product.currency: {SKU: sku, Currency: product.currency, ID: f.price, Product: "prod_hedvi", Amount: f.amount}}}
 			work := billing.New(c, e.WorkerPool, true)
 			if err := work.Validate(e.Ctx); err != nil {
 				t.Fatal(err)
