@@ -136,6 +136,7 @@ func startWorkers(ctx context.Context, a *app.App) {
 	w := a.Workers()
 	consumers := []worker.Runnable{w.Dispatcher, w.Sender, w.Events, w.Webhooks}
 	jobs := []worker.Periodic{
+		{Name: "signup-notices", Interval: time.Second, Fn: w.AuthMail.SendSignupNotice},
 		{Name: "auth-mail", Interval: time.Second, Fn: w.AuthMail.RunOnce},
 		{Name: "reaper", Interval: 15 * time.Second, Fn: w.Reaper.RunOnce},
 		{Name: "domains", Interval: 10 * time.Second, Fn: w.Domains.RunOnce},

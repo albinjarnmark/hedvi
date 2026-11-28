@@ -52,6 +52,10 @@ func (w *Worker) render(j *job) ([]byte, error) {
 	}
 	c.URL, c.Preheader = u.String(), c.Intro
 	c.LinkLabel = u.Host + u.Path
+	return w.renderCopy(c, j.Data.Email)
+}
+
+func (w *Worker) renderCopy(c accountCopy, recipient string) ([]byte, error) {
 	plain := c.Heading + "\n\n" + c.Intro + "\n\n" + c.Action + ":\n" + c.URL + "\n\n"
 	if c.Expires != "" {
 		plain += c.Expires + "\n\n"
@@ -97,7 +101,7 @@ func (w *Worker) render(j *job) ([]byte, error) {
 	var out bytes.Buffer
 	alt := multipart.NewWriter(&out)
 	from := (&mail.Address{Name: "Hedvi", Address: w.From}).String()
-	to := (&mail.Address{Address: j.Data.Email}).String()
+	to := (&mail.Address{Address: recipient}).String()
 	fmt.Fprintf(&out, "From: %s\r\nTo: %s\r\nSubject: %s\r\nMIME-Version: 1.0\r\nContent-Type: multipart/alternative; boundary=%q\r\n\r\n", from, to, mime.QEncoding.Encode("utf-8", c.Subject), alt.Boundary())
 	if err := writeText(alt, "text/plain", plain); err != nil {
 		return nil, err

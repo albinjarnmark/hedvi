@@ -50,24 +50,25 @@ type Config struct {
 	DatabaseAllowPrivateCA      bool
 	ValkeyAllowPrivatePlaintext bool
 
-	AWSMode           string // "mock" or "aws"
-	AWSRegion         string
-	AWSAccountID      string
-	S3Bucket          string
-	S3KMSKeyID        string
-	SendQueueURL      string
-	EventsQueueURL    string
-	WebhookQueueURL   string
-	AuthMailFrom      string
-	AuthMailTenant    string
-	AuthMailConfigSet string
-	SESConfigSet      string
-	SESSendRate       int
-	SESMailFromMX     string
-	BlobDir           string
-	MockDNS           bool
-	MockSESFault      string
-	DNSServer         string
+	AWSMode                 string // "mock" or "aws"
+	AWSRegion               string
+	AWSAccountID            string
+	S3Bucket                string
+	S3KMSKeyID              string
+	SendQueueURL            string
+	EventsQueueURL          string
+	WebhookQueueURL         string
+	SignupNotificationEmail string
+	AuthMailFrom            string
+	AuthMailTenant          string
+	AuthMailConfigSet       string
+	SESConfigSet            string
+	SESSendRate             int
+	SESMailFromMX           string
+	BlobDir                 string
+	MockDNS                 bool
+	MockSESFault            string
+	DNSServer               string
 
 	// DataKey encrypts payloads, webhook secrets and TOTP secrets (AES-256-GCM).
 	DataKey []byte
@@ -113,6 +114,7 @@ func Load() (*Config, error) {
 		SendQueueURL:                get("HEDVI_SQS_SEND_QUEUE_URL", ""),
 		EventsQueueURL:              get("HEDVI_SQS_EVENTS_QUEUE_URL", ""),
 		WebhookQueueURL:             get("HEDVI_SQS_WEBHOOK_QUEUE_URL", ""),
+		SignupNotificationEmail:     strings.TrimSpace(os.Getenv("HEDVI_SIGNUP_NOTIFICATION_EMAIL")),
 		AuthMailFrom:                get("HEDVI_AUTH_MAIL_FROM", "accounts@auth.example.test"),
 		AuthMailTenant:              get("HEDVI_AUTH_MAIL_TENANT", "hedvi-system-auth"),
 		AuthMailConfigSet:           get("HEDVI_AUTH_MAIL_CONFIGURATION_SET", "hedvi-local-auth"),
@@ -193,6 +195,12 @@ func (c *Config) Validate() error {
 	}
 	if c.AWSMode != "mock" && c.AWSMode != "aws" {
 		return fmt.Errorf("HEDVI_AWS_MODE must be mock or aws, got %q", c.AWSMode)
+	}
+	if c.SignupNotificationEmail != "" {
+		a, err := address.Parse(c.SignupNotificationEmail)
+		if err != nil || a.Name != "" || a.Normalized != c.SignupNotificationEmail {
+			return errors.New("HEDVI_SIGNUP_NOTIFICATION_EMAIL must be a single normalized email address")
+		}
 	}
 	if !c.IsDeployed() {
 		if c.AWSMode == "aws" {

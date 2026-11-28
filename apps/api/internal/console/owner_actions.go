@@ -59,9 +59,11 @@ func (s *Server) ownerSummary(ctx context.Context, tx pgx.Tx, r *http.Request, a
   UNION ALL (SELECT id,org_id,created_at,'Webhook delivery failed','warning' FROM webhook_deliveries WHERE state='failed' ORDER BY created_at DESC LIMIT 50)
   UNION ALL (SELECT id,NULL::uuid,created_at,CASE state WHEN 'unknown' THEN 'Account email outcome unknown' ELSE 'Account email failed' END,'warning'
     FROM auth_mail_outbox WHERE state IN('unknown','failed') ORDER BY created_at DESC LIMIT 50)
+  UNION ALL (SELECT org_id,org_id,created_at,'New customer notification needs attention','warning'
+    FROM signup_notifications WHERE state IN ('unknown','failed') ORDER BY created_at DESC LIMIT 50)
   ) events ORDER BY created_at DESC,id LIMIT 50`},
 	}
-	out := map[string]json.RawMessage{}
+	out := map[string]any{"signup_notification_email": s.Cfg.SignupNotificationEmail}
 	for _, q := range queries {
 		var b json.RawMessage
 		var args []any

@@ -74,3 +74,12 @@ To withdraw a grant, identify the organization and active grant, enter a reason,
 Ordinary remembered login lasts at most 30 days when explicitly selected at sign-in.
 It never extends the separate 30-minute owner unlock. Lock console ends privileged
 access while leaving the ordinary account session signed in.
+
+### New customer email
+
+Set `HEDVI_SIGNUP_NOTIFICATION_EMAIL` to the same normalized mailbox on the API
+and worker to notify the owner when a customer completes verified signup,
+including Free accounts. Leave it unset to disable notifications in a test
+environment. The private owner overview shows the configured destination.
+Each notice links to the owner console. Customer email addresses stay in the
+console. If delivery fails or its outcome is unknown, check the Errors tab.

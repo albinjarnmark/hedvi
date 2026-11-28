@@ -15,8 +15,9 @@ import (
 )
 
 type Worker struct {
-	ClaimBegin db.Beginner // optional transaction fault injection
-	Faults     *faults.Injector
+	SignupRecipient string
+	ClaimBegin      db.Beginner // optional transaction fault injection
+	Faults          *faults.Injector
 	*Service
 	Provider                        provider.Provider
 	From, AppURL, Tenant, ConfigSet string
@@ -261,6 +262,12 @@ func (w *Worker) ApplyEvent(ctx context.Context, ev sesevent.Event) error {
 	attempt, err := uuid.Parse(ev.Tag("hedvi_auth_attempt"))
 	if err != nil || ev.Mail.MessageID == "" {
 		return nil
+	}
+	if ev.Tag("hedvi_notice") == "signup" {
+		if recipient.Normalized != w.SignupRecipient || ev.Tag("ses:configuration-set") != w.ConfigSet {
+			return nil
+		}
+		return w.applySignupEvent(ctx, id, attempt, ev.Mail.MessageID, ev.Type())
 	}
 	return db.Tx(ctx, w.Pool, func(tx pgx.Tx) error {
 		if err := Lock(ctx, tx); err != nil {

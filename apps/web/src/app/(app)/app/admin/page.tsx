@@ -14,7 +14,7 @@ type Grant = { id: string; org_id: string; organization: string; plan: string; e
 type Project = { id: string; name: string; organization: string; org_id: string; state: string; hourly_limit: number; daily_limit: number; sending_limits_manual: boolean; verified_domains: number };
 type Incident = { id: string; org_id: string | null; category: string; severity: string; created_at: string };
 type Purchase = { id: string; org_id: string; organization: string; sku: string; state: string; amount: number; currency: string; created_at: string };
-type Summary = { users: Account[]; grants: Grant[]; reviews: Project[]; errors: Incident[]; purchases?: Purchase[] };
+type Summary = { signup_notification_email?: string; users: Account[]; grants: Grant[]; reviews: Project[]; errors: Incident[]; purchases?: Purchase[] };
 type Tab = "overview" | "accounts" | "sending" | "billing" | "errors";
 const tabs: { id: Tab; label: string }[] = [{id:"overview",label:"Overview"},{id:"accounts",label:"Accounts"},{id:"sending",label:"Sending"},{id:"billing",label:"Billing"},{id:"errors",label:"Errors"}];
 const plans: Record<string, string> = {flex:"Flex 10k",pro_50k:"Pro 50k",pro_100k:"Pro 100k"};
@@ -55,7 +55,7 @@ function OwnerConsole() {
           <button onClick={()=>navigate("sending")}><span>Live projects</span><strong>{data.reviews.filter(p=>p.state==="approved").length}</strong><small>View sending status</small></button>
           <button onClick={()=>navigate("errors")}><span>Events to review</span><strong>{data.errors.length}</strong><small>Open the error log</small></button>
         </div>
-        <div className="owner-section-head"><div><h2>Latest registrations</h2><p className="small muted">Your newest accounts, with their verification status.</p></div><button className="btn btn-small" onClick={()=>navigate("accounts")}>View accounts</button></div>
+        <div className="owner-section-head"><div><h2>Latest registrations</h2><p className="small muted">Your newest accounts, with their verification status.{data.signup_notification_email && <> New customer emails go to {data.signup_notification_email} after verification.</>}</p></div><button className="btn btn-small" onClick={()=>navigate("accounts")}>View accounts</button></div>
         <AccountRows users={data.users.slice(0,5)} manage={manage}/>
         <p className="tiny muted">Overview shows the most recent 50 accounts, projects and events. Search Accounts to find older customers.</p>
       </>}

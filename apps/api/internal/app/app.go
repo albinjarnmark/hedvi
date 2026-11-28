@@ -212,7 +212,7 @@ func (a *App) Workers() *Workers {
 	cfg := a.Cfg
 	workerDomains := *a.Domains
 	workerDomains.Pool = a.WorkerPool
-	am := &authmail.Worker{Faults: a.Faults, Service: &authmail.Service{Pool: a.WorkerPool, Hasher: a.Hasher, Sealer: a.Sealer}, Provider: a.Provider, From: cfg.AuthMailFrom, Tenant: cfg.AuthMailTenant, ConfigSet: cfg.AuthMailConfigSet, AppURL: cfg.AppURL}
+	am := &authmail.Worker{SignupRecipient: cfg.SignupNotificationEmail, Faults: a.Faults, Service: &authmail.Service{Pool: a.WorkerPool, Hasher: a.Hasher, Sealer: a.Sealer}, Provider: a.Provider, From: cfg.AuthMailFrom, Tenant: cfg.AuthMailTenant, ConfigSet: cfg.AuthMailConfigSet, AppURL: cfg.AppURL}
 	return &Workers{
 		AuthMail:   am,
 		Dispatcher: &worker.Dispatcher{Pool: a.WorkerPool, Queues: a.Queues, Faults: a.Faults, Log: a.Log},

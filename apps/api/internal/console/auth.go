@@ -199,6 +199,11 @@ func (s *Server) signupComplete(w http.ResponseWriter, r *http.Request) {
    VALUES ($1, 'user', $2, 'org.created', 'organization', $3)`, orgID, userID, orgID.String()); err != nil {
 			return err
 		}
+		if s.Cfg.SignupNotificationEmail != "" {
+			if _, err := tx.Exec(r.Context(), `INSERT INTO signup_notifications(org_id) VALUES ($1)`, orgID); err != nil {
+				return err
+			}
+		}
 		if err := authmail.Consume(r.Context(), tx, proof); err != nil {
 			return err
 		}

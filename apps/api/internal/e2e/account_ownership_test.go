@@ -307,3 +307,37 @@ func TestLegalOriginAndVersionAreBoundToReceipt(t *testing.T) {
 		}
 	}
 }
+
+func TestVerifiedSignupNotifiesOwnerOnce(t *testing.T) {
+	e := testenv.New(t)
+	const recipient = "ops@example.test"
+	e.Console.Cfg.SignupNotificationEmail = recipient
+	e.AuthMail.SignupRecipient = recipient
+	email := "customer@example.test"
+	if code, _, _ := authRequest(t, e, "signup", map[string]any{"email": email}); code != 202 {
+		t.Fatal(code)
+	}
+	token := e.AuthToken(email)
+	if e.Count(`SELECT count(*) FROM signup_notifications`) != 0 {
+		t.Fatal("notice before verification")
+	}
+	body := map[string]any{"token": token, "password": "verified-password-123", "consent": consent()}
+	if code, out, _ := authRequest(t, e, "signup/complete", body); code != 201 {
+		t.Fatal(code, out)
+	}
+	if code, _, _ := authRequest(t, e, "signup/complete", body); code == 201 {
+		t.Fatal("replayed signup")
+	}
+	for range 2 {
+		if err := e.AuthMail.SendSignupNotice(e.Ctx); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if e.Count(`SELECT count(*) FROM signup_notifications WHERE state='accepted'`) != 1 ||
+		e.Count(`SELECT count(*) FROM localmock.ses_outbound WHERE tags->>'hedvi_notice'='signup' AND recipients=ARRAY[$1::text]`, recipient) != 1 {
+		t.Fatal("expected one notification to the configured mailbox")
+	}
+	if _, err := e.APIPool.Exec(e.Ctx, `SELECT * FROM signup_notifications`); err == nil {
+		t.Fatal("API could read owner notifications")
+	}
+}

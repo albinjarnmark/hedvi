@@ -89,7 +89,7 @@
     },
     {
       "path": "apps/api/cmd/hedvi/main.go",
-      "sha256": "f7939ab9a857e1c7f40ec712b99f1e684986f5571b387d4d29090a79e2447eaf"
+      "sha256": "bdd47c75493cc113bfcbaafa2e992fbd3e3539e40d0257a694d0e353ba78993e"
     },
     {
       "path": "apps/api/cmd/hedvi/provider_check.go",
@@ -129,7 +129,7 @@
     },
     {
       "path": "apps/api/internal/app/app.go",
-      "sha256": "e078abd2546d5c476f015e12b69fda03b01b9b785debe76bafecaa7f4c23ad2b"
+      "sha256": "6b996e7591f93a6d3c4c5ae70198213c306e7a6d45aee8addf2657c235fa7c6a"
     },
     {
       "path": "apps/api/internal/app/env.go",
@@ -165,11 +165,15 @@
     },
     {
       "path": "apps/api/internal/authmail/render.go",
-      "sha256": "df6d8d57a305dd6c66b4be09ed5b8e53ec338ee1c156ec8995041fa408cb349f"
+      "sha256": "9d4e2df92cb6def524118513dc3a71a9755085f769ae15629d8da6421cfd5e31"
     },
     {
       "path": "apps/api/internal/authmail/render_test.go",
       "sha256": "2230d188460d2f22e4a7aafa7bb8e39b49d2e72c8979bd9b52ca76bf6e9db64b"
+    },
+    {
+      "path": "apps/api/internal/authmail/signup_notice.go",
+      "sha256": "586768405ddbee13e78a7e26f4c881f697203fb86fe358b822fee2688c6fc074"
     },
     {
       "path": "apps/api/internal/authmail/templates/account.html",
@@ -181,7 +185,7 @@
     },
     {
       "path": "apps/api/internal/authmail/worker.go",
-      "sha256": "57a52738d933946c0f8acdd4f4458c70e1fe138118f5160020f96a16a542c8cd"
+      "sha256": "81e584133e0314da2f551f9ad94c53e28371e417d28e3080aa6a703b648f1345"
     },
     {
       "path": "apps/api/internal/billing/checkout.go",
@@ -221,7 +225,7 @@
     },
     {
       "path": "apps/api/internal/config/config.go",
-      "sha256": "d490bfb27138c3d86c96f2b8d7b20075be026e3b25436c4f88e3b4cf1ef6331f"
+      "sha256": "c8a752a188c4660e6e1af72920b15c4c1824ee0a835865795b7730df66dfa6d8"
     },
     {
       "path": "apps/api/internal/config/config_test.go",
@@ -241,7 +245,7 @@
     },
     {
       "path": "apps/api/internal/console/auth.go",
-      "sha256": "9441767c6765f7fd0320d854a71fb97b427ecbbba1b8aaa8e372338efc925cd9"
+      "sha256": "14e48fa24fd0b396e24c4814b8356ae27ebb89896fda4d49d4ae34662f3ca9d7"
     },
     {
       "path": "apps/api/internal/console/billing.go",
@@ -253,7 +257,7 @@
     },
     {
       "path": "apps/api/internal/console/owner_actions.go",
-      "sha256": "2259e8f23144ba9fc7814769765421c6e321c1b69c23c7e50de150a5cb64c903"
+      "sha256": "4e521a3cf7efa6fc862da2a9fc0f5c03a884ea82515143277caa205ab703b4dc"
     },
     {
       "path": "apps/api/internal/console/project.go",
@@ -364,6 +368,10 @@
       "sha256": "7df03993077fbe1863b9c542c75722a58715cfa6f5247994809a09ceac1b5a8c"
     },
     {
+      "path": "apps/api/internal/db/migrations/0022_signup_notifications.sql",
+      "sha256": "c6289836751a0a48d4ed85b4ce4b821c8a151108f90fd6baffb1d21faa09e8c2"
+    },
+    {
       "path": "apps/api/internal/domains/mail_from.go",
       "sha256": "0d43880c5e7faff48b5b705cbe18f29a81ba91c7010e9ab29d62b320aff85ee0"
     },
@@ -397,7 +405,7 @@
     },
     {
       "path": "apps/api/internal/e2e/account_ownership_test.go",
-      "sha256": "44de3a7955a90a728599f2520435f50c085a80cb08c2f63a817bcf515a30aaae"
+      "sha256": "8b2101435b37c52a68d46f8342d7219128d89132d0571df8819d7ffc7866c85c"
     },
     {
       "path": "apps/api/internal/e2e/alerts_test.go",
@@ -901,7 +909,7 @@
     },
     {
       "path": "apps/web/src/app/(app)/app/admin/page.tsx",
-      "sha256": "4a09121fdeeaa9c980be604ca18359ed69ea6b0cbc81715f4de8986d53e57975"
+      "sha256": "082ee8b74e125540b8b55e4161319197b0bf8933b66d7a7a097a2a56e015a365"
     },
     {
       "path": "apps/web/src/app/(app)/app/layout.tsx",
@@ -1573,7 +1581,7 @@
     },
     {
       "path": "docs/runbooks/hosted-owner.md",
-      "sha256": "ac7203199209172e27b2a2cf8ff7bccc4e3fdd3cdf1491d003c624ec9ba98c18"
+      "sha256": "416755c485b954a5b1d9edf5259e72735268605aeb4e0438deed5eb97a26a64c"
     },
     {
       "path": "docs/runbooks/incident.md",
