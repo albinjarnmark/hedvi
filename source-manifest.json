@@ -169,7 +169,7 @@
     },
     {
       "path": "apps/api/internal/billing/checkout.go",
-      "sha256": "97c62dc81111f358622e522b20e003f863ab6e922e4d0e1dfb902349bd7ac618"
+      "sha256": "d91aa3c0cc15abcc4d907fdcfccfadd5471ae5d6e3f4350c8e15ed2f8592b58d"
     },
     {
       "path": "apps/api/internal/billing/invoice.go",
@@ -357,7 +357,7 @@
     },
     {
       "path": "apps/api/internal/e2e/billing_test.go",
-      "sha256": "ed075516b74efaadb9fc8d1e90e81193ed851856923492ecc17ed25df1b6634c"
+      "sha256": "3988a6387a3414f21b35c5a7e6c82e40edef68b2de31420fb85728b5effa1d58"
     },
     {
       "path": "apps/api/internal/e2e/domain_dns_ownership_test.go",
@@ -797,7 +797,7 @@
     },
     {
       "path": "apps/web/src/app/(site)/docs/guides.tsx",
-      "sha256": "b4587c15b435208dff97740b9ec68378cf6b1f74b83ee58b853aebe683f276d4"
+      "sha256": "f3004453e6629fd3e9f19d2b2bc10ce5d0d43e829580135baa262aa41c9589f8"
     },
     {
       "path": "apps/web/src/app/(site)/docs/layout.tsx",

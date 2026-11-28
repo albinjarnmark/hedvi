@@ -249,7 +249,7 @@ func (s *Service) Checkout(ctx context.Context, org, user, project, token uuid.U
 		}
 		// Stable return destinations are required when a purchase is retried from a different project.
 		dest := s.C.AppURL + "/app/" + project.String() + "/settings/billing-return"
-		v := url.Values{"mode": {p.mode()}, "customer": {o.Customer}, "line_items[0][price]": {p.ID}, "line_items[0][quantity]": {"1"}, "payment_method_types[0]": {"card"}, "adaptive_pricing[enabled]": {"false"}, "allow_promotion_codes": {"false"}, "consent_collection[terms_of_service]": {"required"}, "billing_address_collection": {"auto"}, "customer_update[address]": {"never"}, "customer_update[name]": {"auto"}, "tax_id_collection[enabled]": {"true"}, "automatic_tax[enabled]": {"true"}, "client_reference_id": {o.ID.String()}, "metadata[hedvi_order]": {o.ID.String()}, "success_url": {dest + "?order=" + o.ID.String()}, "cancel_url": {dest + "?order=" + o.ID.String()}}
+		v := url.Values{"mode": {p.mode()}, "customer": {o.Customer}, "line_items[0][price]": {p.ID}, "line_items[0][quantity]": {"1"}, "allowed_payment_method_types[0]": {"card"}, "adaptive_pricing[enabled]": {"false"}, "allow_promotion_codes": {"false"}, "consent_collection[terms_of_service]": {"required"}, "billing_address_collection": {"auto"}, "customer_update[address]": {"never"}, "customer_update[name]": {"auto"}, "tax_id_collection[enabled]": {"true"}, "automatic_tax[enabled]": {"true"}, "client_reference_id": {o.ID.String()}, "metadata[hedvi_order]": {o.ID.String()}, "success_url": {dest + "?order=" + o.ID.String()}, "cancel_url": {dest + "?order=" + o.ID.String()}}
 		if sku == "flex" {
 			v.Set("invoice_creation[enabled]", "true")
 			v.Set("payment_intent_data[metadata][hedvi_order]", o.ID.String())

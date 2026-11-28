@@ -139,6 +139,11 @@ func (f *stripeFixture) RoundTrip(r *http.Request) (*http.Response, error) {
 		f.order = r.Form.Get("client_reference_id")
 		f.sessionCreates++
 		f.checkoutForms = append(f.checkoutForms, r.Form.Encode())
+		// Endive rejects the old payment_method_types request parameter. Keep
+		// card-only Checkout compatible with the pinned Stripe API version.
+		if r.Form.Get("allowed_payment_method_types[0]") != "card" || r.Form.Has("payment_method_types[0]") || r.Form.Has("allowed_payment_method_types[1]") {
+			return nil, fmt.Errorf("invalid checkout payment-method filter")
+		}
 		if r.Form.Get("metadata[hedvi_order]") != f.order || r.Form.Get("line_items[0][price]") != f.price || r.Form.Get("automatic_tax[enabled]") != "true" || r.Form.Get("consent_collection[terms_of_service]") != "required" || r.Form.Get("customer_update[address]") != "never" || r.Form.Get("billing_address_collection") != "auto" || r.Form.Get("shipping_address_collection[allowed_countries][0]") != "" {
 			return nil, fmt.Errorf("invalid checkout")
 		}

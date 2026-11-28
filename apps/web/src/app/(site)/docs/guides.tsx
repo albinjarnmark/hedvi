@@ -51,8 +51,8 @@ export const guides: Doc[] = [
     <h2>Buy through Checkout</h2>
     <DocFigure name="billing-checkout" alt="Choose a product in Settings, confirm the total at Stripe, then check payment status in Hedvi." caption="The return page reads your order. The allowance appears after Hedvi verifies the invoice and payment." />
     <ol>
-      <li>Choose the product, currency and eligible billing country. The first checkout fixes the organization&apos;s billing currency.</li>
-      <li>Select <strong>Continue to Stripe Checkout</strong>. Enter the actual billing address and any applicable tax ID, inspect the total and terms, then confirm payment on Stripe.</li>
+      <li>Choose the product and currency, then enter the company name and full billing address in Hedvi. The first checkout fixes the organization&apos;s billing currency and invoice address.</li>
+      <li>Select <strong>Continue to Stripe Checkout</strong>. Check the company details, enter any applicable tax ID and payment method, inspect the total and terms, then confirm payment on Stripe. Payment-method details do not change the saved company invoice address.</li>
       <li>Read the return page or reopen <strong>Settings → Billing → Recent purchases</strong>. An order may show <strong>Awaiting confirmation</strong> or <strong>Payment pending</strong> while Stripe and Hedvi reconcile it. Check the existing order before starting another purchase.</li>
       <li>Check the available recipients, attachment allowance and credit expiry under <strong>Usage and cost control</strong>. Sender-domain verification, project approval and hourly or daily sending limits still apply.</li>
     </ol>
